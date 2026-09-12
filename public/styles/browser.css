@@ -1,0 +1,385 @@
+/* browser.css - Simulated Chrome Window, Title Bar, Navigation Toolbar, and Web Content */
+
+#chrome-window {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-win-bg);
+  border-radius: var(--border-radius-win);
+  box-shadow: var(--color-win-shadow);
+  border: 1px solid var(--color-win-border);
+  overflow: hidden;
+  z-index: 10;
+  min-width: 480px;
+  min-height: 320px;
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+              width 0.22s ease,
+              height 0.22s ease,
+              top 0.22s ease,
+              left 0.22s ease;
+  transform-origin: bottom center;
+}
+
+/* Disable transitions while user is dragging for zero-latency movement */
+#chrome-window.is-dragging {
+  transition: none !important;
+  cursor: grabbing !important;
+}
+
+#chrome-window.is-dragging #window-titlebar {
+  cursor: grabbing !important;
+}
+
+/* Minimized Window State */
+#chrome-window.is-minimized {
+  transform: translateY(80px) scale(0.85);
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+/* Closed Window State */
+#chrome-window.is-closed {
+  transform: scale(0.92);
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+/* Maximized Window State */
+#chrome-window.is-maximized {
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+}
+
+/* Window Title Bar & Tabstrip */
+#window-titlebar {
+  height: 42px;
+  background-color: var(--color-chrome-tabstrip-bg);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding-left: 8px;
+  cursor: grab;
+  user-select: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Tab Bar Area */
+.chrome-tabstrip {
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  flex: 1;
+  overflow: hidden;
+  padding-top: 6px;
+}
+
+.chrome-tab {
+  height: 34px;
+  padding: 0 16px;
+  background-color: var(--color-chrome-tab-active);
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--color-titlebar-text);
+  max-width: 240px;
+  min-width: 140px;
+  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+.chrome-tab-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.chrome-tab-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.chrome-tab-close {
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  min-height: 18px;
+  border-radius: 50%;
+  color: #5f6368;
+  font-size: 11px;
+}
+
+.chrome-tab-close:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #202124;
+}
+
+.chrome-new-tab-btn {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
+  border-radius: 50%;
+  margin-left: 4px;
+  margin-bottom: 3px;
+  color: #5f6368;
+}
+
+.chrome-new-tab-btn:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+  color: #202124;
+}
+
+/* Window Control Buttons (Minimize, Maximize/Restore, Close) */
+.window-controls {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.win-btn {
+  height: 100%;
+  width: 46px;
+  min-width: 46px;
+  border: none;
+  background: transparent;
+  color: #3c4043;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.win-btn:hover {
+  background-color: var(--color-titlebar-btn-hover);
+}
+
+.win-btn-close:hover {
+  background-color: var(--color-btn-close-hover);
+  color: var(--color-btn-close-text);
+}
+
+.win-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Chrome Toolbar (Nav & Address Bar) */
+.chrome-toolbar {
+  height: 48px;
+  background-color: var(--color-chrome-toolbar-bg);
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  gap: 8px;
+  border-bottom: 1px solid var(--color-chrome-border);
+}
+
+.nav-btn {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: 50%;
+  color: #5f6368;
+  transition: background-color 0.15s ease;
+}
+
+.nav-btn:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+  color: #202124;
+}
+
+.nav-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Address Bar Capsule */
+.chrome-address-bar {
+  flex: 1;
+  height: 34px;
+  background-color: #f1f3f4;
+  border-radius: 17px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  gap: 10px;
+  font-size: 0.88rem;
+  color: #202124;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  border: 1px solid transparent;
+}
+
+.chrome-address-bar:hover {
+  background-color: #e8eaed;
+}
+
+.chrome-address-bar:focus-within {
+  background-color: #ffffff;
+  border-color: #1a73e8;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+.address-lock-icon {
+  color: #5f6368;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.address-text {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.88rem;
+  color: inherit;
+  outline: none;
+}
+
+.address-star-icon {
+  color: #5f6368;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.chrome-menu-btn {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: 50%;
+  color: #5f6368;
+}
+
+.chrome-menu-btn:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+  color: #202124;
+}
+
+/* Chrome Web Page Content Simulation */
+.chrome-content {
+  flex: 1;
+  background-color: #ffffff;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 24px;
+  text-align: center;
+}
+
+.chrome-logo-area {
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.chrome-logo-text {
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.chrome-logo-blue { color: #4285f4; }
+.chrome-logo-red { color: #ea4335; }
+.chrome-logo-yellow { color: #fbbc05; }
+.chrome-logo-green { color: #34a853; }
+
+.simulated-search-box {
+  width: 100%;
+  max-width: 540px;
+  height: 46px;
+  border-radius: 23px;
+  border: 1px solid #dfe1e5;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  box-shadow: 0 1px 6px rgba(32, 33, 36, 0.1);
+  margin-bottom: 32px;
+  background-color: #ffffff;
+}
+
+.simulated-search-box svg {
+  color: #9aa0a6;
+  width: 18px;
+  height: 18px;
+}
+
+.simulated-search-box input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 0.95rem;
+  color: #202124;
+  background: transparent;
+}
+
+.shortcuts-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  max-width: 480px;
+  width: 100%;
+  margin-bottom: 32px;
+}
+
+.shortcut-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 8px;
+  border-radius: 8px;
+  transition: background-color 0.15s ease;
+  color: #3c4043;
+  font-size: 0.82rem;
+}
+
+.shortcut-item:hover {
+  background-color: #f1f3f4;
+}
+
+.shortcut-icon-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #f1f3f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.chrome-welcome-banner {
+  max-width: 580px;
+  background-color: #e8f0fe;
+  border: 1px solid #d2e3fc;
+  border-radius: 12px;
+  padding: 16px 20px;
+  text-align: left;
+  color: #174ea6;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.chrome-welcome-banner h3 {
+  font-size: 1rem;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

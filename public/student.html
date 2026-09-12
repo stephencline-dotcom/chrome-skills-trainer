@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chrome Skills Trainer - Student Practice</title>
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/desktop.css">
+  <link rel="stylesheet" href="styles/browser.css">
+  <link rel="stylesheet" href="styles/lesson-player.css">
+</head>
+<body>
+
+  <div id="desktop">
+    <!-- Simulated Desktop Workspace Area -->
+    <main id="desktop-workspace" aria-label="Simulated Windows Desktop">
+      
+      <!-- Elementary Student Instruction Card -->
+      <section id="instruction-card" class="instruction-card" aria-label="Classroom Activity Instructions">
+        <!-- Optional Teacher Hub Back Link Container -->
+        <div id="teacher-back-banner" style="display: none; margin-bottom: 10px; border-bottom: 1px dashed #d1d5db; padding-bottom: 8px;">
+          <a id="teacher-back-link" href="teacher.html" style="font-size: 0.8rem; font-weight: 600; color: #1d4ed8; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+            &larr; Back to Teacher Hub
+          </a>
+        </div>
+
+        <div class="instruction-card-header">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+          </svg>
+          <span id="instruction-card-title">Practice Window Controls!</span>
+          <span id="preview-badge" style="display: none; margin-left: auto; background-color: #dbeafe; color: #1e40af; font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px;">
+            Practice Preview
+          </span>
+        </div>
+
+        <div id="instruction-card-body">
+          <ol class="instruction-list">
+            <li>
+              <span class="instruction-step">1</span>
+              <span class="instruction-text">Click <strong>Minimize (➖)</strong> to hide Chrome into the taskbar.</span>
+            </li>
+            <li>
+              <span class="instruction-step">2</span>
+              <span class="instruction-text">Click the <strong>Chrome taskbar button</strong> to bring it back.</span>
+            </li>
+            <li>
+              <span class="instruction-step">3</span>
+              <span class="instruction-text">Click <strong>Maximize (🔲)</strong> or double-click title bar to expand.</span>
+            </li>
+            <li>
+              <span class="instruction-step">4</span>
+              <span class="instruction-text">Click <strong>Restore Down (❐)</strong> to shrink it back.</span>
+            </li>
+            <li>
+              <span class="instruction-step">5</span>
+              <span class="instruction-text">Click and drag the <strong>title bar</strong> to move the window.</span>
+            </li>
+            <li>
+              <span class="instruction-step">6</span>
+              <span class="instruction-text">Click <strong>Close (❌)</strong>, then click the taskbar button to open a new window!</span>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Simulated Chrome Window -->
+      <div id="chrome-window" role="dialog" aria-label="Chrome Skills Trainer Window" tabindex="-1">
+        
+        <!-- Window Title Bar / Tab Bar -->
+        <header id="window-titlebar">
+          <div class="chrome-tabstrip">
+            <div class="chrome-tab" title="Chrome Skills Trainer">
+              <svg class="chrome-tab-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <circle cx="12" cy="12" r="10" fill="#4285f4"/>
+                <circle cx="12" cy="12" r="4" fill="#ffffff"/>
+              </svg>
+              <span class="chrome-tab-title">Chrome Skills Trainer</span>
+              <button type="button" class="chrome-tab-close" aria-label="Close Tab" title="Close Tab">✕</button>
+            </div>
+            <button type="button" class="chrome-new-tab-btn" aria-label="New Tab" title="New Tab">+</button>
+          </div>
+
+          <!-- Window Controls (Minimize, Maximize/Restore, Close) -->
+          <div class="window-controls" aria-label="Window Controls">
+            <button type="button" id="btn-minimize" class="win-btn win-btn-minimize" aria-label="Minimize" title="Minimize">
+              <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                <line x1="3" y1="8" x2="13" y2="8" stroke="currentColor" stroke-width="1.2"/>
+              </svg>
+            </button>
+            
+            <button type="button" id="btn-maximize" class="win-btn win-btn-maximize" aria-label="Maximize" title="Maximize">
+              <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                <rect x="3.5" y="3.5" width="9" height="9" fill="none" stroke="currentColor" stroke-width="1.2"/>
+              </svg>
+            </button>
+            
+            <button type="button" id="btn-close" class="win-btn win-btn-close" aria-label="Close" title="Close">
+              <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                <line x1="4" y1="4" x2="12" y2="12" stroke="currentColor" stroke-width="1.2"/>
+                <line x1="12" y1="4" x2="4" y2="12" stroke="currentColor" stroke-width="1.2"/>
+              </svg>
+            </button>
+          </div>
+        </header>
+
+        <!-- Simulated Navigation Toolbar -->
+        <div class="chrome-toolbar">
+          <button type="button" class="nav-btn" aria-label="Back" title="Back" disabled>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true" focusable="false">
+              <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+          </button>
+          
+          <button type="button" class="nav-btn" aria-label="Forward" title="Forward" disabled>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true" focusable="false">
+              <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z"/>
+            </svg>
+          </button>
+          
+          <button type="button" class="nav-btn" aria-label="Reload page" title="Reload page">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true" focusable="false">
+              <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+            </svg>
+          </button>
+
+          <!-- Address Bar Capsule -->
+          <div class="chrome-address-bar" title="Address Bar">
+            <svg class="address-lock-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+              <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+            </svg>
+            <input type="text" class="address-text" value="https://chrome-skills-trainer.local" readonly aria-label="Web address">
+            <svg class="address-star-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+              <path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.64-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"/>
+            </svg>
+          </div>
+
+          <button type="button" class="chrome-menu-btn" aria-label="Chrome Menu" title="Chrome Menu">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true" focusable="false">
+              <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Simulated Web Page Content Area -->
+        <section class="chrome-content" aria-label="Simulated Browser Page">
+          <div class="chrome-logo-area">
+            <h1 class="chrome-logo-text">
+              <span class="chrome-logo-blue">C</span><span class="chrome-logo-red">h</span><span class="chrome-logo-yellow">r</span><span class="chrome-logo-blue">o</span><span class="chrome-logo-green">m</span><span class="chrome-logo-red">e</span>
+              <span style="font-weight: 300; color: #5f6368; font-size: 1.8rem; margin-left: 8px;">Trainer</span>
+            </h1>
+          </div>
+
+          <div class="simulated-search-box">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+              <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+            </svg>
+            <input type="text" placeholder="Search or type web address (Simulation)" readonly aria-label="Search box placeholder">
+          </div>
+
+          <div class="shortcuts-grid" aria-label="Quick Shortcuts">
+            <div class="shortcut-item">
+              <div class="shortcut-icon-circle">🔢</div>
+              <span>Math Games</span>
+            </div>
+            <div class="shortcut-item">
+              <div class="shortcut-icon-circle">📚</div>
+              <span>Reading Corner</span>
+            </div>
+            <div class="shortcut-item">
+              <div class="shortcut-icon-circle">🧪</div>
+              <span>Science Lab</span>
+            </div>
+            <div class="shortcut-item">
+              <div class="shortcut-icon-circle">🎨</div>
+              <span>Art & Coding</span>
+            </div>
+          </div>
+
+          <div class="chrome-welcome-banner">
+            <h3>
+              <span>💡</span> Welcome Elementary Skill Builders!
+            </h3>
+            <p>
+              Use the top-right control buttons on this window to practice minimizing, maximizing, restoring down, and closing. You can also drag the window by its title bar!
+            </p>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- Simulated Windows Taskbar at Bottom -->
+    <footer id="taskbar" aria-label="Simulated Windows Taskbar">
+      <div class="taskbar-left">
+        <button type="button" class="taskbar-start-btn" aria-label="Start Menu" title="Start">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="#ffffff" aria-hidden="true" focusable="false">
+            <path d="M0 2.5L6.5 1.6V7.5H0V2.5ZM0 8.5H6.5V14.4L0 13.5V8.5ZM7.5 1.45L16 0.2V7.5H7.5V1.45ZM7.5 8.5H16V15.8L7.5 14.55V8.5Z"/>
+          </svg>
+        </button>
+
+        <div id="taskbar-apps" class="taskbar-apps">
+          <button type="button" id="taskbar-chrome-btn" class="taskbar-app-btn is-active" aria-label="Chrome Skills Trainer (Active Window)" title="Chrome Skills Trainer">
+            <div class="taskbar-icon">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+                <circle cx="12" cy="12" r="10" fill="#4285f4"/>
+                <circle cx="12" cy="12" r="4" fill="#ffffff"/>
+              </svg>
+            </div>
+            <span class="taskbar-label">Chrome Skills Trainer</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="taskbar-right">
+        <div class="system-tray-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+          </svg>
+        </div>
+        <div id="system-clock" class="system-clock" aria-label="System Clock">
+          <!-- Dynamically populated by JS -->
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Application Logic -->
+  <script type="module" src="scripts/app.js"></script>
+</body>
+</html>

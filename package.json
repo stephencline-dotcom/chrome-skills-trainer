@@ -1,0 +1,21 @@
+{
+  "name": "chrome-skills-trainer",
+  "version": "1.0.0",
+  "description": "Simulated Windows desktop and Google Chrome environment for elementary students to learn window and browser controls safely.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "education",
+    "chrome",
+    "windows",
+    "simulation",
+    "classroom"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

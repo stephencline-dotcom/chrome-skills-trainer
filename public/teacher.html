@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chrome Skills Trainer - Teacher Presentation Hub</title>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/lesson-hub.css">
+  <link rel="stylesheet" href="styles/lesson-player.css">
+</head>
+<body class="teacher-body">
+
+  <!-- Teacher Hub Navigation Header -->
+  <header class="hub-header">
+    <a href="index.html" class="hub-brand" title="Return to Role Selection">
+      <h1 class="hub-brand-title">
+        <span style="color: #4285f4;">C</span><span style="color: #ea4335;">h</span><span style="color: #fbbc05;">r</span><span style="color: #4285f4;">o</span><span style="color: #34a853;">m</span><span style="color: #ea4335;">e</span> Skills Trainer
+      </h1>
+      <span class="hub-brand-subtitle">Teacher Hub</span>
+    </a>
+
+    <!-- Classroom Connection Indicator Placeholder -->
+    <div class="connection-indicator is-local" title="Local standalone mode (No live classroom session connected)">
+      <span class="connection-dot"></span>
+      <span>Classroom Session: Offline (Local Mode)</span>
+    </div>
+  </header>
+
+  <!-- Main Content Workspace -->
+  <main class="hub-container">
+    
+    <!-- Teacher Intro Header -->
+    <section class="hub-intro">
+      <h2>Classroom Skill Catalog</h2>
+      <p>
+        Select a browser skill below to view lesson objectives, review presentation steps, and launch a student simulator practice preview.
+      </p>
+    </section>
+
+    <!-- Category Filter Controls -->
+    <nav id="category-filter-bar" class="category-filter-bar" aria-label="Skill Category Filters">
+      <!-- Dynamically populated by lesson-hub.js -->
+    </nav>
+
+    <!-- Content Layout Grid -->
+    <div class="hub-content-layout">
+      
+      <!-- Skills Cards Grid -->
+      <section id="skills-grid" class="skills-grid" aria-label="Available Skills">
+        <!-- Dynamically populated by lesson-hub.js -->
+      </section>
+
+      <!-- Lesson Detail Panel -->
+      <aside id="detail-panel" class="detail-panel" aria-label="Selected Skill Detail Panel">
+        <!-- Dynamically populated by lesson-hub.js -->
+      </aside>
+
+    </div>
+
+  </main>
+
+  <!-- Application Logic -->
+  <script type="module" src="scripts/lesson-hub.js"></script>
+</body>
+</html>

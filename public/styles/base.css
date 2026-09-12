@@ -1,0 +1,91 @@
+/* base.css - Foundation resets, CSS variables, typography, and accessibility defaults */
+
+:root {
+  /* Color Palette - Windows/Chrome Classroom Theme */
+  --color-desktop-bg-start: #1e3c72;
+  --color-desktop-bg-end: #2a5298;
+  --color-taskbar-bg: rgba(20, 24, 33, 0.92);
+  --color-taskbar-hover: rgba(255, 255, 255, 0.12);
+  --color-taskbar-active: rgba(255, 255, 255, 0.22);
+  --color-taskbar-indicator: #3b82f6;
+
+  --color-win-bg: #ffffff;
+  --color-win-border: rgba(0, 0, 0, 0.18);
+  --color-win-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+
+  --color-titlebar-bg: #e8eaed;
+  --color-titlebar-text: #202124;
+  --color-titlebar-btn-hover: rgba(0, 0, 0, 0.08);
+
+  --color-btn-close-hover: #e81123;
+  --color-btn-close-text: #ffffff;
+
+  --color-chrome-tabstrip-bg: #dee1e6;
+  --color-chrome-tab-active: #ffffff;
+  --color-chrome-tab-inactive: #e8eaed;
+  --color-chrome-toolbar-bg: #ffffff;
+  --color-chrome-border: #dadce0;
+
+  --color-focus-ring: #2563eb;
+  --color-text-main: #1f2937;
+  --color-text-muted: #6b7280;
+
+  /* Sizing & Spacing */
+  --taskbar-height: 48px;
+  --btn-min-target: 44px;
+  --border-radius-win: 8px;
+
+  /* Typography */
+  --font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font-family);
+  background-color: var(--color-desktop-bg-start);
+  color: var(--color-text-main);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Accessible focus indicators for interactive elements */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--color-focus-ring) !important;
+  outline-offset: 2px !important;
+  z-index: 100;
+}
+
+/* Button Reset */
+button {
+  font-family: inherit;
+  font-size: 100%;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--btn-min-target);
+  min-height: var(--btn-min-target);
+}
+
+/* Reduced Motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

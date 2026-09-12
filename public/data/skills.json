@@ -1,0 +1,774 @@
+{
+  "version": "1.0.0",
+  "categories": [
+    "Window Controls",
+    "Navigation",
+    "Tabs",
+    "Bookmarks",
+    "Chrome Menu"
+  ],
+  "skills": [
+    {
+      "id": "minimize",
+      "name": "Minimize",
+      "category": "Window Controls",
+      "iconType": "symbol",
+      "iconText": "➖",
+      "shortExplanation": "Hide the window into the bottom taskbar without closing your work.",
+      "simulatorControl": "Top right window control button (-) or taskbar button.",
+      "hasCompleteLesson": true,
+      "lessonSections": [
+        {
+          "id": "step-1-meet-minimize",
+          "title": "Meet Minimize",
+          "section": "Meet the Button",
+          "type": "introduction",
+          "teacherTitle": "Meet the Minimize Button",
+          "teacherText": "The Minimize button is shaped like a small minus sign (➖) in the top-right corner of your window. When you click it, your window hides down into the taskbar.",
+          "teacherPrompt": "Point to the top-right corner of your screen. Ask students: 'What shape looks like a takeaway line or minus sign?'",
+          "studentTitle": "Meet the Minimize Button",
+          "studentInstruction": "Look at the top-right corner of the window. Notice the minus sign (➖) button.",
+          "studentMode": "observe",
+          "targetControl": null,
+          "completionMessage": "Ready to find the button!",
+          "allowStudentInteraction": false
+        },
+        {
+          "id": "step-2-find-button",
+          "title": "Find the Button",
+          "section": "Meet the Button",
+          "type": "identify",
+          "teacherTitle": "Locate the Minimize Button",
+          "teacherText": "Help students locate the Minimize button. The button is highlighted on screen.",
+          "teacherPrompt": "Ask students: 'Can you find the highlighted minus button in the top-right corner?'",
+          "studentTitle": "Find the Minimize Button",
+          "studentInstruction": "Click the highlighted Minimize button (➖) in the top-right corner.",
+          "studentMode": "identify",
+          "targetControl": "btn-minimize",
+          "completionMessage": "Great job! You found the Minimize button!",
+          "allowStudentInteraction": true
+        },
+        {
+          "id": "step-3-watch-it-work",
+          "title": "Watch It Work",
+          "section": "Watch It Work",
+          "type": "demonstration",
+          "teacherTitle": "Watch Minimize in Action",
+          "teacherText": "When Minimize is clicked, the browser window slides down into the taskbar at the bottom of the screen. Your work is kept safe!",
+          "teacherPrompt": "Explain to students: 'Minimizing does not delete or close your work. It just puts Chrome away until you need it again.'",
+          "studentTitle": "Watch Chrome Minimize",
+          "studentInstruction": "Watch the presentation screen to see how Chrome slides down into the taskbar.",
+          "studentMode": "observe",
+          "targetControl": null,
+          "completionMessage": "Now you are ready to try it yourself!",
+          "allowStudentInteraction": false
+        },
+        {
+          "id": "step-4-guided-minimize",
+          "title": "Guided Practice — Minimize",
+          "section": "Guided Practice",
+          "type": "guided-practice",
+          "teacherTitle": "Practice: Minimize Chrome",
+          "teacherText": "Direct students to click the Minimize button on their screen. Their window will slide down into the taskbar.",
+          "teacherPrompt": "Instruct students: 'Click the Minimize button in the top-right corner of your Chrome window.'",
+          "studentTitle": "Minimize the Window",
+          "studentInstruction": "Click the Minimize button (➖) to hide Chrome into the taskbar.",
+          "studentMode": "interact",
+          "targetControl": "btn-minimize",
+          "completionMessage": "Awesome! Chrome is now minimized in your taskbar!",
+          "allowStudentInteraction": true
+        },
+        {
+          "id": "step-5-guided-restore",
+          "title": "Guided Practice — Bring It Back",
+          "section": "Guided Practice",
+          "type": "guided-practice",
+          "teacherTitle": "Practice: Restore from Taskbar",
+          "teacherText": "Direct students to click the Chrome icon on their taskbar to bring the window back.",
+          "teacherPrompt": "Instruct students: 'Look at the bottom taskbar. Click the Chrome icon to open your window again.'",
+          "studentTitle": "Bring Chrome Back",
+          "studentInstruction": "Click the Chrome icon on the bottom taskbar to restore your window.",
+          "studentMode": "interact",
+          "targetControl": "taskbar-chrome-btn",
+          "completionMessage": "Nice work! You brought Chrome back onto the screen!",
+          "allowStudentInteraction": true
+        },
+        {
+          "id": "step-6-independent-challenge",
+          "title": "Independent Challenge",
+          "section": "Student Challenge",
+          "type": "independent-challenge",
+          "teacherTitle": "Student Challenge: Minimize and Restore",
+          "teacherText": "Students must minimize Chrome and then restore it from the taskbar without visual highlights.",
+          "teacherPrompt": "Tell students: 'Show that you can minimize Chrome to the taskbar, then open it back up without help.'",
+          "studentTitle": "Minimize & Restore Challenge",
+          "studentInstruction": "Hide Chrome into the taskbar, then bring it back!",
+          "studentMode": "interact",
+          "targetControl": "sequence",
+          "completionMessage": "Outstanding! You mastered minimizing and restoring Chrome!",
+          "allowStudentInteraction": true
+        },
+        {
+          "id": "step-7-concept-check",
+          "title": "Minimize or Close?",
+          "section": "Student Challenge",
+          "type": "summary",
+          "teacherTitle": "Concept Check: Minimize vs Close",
+          "teacherText": "Review the difference between Minimize (hides window) and Close (shuts window).",
+          "teacherPrompt": "Ask the class: 'Which button hides a window into the taskbar without closing your work?'",
+          "studentTitle": "Minimize or Close?",
+          "studentInstruction": "Which button hides a window into the taskbar but keeps your work open?",
+          "studentMode": "quiz",
+          "targetControl": "quiz-minimize",
+          "completionMessage": "Correct! Minimize hides your window without closing your work.",
+          "allowStudentInteraction": true
+        },
+        {
+          "id": "step-8-lesson-complete",
+          "title": "Lesson Complete",
+          "section": "Student Challenge",
+          "type": "summary",
+          "teacherTitle": "Minimize Skill Mastered!",
+          "teacherText": "Celebrate student success! Reinforce that Minimize hides a window without closing it.",
+          "teacherPrompt": "Congratulate students on completing their first Chrome browser skill lesson!",
+          "studentTitle": "Lesson Complete!",
+          "studentInstruction": "Minimize hides a window without closing it. Excellent job!",
+          "studentMode": "summary",
+          "targetControl": null,
+          "completionMessage": "Lesson Complete! You are a Minimize master!",
+          "allowStudentInteraction": false
+        }
+      ]
+    },
+    {
+      "id": "maximize",
+      "name": "Maximize",
+      "category": "Window Controls",
+      "iconType": "symbol",
+      "iconText": "🔲",
+      "shortExplanation": "Expand the window to fill the entire desktop screen.",
+      "simulatorControl": "Top right window control button (Square box) or double-click title bar.",
+      "lessonSections": [
+        {
+          "id": "meet-the-button",
+          "title": "Meet the Button",
+          "type": "presentation",
+          "placeholderDescription": "Find the square maximize button next to the close button."
+        },
+        {
+          "id": "watch-it-work",
+          "title": "Watch It Work",
+          "type": "demonstration",
+          "placeholderDescription": "See how maximizing gives you the largest possible view of your browser."
+        },
+        {
+          "id": "guided-practice",
+          "title": "Guided Practice",
+          "type": "practice",
+          "placeholderDescription": "Maximize the window, then practice double-clicking the title bar."
+        },
+        {
+          "id": "student-challenge",
+          "title": "Student Challenge",
+          "type": "challenge",
+          "placeholderDescription": "Maximize Chrome so no desktop wallpaper is visible on the sides."
+        }
+      ]
+    },
+    {
+      "id": "restore-down",
+      "name": "Restore Down",
+      "category": "Window Controls",
+      "iconType": "symbol",
+      "iconText": "❐",
+      "shortExplanation": "Return a maximized window back to its floating size and position.",
+      "simulatorControl": "Top right window control button (Overlapping squares) when maximized.",
+      "lessonSections": [
+        {
+          "id": "meet-the-button",
+          "title": "Meet the Button",
+          "type": "presentation",
+          "placeholderDescription": "Notice how the maximize button turns into two overlapping squares."
+        },
+        {
+          "id": "watch-it-work",
+          "title": "Watch It Work",
+          "type": "demonstration",
+          "placeholderDescription": "Watch the window shrink back so you can see your desktop wallpaper."
+        },
+        {
+          "id": "guided-practice",
+          "title": "Guided Practice",
+          "type": "practice",
+          "placeholderDescription": "Restore Down the window and drag it slightly to the left."
+        },
+        {
+          "id": "student-challenge",
+          "title": "Student Challenge",
+          "type": "challenge",
+          "placeholderDescription": "Switch between Maximized and Restore Down using the button."
+        }
+      ]
+    },
+    {
+      "id": "close",
+      "name": "Close",
+      "category": "Window Controls",
+      "iconType": "symbol",
+      "iconText": "❌",
+      "shortExplanation": "Close the window when you are completely finished with your work.",
+      "simulatorControl": "Top right window red/hover button (X) or taskbar button to re-open.",
+      "lessonSections": [
+        {
+          "id": "meet-the-button",
+          "title": "Meet the Button",
+          "type": "presentation",
+          "placeholderDescription": "Locate the red X button in the very top right corner."
+        },
+        {
+          "id": "watch-it-work",
+          "title": "Watch It Work",
+          "type": "demonstration",
+          "placeholderDescription": "Observe how closing turns the taskbar icon inactive."
+        },
+        {
+          "id": "guided-practice",
+          "title": "Guided Practice",
+          "type": "practice",
+          "placeholderDescription": "Close the window, then click the taskbar button to open a fresh window."
+        },
+        {
+          "id": "student-challenge",
+          "title": "Student Challenge",
+          "type": "challenge",
+          "placeholderDescription": "Practice closing and re-opening a fresh Chrome window."
+        }
+      ]
+    },
+    {
+      "id": "back",
+      "name": "Back",
+      "category": "Navigation",
+      "iconType": "symbol",
+      "iconText": "⬅️",
+      "shortExplanation": "Return to the previous web page you were looking at.",
+      "simulatorControl": "Left arrow button on the top navigation bar.",
+      "lessonSections": [
+        {
+          "id": "meet-the-button",
+          "title": "Meet the Button",
+          "type": "presentation",
+          "placeholderDescription": "Find the left-pointing arrow at the top-left of Chrome."
+        },
+        {
+          "id": "watch-it-work",
+          "title": "Watch It Work",
+          "type": "demonstration",
+          "placeholderDescription": "Learn how the back button takes you step-by-step to earlier pages."
+        },
+        {
+          "id": "guided-practice",
+          "title": "Guided Practice",
+          "type": "practice",
+          "placeholderDescription": "Click Back to return to your previous activity."
+        },
+        {
+          "id": "student-challenge",
+          "title": "Student Challenge",
+          "type": "challenge",
+          "placeholderDescription": "Use the Back button to return to the search results page."
+        }
+      ]
+    },
+    {
+      "id": "forward",
+      "name": "Forward",
+      "category": "Navigation",
+      "iconType": "symbol",
+      "iconText": "➡️",
+      "shortExplanation": "Move forward to the page you were on before clicking Back.",
+      "simulatorControl": "Right arrow button on the top navigation bar.",
+      "lessonSections": [
+        {
+          "id": "meet-the-button",
+          "title": "Meet the Button",
+          "type": "presentation",
+          "placeholderDescription": "Locate the right-pointing arrow next to the Back button."
+        },
+        {
+          "id": "watch-it-work",
+          "title": "Watch It Work",
+          "type": "demonstration",
+          "placeholderDescription": "See how Forward re-visits pages after you went backwards."
+        },
+        {
+          "id": "guided-practice",
+          "title": "Guided Practice",
+          "type": "practice",
+          "placeholderDescription": "Go Back once, then click Forward to re-open the page."
+        },
+        {
+          "id": "student-challenge",
+          "title": "Student Challenge",
+          "type": "challenge",
+          "placeholderDescription": "Practice using Back and Forward to jump between pages."
+        }
+      ]
+    },
+    {
+      "id": "reload",
+      "name": "Reload",
+      "category": "Navigation",
+      "iconType": "symbol",
+      "iconText": "🔄",
+      "shortExplanation": "Refresh the current web page to get the latest updates.",
+      "simulatorControl": "Circular arrow button next to Forward.",
+      "lessonSections": [
+        {
+          "id": "meet-the-button",
+          "title": "Meet the Button",
+          "type": "presentation",
+          "placeholderDescription": "Identify the circular arrow reload button."
+        },
+        {
+          "id": "watch-it-work",
+          "title": "Watch It Work",
+          "type": "demonstration",
+          "placeholderDescription": "Watch how refreshing reloads all content on the page."
+        },
+        {
+          "id": "guided-practice",
+          "title": "Guided Practice",
+          "type": "practice",
+          "placeholderDescription": "Click Reload to refresh the classroom website."
+        },
+        {
+          "id": "student-challenge",
+          "title": "Student Challenge",
+          "type": "challenge",
+          "placeholderDescription": "Use Reload when a web page is loading slowly or stuck."
+        }
+      ]
+    },
+    {
+      "id": "home",
+      "name": "Home",
+      "category": "Navigation",
+      "iconType": "symbol",
+      "iconText": "🏠",
+      "shortExplanation": "Instantly return to your main school home page.",
+      "simulatorControl": "House icon on the navigation bar.",
+      "lessonSections": [
+        {
+          "id": "meet-the-button",
+          "title": "Meet the Button",
+          "type": "presentation",
+          "placeholderDescription": "Find the house-shaped Home button."
+        },
+        {
+          "id": "watch-it-work",
+          "title": "Watch It Work",
+          "type": "demonstration",
+          "placeholderDescription": "Observe how Home jumps straight to your starting page."
+        },
+        {
+          "id": "guided-practice",
+          "title": "Guided Practice",
+          "type": "practice",
+          "placeholderDescription": "Click the Home button to jump back to the main portal."
+        },
+        {
+          "id": "student-challenge",
+          "title": "Student Challenge",
+          "type": "challenge",
+          "placeholderDescription": "Navigate away and use Home to quickly return."
+        }
+      ]
+    },
+    {
+      "id": "address-bar",
+      "name": "Address Bar",
+      "category": "Navigation",
+      "iconType": "symbol",
+      "iconText": "🔍",
+      "shortExplanation": "Type web addresses (URLs) or search terms here.",
+      "simulatorControl": "Long white text box at the top of the browser.",
+      "lessonSections": [
+        {
+          "id": "meet-the-button",
+          "title": "Meet the Button",
+          "type": "presentation",
+          "placeholderDescription": "Locate the long text box containing the web address."
+        },
+        {
+          "id": "watch-it-work",
+          "title": "Watch It Work",
+          "type": "demonstration",
+          "placeholderDescription": "Learn how typing an address leads directly to a website."
+        },
+        {
+          "id": "guided-practice",
+          "title": "Guided Practice",
+          "type": "practice",
+          "placeholderDescription": "Click inside the address bar to select the text."
+        },
+        {
+          "id": "student-challenge",
+          "title": "Student Challenge",
+          "type": "challenge",
+          "placeholderDescription": "Identify whether a web address begins with https."
+        }
+      ]
+    },
+    {
+      "id": "new-tab",
+      "name": "New Tab",
+      "category": "Tabs",
+      "iconType": "symbol",
+      "iconText": "➕",
+      "shortExplanation": "Open a fresh web page tab alongside your current page.",
+      "simulatorControl": "Plus (+) button next to the active tab.",
+      "lessonSections": [
+        {
+          "id": "meet-the-button",
+          "title": "Meet the Button",
+          "type": "presentation",
+          "placeholderDescription": "Find the small plus icon next to open tabs."
+        },
+        {
+          "id": "watch-it-work",
+          "title": "Watch It Work",
+          "type": "demonstration",
+          "placeholderDescription": "See how opening multiple tabs keeps several pages accessible."
+        },
+        {
+          "id": "guided-practice",
+          "title": "Guided Practice",
+          "type": "practice",
+          "placeholderDescription": "Click the New Tab button to open a second tab."
+        },
+        {
+          "id": "student-challenge",
+          "title": "Student Challenge",
+          "type": "challenge",
+          "placeholderDescription": "Open two new tabs and switch between them."
+        }
+      ]
+    },
+    {
+      "id": "close-tab",
+      "name": "Close Tab",
+      "category": "Tabs",
+      "iconType": "symbol",
+      "iconText": "✖️",
+      "shortExplanation": "Close a specific open tab without closing the whole browser.",
+      "simulatorControl": "Small x icon on the right side of tab title.",
+      "lessonSections": [
+        {
+          "id": "meet-the-button",
+          "title": "Meet the Button",
+          "type": "presentation",
+          "placeholderDescription": "Locate the tiny 'x' inside the tab tab shape."
+        },
+        {
+          "id": "watch-it-work",
+          "title": "Watch It Work",
+          "type": "demonstration",
+          "placeholderDescription": "Watch a single tab close cleanly without losing other open tabs."
+        },
+        {
+          "id": "guided-practice",
+          "title": "Guided Practice",
+          "type": "practice",
+          "placeholderDescription": "Close an extra tab using its small close button."
+        },
+        {
+          "id": "student-challenge",
+          "title": "Student Challenge",
+          "type": "challenge",
+          "placeholderDescription": "Close three open tabs one by one."
+        }
+      ]
+    },
+    {
+      "id": "bookmark-this-page",
+      "name": "Bookmark This Page",
+      "category": "Bookmarks",
+      "iconType": "symbol",
+      "iconText": "⭐",
+      "shortExplanation": "Save a favorite website so you can easily find it later.",
+      "simulatorControl": "Star icon on the right side of the address bar.",
+      "lessonSections": [
+        {
+          "id": "meet-the-button",
+          "title": "Meet the Button",
+          "type": "presentation",
+          "placeholderDescription": "Find the star icon inside the address bar."
+        },
+        {
+          "id": "watch-it-work",
+          "title": "Watch It Work",
+          "type": "demonstration",
+          "placeholderDescription": "Learn how bookmarking adds websites to your favorites list."
+        },
+        {
+          "id": "guided-practice",
+          "title": "Guided Practice",
+          "type": "practice",
+          "placeholderDescription": "Click the star icon to save the current page."
+        },
+        {
+          "id": "student-challenge",
+          "title": "Student Challenge",
+          "type": "challenge",
+          "placeholderDescription": "Bookmark your favorite classroom subject page."
+        }
+      ]
+    },
+    {
+      "id": "bookmarks-bar",
+      "name": "Bookmarks Bar",
+      "category": "Bookmarks",
+      "iconType": "symbol",
+      "iconText": "🔖",
+      "shortExplanation": "A quick-access toolbar for your saved favorite websites.",
+      "simulatorControl": "Toolbar area directly below the main address bar.",
+      "lessonSections": [
+        {
+          "id": "meet-the-button",
+          "title": "Meet the Button",
+          "type": "presentation",
+          "placeholderDescription": "Locate the horizontal bar under the address bar."
+        },
+        {
+          "id": "watch-it-work",
+          "title": "Watch It Work",
+          "type": "demonstration",
+          "placeholderDescription": "See how clicking a bookmark opens websites in one click."
+        },
+        {
+          "id": "guided-practice",
+          "title": "Guided Practice",
+          "type": "practice",
+          "placeholderDescription": "Click a saved bookmark from the bookmarks bar."
+        },
+        {
+          "id": "student-challenge",
+          "title": "Student Challenge",
+          "type": "challenge",
+          "placeholderDescription": "Find and launch a math bookmark from the bar."
+        }
+      ]
+    },
+    {
+      "id": "three-dot-menu",
+      "name": "Three-Dot Menu",
+      "category": "Chrome Menu",
+      "iconType": "symbol",
+      "iconText": "⋮",
+      "shortExplanation": "Open Chrome options, settings, history, and tools.",
+      "simulatorControl": "Three vertical dots button in top right of toolbar.",
+      "lessonSections": [
+        {
+          "id": "meet-the-button",
+          "title": "Meet the Button",
+          "type": "presentation",
+          "placeholderDescription": "Find the three vertical dots on the far right."
+        },
+        {
+          "id": "watch-it-work",
+          "title": "Watch It Work",
+          "type": "demonstration",
+          "placeholderDescription": "Explore the drop-down menu options for Chrome."
+        },
+        {
+          "id": "guided-practice",
+          "title": "Guided Practice",
+          "type": "practice",
+          "placeholderDescription": "Click the three dots to view the main menu."
+        },
+        {
+          "id": "student-challenge",
+          "title": "Student Challenge",
+          "type": "challenge",
+          "placeholderDescription": "Locate Zoom and Print inside the main menu."
+        }
+      ]
+    },
+    {
+      "id": "history",
+      "name": "History",
+      "category": "Chrome Menu",
+      "iconType": "symbol",
+      "iconText": "📜",
+      "shortExplanation": "View a list of web pages you have visited recently.",
+      "simulatorControl": "History item inside the three-dot menu.",
+      "lessonSections": [
+        {
+          "id": "meet-the-button",
+          "title": "Meet the Button",
+          "type": "presentation",
+          "placeholderDescription": "Locate the History entry inside the main Chrome menu."
+        },
+        {
+          "id": "watch-it-work",
+          "title": "Watch It Work",
+          "type": "demonstration",
+          "placeholderDescription": "Learn how History helps you find web pages you opened earlier."
+        },
+        {
+          "id": "guided-practice",
+          "title": "Guided Practice",
+          "type": "practice",
+          "placeholderDescription": "Open History to see previously visited sites."
+        },
+        {
+          "id": "student-challenge",
+          "title": "Student Challenge",
+          "type": "challenge",
+          "placeholderDescription": "Re-open a page from your browser history."
+        }
+      ]
+    },
+    {
+      "id": "downloads",
+      "name": "Downloads",
+      "category": "Chrome Menu",
+      "iconType": "symbol",
+      "iconText": "⬇️",
+      "shortExplanation": "Find files, worksheets, or images saved to your computer.",
+      "simulatorControl": "Downloads item inside three-dot menu.",
+      "lessonSections": [
+        {
+          "id": "meet-the-button",
+          "title": "Meet the Button",
+          "type": "presentation",
+          "placeholderDescription": "Find the Downloads entry in Chrome."
+        },
+        {
+          "id": "watch-it-work",
+          "title": "Watch It Work",
+          "type": "demonstration",
+          "placeholderDescription": "Discover where downloaded files go on your computer."
+        },
+        {
+          "id": "guided-practice",
+          "title": "Guided Practice",
+          "type": "practice",
+          "placeholderDescription": "Open the Downloads list to view saved files."
+        },
+        {
+          "id": "student-challenge",
+          "title": "Student Challenge",
+          "type": "challenge",
+          "placeholderDescription": "Locate a downloaded assignment worksheet."
+        }
+      ]
+    },
+    {
+      "id": "zoom",
+      "name": "Zoom",
+      "category": "Chrome Menu",
+      "iconType": "symbol",
+      "iconText": "🔎",
+      "shortExplanation": "Make words and pictures on the page bigger or smaller.",
+      "simulatorControl": "Zoom plus (+) and minus (-) buttons in main menu.",
+      "lessonSections": [
+        {
+          "id": "meet-the-button",
+          "title": "Meet the Button",
+          "type": "presentation",
+          "placeholderDescription": "Find the Zoom controls with plus and minus signs."
+        },
+        {
+          "id": "watch-it-work",
+          "title": "Watch It Work",
+          "type": "demonstration",
+          "placeholderDescription": "See text grow larger and easier to read."
+        },
+        {
+          "id": "guided-practice",
+          "title": "Guided Practice",
+          "type": "practice",
+          "placeholderDescription": "Zoom in to 125% and then reset back to 100%."
+        },
+        {
+          "id": "student-challenge",
+          "title": "Student Challenge",
+          "type": "challenge",
+          "placeholderDescription": "Adjust the page zoom so small text is easy to read."
+        }
+      ]
+    },
+    {
+      "id": "find-on-page",
+      "name": "Find on Page",
+      "category": "Chrome Menu",
+      "iconType": "symbol",
+      "iconText": "🔍",
+      "shortExplanation": "Search for a specific word on the current web page.",
+      "simulatorControl": "Find item in menu or Ctrl+F shortcut.",
+      "lessonSections": [
+        {
+          "id": "meet-the-button",
+          "title": "Meet the Button",
+          "type": "presentation",
+          "placeholderDescription": "Locate the Find on Page tool in the menu."
+        },
+        {
+          "id": "watch-it-work",
+          "title": "Watch It Work",
+          "type": "demonstration",
+          "placeholderDescription": "Watch words highlight automatically when typed into Find."
+        },
+        {
+          "id": "guided-practice",
+          "title": "Guided Practice",
+          "type": "practice",
+          "placeholderDescription": "Type 'Chrome' into the Find bar to highlight it."
+        },
+        {
+          "id": "student-challenge",
+          "title": "Student Challenge",
+          "type": "challenge",
+          "placeholderDescription": "Find how many times the word 'Window' appears on page."
+        }
+      ]
+    },
+    {
+      "id": "full-screen",
+      "name": "Full Screen",
+      "category": "Chrome Menu",
+      "iconType": "symbol",
+      "iconText": "⛶",
+      "shortExplanation": "Fill your entire computer monitor with the web page.",
+      "simulatorControl": "Square frame button in Zoom menu or F11 key.",
+      "lessonSections": [
+        {
+          "id": "meet-the-button",
+          "title": "Meet the Button",
+          "type": "presentation",
+          "placeholderDescription": "Locate the full screen square icon next to Zoom."
+        },
+        {
+          "id": "watch-it-work",
+          "title": "Watch It Work",
+          "type": "demonstration",
+          "placeholderDescription": "Observe how full screen hides taskbars for zero distractions."
+        },
+        {
+          "id": "guided-practice",
+          "title": "Guided Practice",
+          "type": "practice",
+          "placeholderDescription": "Enter full screen mode and exit using Esc or F11."
+        },
+        {
+          "id": "student-challenge",
+          "title": "Student Challenge",
+          "type": "challenge",
+          "placeholderDescription": "Toggle full screen for a classroom reading assignment."
+        }
+      ]
+    }
+  ]
+}

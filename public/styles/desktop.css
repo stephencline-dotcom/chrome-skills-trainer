@@ -1,0 +1,229 @@
+/* desktop.css - Layout for simulated Windows Desktop, Instruction Card, and Taskbar */
+
+#desktop {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  user-select: none;
+}
+
+/* Desktop Workspace area above taskbar */
+#desktop-workspace {
+  flex: 1;
+  position: relative;
+  width: 100%;
+  height: calc(100vh - var(--taskbar-height));
+  background: radial-gradient(circle at 50% 30%, #2b589a 0%, #1a3668 70%, #112244 100%);
+  overflow: hidden;
+}
+
+/* Classroom Instruction Card */
+.instruction-card {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  width: 310px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  z-index: 5;
+  color: var(--color-text-main);
+}
+
+.instruction-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1e3c72;
+  margin-bottom: 12px;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 8px;
+}
+
+.instruction-card-header svg {
+  width: 20px;
+  height: 20px;
+  fill: #1e3c72;
+}
+
+.instruction-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.instruction-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.instruction-step {
+  background: #2563eb;
+  color: white;
+  font-weight: bold;
+  font-size: 0.75rem;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.instruction-text {
+  flex: 1;
+}
+
+.instruction-text strong {
+  color: #1d4ed8;
+}
+
+/* Simulated Taskbar */
+#taskbar {
+  height: var(--taskbar-height);
+  width: 100%;
+  background-color: var(--color-taskbar-bg);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  z-index: 1000;
+  color: #ffffff;
+}
+
+.taskbar-left {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+}
+
+.taskbar-start-btn {
+  height: 40px;
+  width: 44px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.taskbar-start-btn:hover {
+  background-color: var(--color-taskbar-hover);
+}
+
+.taskbar-apps {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 6px;
+  height: 100%;
+}
+
+/* Chrome Taskbar Button */
+.taskbar-app-btn {
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: transparent;
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 500;
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+
+.taskbar-app-btn:hover {
+  background-color: var(--color-taskbar-hover);
+}
+
+/* Active window indicator bar at bottom of taskbar item */
+.taskbar-app-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 12px;
+  right: 12px;
+  height: 3px;
+  background-color: transparent;
+  border-radius: 2px 2px 0 0;
+  transition: background-color 0.2s ease, width 0.2s ease;
+}
+
+.taskbar-app-btn.is-active::after {
+  background-color: var(--color-taskbar-indicator);
+}
+
+.taskbar-app-btn.is-active {
+  background-color: var(--color-taskbar-active);
+}
+
+.taskbar-app-btn.is-minimized::after {
+  background-color: #9ca3af;
+}
+
+.taskbar-app-btn.is-minimized {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.taskbar-app-btn.is-closed::after {
+  background-color: transparent;
+}
+
+.taskbar-icon {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.taskbar-label {
+  white-space: nowrap;
+}
+
+/* Taskbar Right / System Tray */
+.taskbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-right: 8px;
+  font-size: 0.82rem;
+  color: #e5e7eb;
+}
+
+.system-tray-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 0 6px;
+  border-radius: 4px;
+}
+
+.system-clock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  line-height: 1.2;
+  font-size: 0.78rem;
+  padding: 0 8px;
+}

@@ -1,0 +1,568 @@
+/* lesson-player.css - Styles for Teacher Presentation, Student Activity Controller, Highlights & Feedback */
+
+/* Target Control Highlight */
+.target-highlight {
+  position: relative;
+  z-index: 10000 !important;
+  box-shadow: 0 0 0 4px #2563eb, 0 0 16px rgba(37, 99, 235, 0.8) !important;
+  border-radius: 6px;
+  animation: pulseHighlight 1.6s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+@keyframes pulseHighlight {
+  0%, 100% {
+    box-shadow: 0 0 0 4px #2563eb, 0 0 12px rgba(37, 99, 235, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 7px #3b82f6, 0 0 24px rgba(59, 130, 246, 0.9);
+  }
+}
+
+/* Reduced Motion Override for Target Highlight */
+@media (prefers-reduced-motion: reduce) {
+  .target-highlight {
+    animation: none !important;
+    box-shadow: 0 0 0 5px #1d4ed8 !important;
+  }
+}
+
+/* Disabled Control State for Interaction Protection */
+.control-disabled {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
+  pointer-events: auto !important; /* Allow click attempt capture for feedback */
+}
+
+/* Feedback Banners (Success & Try-Again) */
+.feedback-banner {
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideInUp 0.2s ease-out;
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.feedback-banner.success {
+  background-color: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.feedback-banner.try-again {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+/* Student Preview Compact Navigator */
+.student-preview-nav {
+  background-color: #1e293b;
+  color: #ffffff;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  z-index: 10001;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.student-preview-nav-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.student-preview-nav-badge {
+  background-color: #3b82f6;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.student-preview-nav-btn {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 32px;
+  min-width: unset;
+  transition: background-color 0.15s ease;
+}
+
+.student-preview-nav-btn:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.student-preview-nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Quiz Option Cards for Step 7 */
+.quiz-container {
+  display: flex;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.quiz-option-btn {
+  flex: 1;
+  background-color: #ffffff;
+  border: 2px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-height: 70px;
+}
+
+.quiz-option-btn:hover {
+  border-color: #2563eb;
+  background-color: #eff6ff;
+}
+
+.quiz-option-btn.is-correct {
+  border-color: #16a34a;
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.quiz-option-btn.is-incorrect {
+  border-color: #dc2626;
+  background-color: #fef2f2;
+  color: #b91c1c;
+}
+
+/* Teacher Presentation Projection Layout */
+.teacher-present-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+  flex: 1;
+  height: calc(100vh - 80px);
+  overflow: hidden;
+  padding: 20px 32px;
+}
+
+@media (max-width: 1100px) {
+  .teacher-present-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+    overflow: auto;
+  }
+}
+
+.teacher-slide-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  height: 100%;
+  overflow-y: auto;
+}
+
+.slide-section-badge {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #2563eb;
+  background-color: #dbeafe;
+  padding: 4px 12px;
+  border-radius: 20px;
+  display: inline-block;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.slide-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.slide-text {
+  font-size: 1.25rem;
+  color: #334155;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.teacher-prompt-box {
+  background-color: #f8fafc;
+  border-left: 4px solid #f59e0b;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+
+.teacher-prompt-box strong {
+  color: #b45309;
+  display: block;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.teacher-prompt-box p {
+  font-size: 1.05rem;
+  color: #451a03;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.student-preview-box {
+  background-color: #f1f5f9;
+  border-left: 4px solid #3b82f6;
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+}
+
+.student-preview-box strong {
+  color: #1d4ed8;
+  display: block;
+  font-size: 0.88rem;
+  margin-bottom: 4px;
+}
+
+.student-preview-box p {
+  font-size: 0.98rem;
+  color: #1e293b;
+  margin: 0;
+}
+
+/* Demonstration Box for Step 3 (Watch It Work) */
+.demo-stage {
+  background-color: #0f172a;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  min-height: 240px;
+  position: relative;
+  overflow: hidden;
+}
+
+.demo-mini-desktop {
+  width: 100%;
+  max-width: 440px;
+  height: 220px;
+  background: radial-gradient(circle at 50% 30%, #2b589a 0%, #1a3668 100%);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.demo-mini-window {
+  position: absolute;
+  top: 20px;
+  left: 40px;
+  width: 360px;
+  height: 150px;
+  background-color: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform-origin: bottom center;
+}
+
+.demo-mini-window.animating {
+  animation: demoMinimizeAnim 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes demoMinimizeAnim {
+  0%, 25% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  65%, 85% {
+    transform: translateY(60px) scale(0.2);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.demo-mini-titlebar {
+  height: 28px;
+  background-color: #dee1e6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+}
+
+.demo-mini-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.demo-mini-btn {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: #cbd5e1;
+}
+
+.demo-mini-btn-min {
+  background-color: #3b82f6;
+}
+
+.demo-mini-taskbar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 28px;
+  background-color: rgba(20, 24, 33, 0.95);
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+}
+
+.demo-mini-taskbar-btn {
+  height: 20px;
+  padding: 0 8px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #ffffff;
+  font-size: 0.65rem;
+}
+
+.replay-demo-btn {
+  background-color: #2563eb;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  transition: background-color 0.15s ease;
+}
+
+.replay-demo-btn:hover {
+  background-color: #1d4ed8;
+}
+
+/* Teacher Slide Footer Nav */
+.slide-footer-nav {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 20px;
+}
+
+.slide-nav-btn {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #1e293b;
+  padding: 12px 24px;
+  border-radius: 24px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.slide-nav-btn:hover:not(:disabled) {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.slide-nav-btn.primary {
+  background-color: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
+.slide-nav-btn.primary:hover:not(:disabled) {
+  background-color: #1d4ed8;
+}
+
+.slide-nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Sidebar Steps List */
+.teacher-steps-sidebar {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  height: 100%;
+  overflow-y: auto;
+}
+
+.sidebar-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.sidebar-step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+}
+
+.sidebar-step-item {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar-step-item:hover {
+  background-color: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.sidebar-step-item.is-active {
+  background-color: #eff6ff;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px #2563eb;
+}
+
+.sidebar-step-number {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #cbd5e1;
+  color: #1e293b;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sidebar-step-item.is-active .sidebar-step-number {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+.sidebar-step-info {
+  flex: 1;
+  overflow: hidden;
+}
+
+.sidebar-step-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-step-sec {
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+/* Celebration Banner for Step 8 */
+.celebration-banner {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  border: 2px solid #86efac;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  color: #14532d;
+  margin-top: 16px;
+  box-shadow: 0 6px 16px rgba(22, 163, 74, 0.15);
+}
+
+.celebration-banner h3 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.celebration-banner p {
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+.return-hub-btn {
+  background-color: #16a34a;
+  color: #ffffff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 24px;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.15s ease;
+}
+
+.return-hub-btn:hover {
+  background-color: #15803d;
+}
