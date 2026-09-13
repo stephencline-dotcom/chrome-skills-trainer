@@ -101,7 +101,17 @@
 }
 
 .instruction-panel.is-collapsed #instruction-card-body {
+  display: block;
+}
+
+.instruction-panel.is-collapsed #instruction-card-body > :not(.feedback-banner) {
   display: none;
+}
+
+.instruction-panel.is-collapsed .feedback-banner {
+  margin-top: 4px;
+  padding: 6px 10px;
+  font-size: 0.82rem;
 }
 
 .instruction-list {

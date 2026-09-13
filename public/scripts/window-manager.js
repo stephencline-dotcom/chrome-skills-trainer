@@ -68,7 +68,7 @@ export class WindowManager {
       detail
     });
     this.windowEl.dispatchEvent(event);
-    document.dispatchEvent(event);
+    return event;
   }
 
   /**
@@ -194,8 +194,12 @@ export class WindowManager {
    * by interaction permissions).
    */
   handleMinimize() {
-    this.dispatchEvent('window:control-attempt', { control: 'btn-minimize', action: 'minimize', allowed: this.canInteract('btn-minimize') });
-    if (!this.canInteract('btn-minimize')) return;
+    const attemptEvent = this.dispatchEvent('window:control-attempt', {
+      control: 'btn-minimize',
+      action: 'minimize',
+      allowed: this.canInteract('btn-minimize')
+    });
+    if (attemptEvent.defaultPrevented || !this.canInteract('btn-minimize')) return;
     this.performMinimize();
   }
 

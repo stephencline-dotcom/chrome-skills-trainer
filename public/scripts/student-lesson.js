@@ -277,7 +277,23 @@ export class StudentLesson {
    */
   setPanelCollapsed(collapsed) {
     if (!this.panelEl) return;
-    this.panelEl.classList.toggle('is-collapsed', !!collapsed);
+
+    const shouldCollapse = !!collapsed;
+    const changed = this.panelEl.classList.contains('is-collapsed') !== shouldCollapse;
+    this.panelEl.classList.toggle('is-collapsed', shouldCollapse);
+
+    if (changed && !shouldCollapse) {
+      requestAnimationFrame(() => {
+        if (
+          !this.windowManager.isMinimized &&
+          !this.windowManager.isClosed &&
+          !this.windowManager.isMaximized
+        ) {
+          this.windowManager.centerWindow();
+          this.windowManager.applyRestoredBounds();
+        }
+      });
+    }
   }
 
   /**
@@ -554,6 +570,15 @@ export class StudentLesson {
     const { control, allowed } = e.detail || {};
     const step = this.engine.getCurrentStep();
     if (!step) return;
+
+    if (step.id === 'step-2-find-button' && control === 'btn-minimize' && allowed) {
+      e.preventDefault();
+      this.highlight.clear();
+      this.showFeedback('success', step.completionMessage);
+      this.engine.setStepCompleted(step.id, true);
+      this.renderModeBar();
+      return;
+    }
 
     if (!allowed && step.allowStudentInteraction !== false) {
       this.showFeedback('try-again', 'That button does something different. Try again!');

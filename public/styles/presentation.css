@@ -188,9 +188,12 @@ html, body {
   max-width: 800px;
 }
 
-/* Presentation window controls are display-only: no pointer feedback affordance */
+/* Classroom Presentation supports live teacher modeling. */
 .presentation-body .win-btn,
-.presentation-body .taskbar-app-btn,
+.presentation-body .taskbar-app-btn {
+  cursor: pointer;
+}
+
 .presentation-body .nav-btn {
   cursor: default;
 }

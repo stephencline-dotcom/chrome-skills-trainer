@@ -14,6 +14,7 @@
  */
 
 import { lessonCatalog } from './lesson-catalog.js';
+import { WindowManager } from './window-manager.js';
 import { LocalLessonChannel, LOCAL_LESSON_COMMANDS } from './local-lesson-channel.js';
 import { SimulatorHighlight } from './simulator-highlight.js';
 import { targetControlToControlKey, getSimulatorControlElement, getControlLabel } from './simulator-controls.js';
@@ -47,8 +48,6 @@ class PresentationController {
     const params = new URLSearchParams(window.location.search);
     const skillId = params.get('skill');
 
-    window.addEventListener('resize', this.handleResize);
-    this.centerWindow();
 
     try {
       await lessonCatalog.loadCatalog();
@@ -63,6 +62,32 @@ class PresentationController {
       this.syncStatusEl.textContent = '';
       return;
     }
+
+    this.windowManager = new WindowManager({
+      desktopWorkspace: this.workspaceEl,
+      windowEl: this.windowEl,
+      titlebarEl: document.getElementById('window-titlebar'),
+      btnMinimize: document.getElementById('btn-minimize'),
+      btnMaximize: document.getElementById('btn-maximize'),
+      btnClose: document.getElementById('btn-close'),
+      taskbarBtn: document.getElementById('taskbar-chrome-btn')
+    });
+    this.windowManager.defaultWidth = 760;
+    this.windowManager.defaultHeight = 440;
+    this.windowManager.init();
+
+    this.windowEl.addEventListener('window:minimized', () => {
+      this.highlight.clear();
+    });
+
+    this.windowEl.addEventListener('window:taskbar-restored', () => {
+      if (
+        this.currentStep?.id === 'step-2-find-button' ||
+        this.currentStep?.id === 'step-4-guided-minimize'
+      ) {
+        this.applyControlHighlight('btn-minimize');
+      }
+    });
 
     this.demo = new MinimizeDemonstration({
       windowEl: this.windowEl,
@@ -127,7 +152,6 @@ class PresentationController {
 
   handleResize() {
     if (!this.windowEl.classList.contains('is-minimized')) {
-      this.centerWindow();
     }
   }
 
@@ -135,8 +159,12 @@ class PresentationController {
   clearStepVisuals() {
     this.highlight.clear();
     if (this.demo) this.demo.stop();
-    this.windowEl.classList.remove('is-minimized');
-    this.windowEl.style.display = '';
+    if (this.windowManager) {
+      this.windowManager.resetToDefault();
+    } else {
+      this.windowEl.classList.remove('is-minimized');
+      this.windowEl.style.display = '';
+    }
     this.symbolBadgeEl.style.display = 'none';
     this.quizDisplayEl.style.display = 'none';
     this.celebrationEl.style.display = 'none';
@@ -172,7 +200,7 @@ class PresentationController {
         break;
 
       case 'step-5-guided-restore':
-        this.windowEl.classList.add('is-minimized');
+        this.windowManager.minimize();
         this.applyControlHighlight('taskbar-chrome-btn');
         break;
 
