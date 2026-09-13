@@ -1,29 +1,123 @@
 /* lesson-player.css - Styles for Teacher Presentation, Student Activity Controller, Highlights & Feedback */
 
-/* Target Control Highlight */
-.target-highlight {
-  position: relative;
-  z-index: 10000 !important;
-  box-shadow: 0 0 0 4px #2563eb, 0 0 16px rgba(37, 99, 235, 0.8) !important;
-  border-radius: 6px;
+/*
+ * Target Control Highlight Overlay
+ * Rendered as `position: fixed` elements appended to <body> (see
+ * simulator-highlight.js) so the ring/label are never clipped by the
+ * simulated Chrome window's `overflow: hidden` rounded-corner clipping.
+ * `pointer-events: none` guarantees the overlay never blocks clicking the
+ * real control underneath.
+ */
+.simulator-highlight-ring {
+  position: fixed;
+  z-index: 20000;
+  border-radius: 8px;
+  border: 3px solid #fbbc05;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.9), 0 0 18px rgba(251, 188, 5, 0.75);
+  pointer-events: none;
   animation: pulseHighlight 1.6s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+.simulator-highlight-label {
+  position: fixed;
+  z-index: 20001;
+  background-color: #1e293b;
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.simulator-highlight-label::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  transform: translateX(-50%);
+  border-width: 5px 5px 0 5px;
+  border-style: solid;
+  border-color: #1e293b transparent transparent transparent;
 }
 
 @keyframes pulseHighlight {
   0%, 100% {
-    box-shadow: 0 0 0 4px #2563eb, 0 0 12px rgba(37, 99, 235, 0.7);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.9), 0 0 12px rgba(251, 188, 5, 0.6);
   }
   50% {
-    box-shadow: 0 0 0 7px #3b82f6, 0 0 24px rgba(59, 130, 246, 0.9);
+    box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.95), 0 0 24px rgba(251, 188, 5, 0.9);
   }
 }
 
 /* Reduced Motion Override for Target Highlight */
 @media (prefers-reduced-motion: reduce) {
-  .target-highlight {
+  .simulator-highlight-ring {
     animation: none !important;
-    box-shadow: 0 0 0 5px #1d4ed8 !important;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.95), 0 0 12px rgba(251, 188, 5, 0.7) !important;
   }
+}
+
+/*
+ * Shared "Watch It Work" cursor demonstration (minimize-demonstration.js).
+ * Used identically by Classroom Presentation, Teacher Lesson Control's
+ * preview, and Student Practice Step 3.
+ */
+.demo-cursor {
+  position: fixed;
+  z-index: 25000;
+  left: 0;
+  top: 0;
+  width: 26px;
+  height: 26px;
+  margin-left: -4px;
+  margin-top: -2px;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.demo-cursor-click-ring {
+  position: absolute;
+  left: 6px;
+  top: 4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #fbbc05;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.demo-cursor.is-clicking .demo-cursor-click-ring {
+  animation: demoCursorClick 0.45s ease-out;
+}
+
+@keyframes demoCursorClick {
+  0% { opacity: 0.9; transform: scale(0.4); }
+  100% { opacity: 0; transform: scale(2.2); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-cursor.is-clicking .demo-cursor-click-ring {
+    animation: none;
+    opacity: 0.9;
+    transform: scale(1.4);
+  }
+}
+
+/* Demonstration caption text (position/size customized per host page) */
+.demo-caption {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.instruction-body-text {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: #1e293b;
+  font-weight: 500;
 }
 
 /* Disabled Control State for Interaction Protection */
@@ -63,36 +157,60 @@
   border: 1px solid #fecaca;
 }
 
-/* Student Preview Compact Navigator */
-.student-preview-nav {
+/* Student Practice Mode Bar (Teacher-Led / Independent status + nav) */
+.student-mode-bar {
+  flex-shrink: 0;
   background-color: #1e293b;
   color: #ffffff;
-  padding: 8px 16px;
+  padding: 6px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 0.85rem;
+  gap: 12px;
+  font-size: 0.82rem;
   z-index: 10001;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.student-preview-nav-left {
+.student-mode-bar-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  min-width: 0;
 }
 
-.student-preview-nav-badge {
+.student-mode-badge {
   background-color: #3b82f6;
   color: #ffffff;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
   padding: 2px 8px;
   border-radius: 4px;
   text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.student-preview-nav-btn {
+.student-mode-badge.is-independent {
+  background-color: #16a34a;
+}
+
+.student-mode-sync-status {
+  font-size: 0.76rem;
+  color: #cbd5e1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.student-mode-bar-right {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.student-mode-nav-btn {
   background-color: rgba(255, 255, 255, 0.15);
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -103,14 +221,15 @@
   cursor: pointer;
   min-height: 32px;
   min-width: unset;
+  text-decoration: none;
   transition: background-color 0.15s ease;
 }
 
-.student-preview-nav-btn:hover:not(:disabled) {
+.student-mode-nav-btn:hover:not(:disabled) {
   background-color: rgba(255, 255, 255, 0.3);
 }
 
-.student-preview-nav-btn:disabled {
+.student-mode-nav-btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
@@ -300,25 +419,14 @@
   flex-direction: column;
   overflow: hidden;
   transform-origin: bottom center;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.demo-mini-window.animating {
-  animation: demoMinimizeAnim 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-
-@keyframes demoMinimizeAnim {
-  0%, 25% {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
-  65%, 85% {
-    transform: translateY(60px) scale(0.2);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
+/* Mirrors the real #chrome-window.is-minimized behavior at mini scale, so
+   the shared MinimizeDemonstration controller works identically here. */
+.demo-mini-window.is-minimized {
+  transform: translateY(40px) scale(0.15);
+  opacity: 0;
 }
 
 .demo-mini-titlebar {
@@ -337,13 +445,17 @@
 
 .demo-mini-btn {
   width: 14px;
+  min-width: 14px;
   height: 14px;
+  min-height: 14px;
+  padding: 0;
   border-radius: 50%;
   background-color: #cbd5e1;
 }
 
 .demo-mini-btn-min {
   background-color: #3b82f6;
+  cursor: default;
 }
 
 .demo-mini-taskbar {
@@ -360,6 +472,8 @@
 
 .demo-mini-taskbar-btn {
   height: 20px;
+  min-height: 20px;
+  min-width: unset;
   padding: 0 8px;
   background-color: rgba(255, 255, 255, 0.2);
   border-radius: 3px;
@@ -368,6 +482,15 @@
   gap: 4px;
   color: #ffffff;
   font-size: 0.65rem;
+  cursor: default;
+}
+
+.demo-caption-mini {
+  font-size: 0.85rem;
+  color: #cbd5e1;
+  text-align: center;
+  min-height: 1.3em;
+  margin-top: 4px;
 }
 
 .replay-demo-btn {
@@ -396,23 +519,34 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
   border-top: 1px solid #e2e8f0;
   padding-top: 20px;
+}
+
+.slide-footer-nav-launchers {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .slide-nav-btn {
   background-color: #ffffff;
   border: 1px solid #cbd5e1;
   color: #1e293b;
-  padding: 12px 24px;
+  padding: 12px 20px;
   border-radius: 24px;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.92rem;
   cursor: pointer;
   transition: all 0.15s ease;
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  text-decoration: none;
+  white-space: nowrap;
 }
 
 .slide-nav-btn:hover:not(:disabled) {
@@ -548,6 +682,28 @@
   margin-bottom: 20px;
 }
 
+.celebration-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.celebration-waiting-note {
+  font-size: 0.88rem;
+  color: #166534;
+  font-style: italic;
+  margin-bottom: 0 !important;
+}
+
+.restart-lesson-btn {
+  background-color: #2563eb;
+}
+
+.restart-lesson-btn:hover {
+  background-color: #1d4ed8;
+}
+
 .return-hub-btn {
   background-color: #16a34a;
   color: #ffffff;
@@ -565,4 +721,48 @@
 
 .return-hub-btn:hover {
   background-color: #15803d;
+}
+
+/* Teacher Control: Independent Mode toggle */
+.mode-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+}
+
+.mode-toggle-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.mode-toggle-btn {
+  background-color: #e2e8f0;
+  border: 1px solid #cbd5e1;
+  color: #1e293b;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  min-height: 34px;
+  transition: all 0.15s ease;
+}
+
+.mode-toggle-btn[aria-pressed="true"] {
+  background-color: #16a34a;
+  border-color: #16a34a;
+  color: #ffffff;
+}
+
+.teacher-sync-status {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin-top: 6px;
 }

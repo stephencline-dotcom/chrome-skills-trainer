@@ -190,11 +190,25 @@ export class WindowManager {
   }
 
   /**
-   * Minimize the simulated Chrome window
+   * Minimize the simulated Chrome window (real Minimize button click - gated
+   * by interaction permissions).
    */
   handleMinimize() {
     this.dispatchEvent('window:control-attempt', { control: 'btn-minimize', action: 'minimize', allowed: this.canInteract('btn-minimize') });
     if (!this.canInteract('btn-minimize')) return;
+    this.performMinimize();
+  }
+
+  /**
+   * Core minimize state mutation with NO interaction gating. Used by
+   * handleMinimize() (after its own gate check), by the taskbar's own
+   * "minimize an open window" fallback, and by lesson code that needs to
+   * programmatically set up a step's starting window state. Per-step
+   * interaction restrictions (e.g. "only the taskbar button is allowed this
+   * step") must never block this from running - they only gate real clicks
+   * on the Minimize button itself.
+   */
+  performMinimize() {
     if (this.isClosed) return;
 
     this.saveCurrentBounds();
@@ -211,6 +225,7 @@ export class WindowManager {
 
     this.dispatchEvent('window:minimized', { control: 'btn-minimize', action: 'minimize' });
   }
+
 
   /**
    * Toggle between Maximize and Restore Down
@@ -302,12 +317,19 @@ export class WindowManager {
   }
 
   /**
-   * Close the simulated Chrome window
+   * Close the simulated Chrome window (real Close button click - gated by
+   * interaction permissions).
    */
   handleClose() {
     this.dispatchEvent('window:control-attempt', { control: 'btn-close', action: 'close', allowed: this.canInteract('btn-close') });
     if (!this.canInteract('btn-close')) return;
+    this.performClose();
+  }
 
+  /**
+   * Core close state mutation with NO interaction gating (see performMinimize).
+   */
+  performClose() {
     this.saveCurrentBounds();
     this.isClosed = true;
 
@@ -367,8 +389,12 @@ export class WindowManager {
       // If minimized, restore window
       this.restoreFromMinimize();
     } else {
-      // If window is currently open, clicking taskbar minimizes it
-      this.handleMinimize();
+      // If window is currently open, clicking taskbar minimizes it. This is
+      // the taskbar's own action (already gated above on 'taskbar-chrome-btn'
+      // permission) - it must NOT be re-gated on 'btn-minimize' permission,
+      // otherwise a step that only allows the taskbar control (e.g. "Bring
+      // It Back") would never be able to minimize via the taskbar either.
+      this.performMinimize();
     }
   }
 
@@ -490,13 +516,13 @@ export class WindowManager {
   }
 
   // --- Safe Public API Methods for Lesson Activity Controller ---
+  // These call the ungated "perform*" state mutators directly (not the
+  // gated "handle*" click handlers), since lesson setup code must be able
+  // to place the window in any state regardless of a step's per-control
+  // interaction restrictions.
 
   minimize() {
-    this.handleMinimize();
-  }
-
-  maximize() {
-    if (!this.isMaximized) this.maximize();
+    this.performMinimize();
   }
 
   restore() {
@@ -505,11 +531,7 @@ export class WindowManager {
   }
 
   close() {
-    this.handleClose();
-  }
-
-  openFresh() {
-    this.openFresh();
+    this.performClose();
   }
 
   restoreFromTaskbar() {

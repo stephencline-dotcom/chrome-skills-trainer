@@ -14,57 +14,59 @@
 <body>
 
   <div id="desktop">
+
+    <!-- Student Practice Mode Bar: shown only when a lesson is active. Lives
+         INSIDE #desktop's flex column (not prepended to <body>) so its height
+         is always accounted for and the taskbar never gets pushed off-screen. -->
+    <header id="student-mode-bar" class="student-mode-bar" style="display: none;" aria-live="polite">
+      <!-- Dynamically populated by student-lesson.js -->
+    </header>
+
+    <!-- Compact Instruction Panel: a top strip, never behind the Chrome window -->
+    <section id="instruction-panel" class="instruction-panel" aria-label="Classroom Activity Instructions">
+      <div class="instruction-panel-row">
+        <span id="instruction-step-badge" class="instruction-step-badge" style="display: none;"></span>
+        <svg class="instruction-panel-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+        </svg>
+        <span id="instruction-card-title">Practice Window Controls!</span>
+        <span id="preview-badge" style="display: none;">
+          Practice Preview
+        </span>
+      </div>
+
+      <div id="instruction-card-body">
+        <ol class="instruction-list">
+          <li>
+            <span class="instruction-step">1</span>
+            <span class="instruction-text">Click <strong>Minimize (➖)</strong> to hide Chrome into the taskbar.</span>
+          </li>
+          <li>
+            <span class="instruction-step">2</span>
+            <span class="instruction-text">Click the <strong>Chrome taskbar button</strong> to bring it back.</span>
+          </li>
+          <li>
+            <span class="instruction-step">3</span>
+            <span class="instruction-text">Click <strong>Maximize (🔲)</strong> or double-click title bar to expand.</span>
+          </li>
+          <li>
+            <span class="instruction-step">4</span>
+            <span class="instruction-text">Click <strong>Restore Down (❐)</strong> to shrink it back.</span>
+          </li>
+          <li>
+            <span class="instruction-step">5</span>
+            <span class="instruction-text">Click and drag the <strong>title bar</strong> to move the window.</span>
+          </li>
+          <li>
+            <span class="instruction-step">6</span>
+            <span class="instruction-text">Click <strong>Close (❌)</strong>, then click the taskbar button to open a new window!</span>
+          </li>
+        </ol>
+      </div>
+    </section>
+
     <!-- Simulated Desktop Workspace Area -->
     <main id="desktop-workspace" aria-label="Simulated Windows Desktop">
-      
-      <!-- Elementary Student Instruction Card -->
-      <section id="instruction-card" class="instruction-card" aria-label="Classroom Activity Instructions">
-        <!-- Optional Teacher Hub Back Link Container -->
-        <div id="teacher-back-banner" style="display: none; margin-bottom: 10px; border-bottom: 1px dashed #d1d5db; padding-bottom: 8px;">
-          <a id="teacher-back-link" href="teacher.html" style="font-size: 0.8rem; font-weight: 600; color: #1d4ed8; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
-            &larr; Back to Teacher Hub
-          </a>
-        </div>
-
-        <div class="instruction-card-header">
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
-          </svg>
-          <span id="instruction-card-title">Practice Window Controls!</span>
-          <span id="preview-badge" style="display: none; margin-left: auto; background-color: #dbeafe; color: #1e40af; font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px;">
-            Practice Preview
-          </span>
-        </div>
-
-        <div id="instruction-card-body">
-          <ol class="instruction-list">
-            <li>
-              <span class="instruction-step">1</span>
-              <span class="instruction-text">Click <strong>Minimize (➖)</strong> to hide Chrome into the taskbar.</span>
-            </li>
-            <li>
-              <span class="instruction-step">2</span>
-              <span class="instruction-text">Click the <strong>Chrome taskbar button</strong> to bring it back.</span>
-            </li>
-            <li>
-              <span class="instruction-step">3</span>
-              <span class="instruction-text">Click <strong>Maximize (🔲)</strong> or double-click title bar to expand.</span>
-            </li>
-            <li>
-              <span class="instruction-step">4</span>
-              <span class="instruction-text">Click <strong>Restore Down (❐)</strong> to shrink it back.</span>
-            </li>
-            <li>
-              <span class="instruction-step">5</span>
-              <span class="instruction-text">Click and drag the <strong>title bar</strong> to move the window.</span>
-            </li>
-            <li>
-              <span class="instruction-step">6</span>
-              <span class="instruction-text">Click <strong>Close (❌)</strong>, then click the taskbar button to open a new window!</span>
-            </li>
-          </ol>
-        </div>
-      </section>
 
       <!-- Simulated Chrome Window -->
       <div id="chrome-window" role="dialog" aria-label="Chrome Skills Trainer Window" tabindex="-1">
@@ -85,19 +87,19 @@
 
           <!-- Window Controls (Minimize, Maximize/Restore, Close) -->
           <div class="window-controls" aria-label="Window Controls">
-            <button type="button" id="btn-minimize" class="win-btn win-btn-minimize" aria-label="Minimize" title="Minimize">
+            <button type="button" id="btn-minimize" class="win-btn win-btn-minimize" data-simulator-control="minimize" aria-label="Minimize" title="Minimize">
               <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
                 <line x1="3" y1="8" x2="13" y2="8" stroke="currentColor" stroke-width="1.2"/>
               </svg>
             </button>
             
-            <button type="button" id="btn-maximize" class="win-btn win-btn-maximize" aria-label="Maximize" title="Maximize">
+            <button type="button" id="btn-maximize" class="win-btn win-btn-maximize" data-simulator-control="maximize" aria-label="Maximize" title="Maximize">
               <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
                 <rect x="3.5" y="3.5" width="9" height="9" fill="none" stroke="currentColor" stroke-width="1.2"/>
               </svg>
             </button>
             
-            <button type="button" id="btn-close" class="win-btn win-btn-close" aria-label="Close" title="Close">
+            <button type="button" id="btn-close" class="win-btn win-btn-close" data-simulator-control="close" aria-label="Close" title="Close">
               <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
                 <line x1="4" y1="4" x2="12" y2="12" stroke="currentColor" stroke-width="1.2"/>
                 <line x1="12" y1="4" x2="4" y2="12" stroke="currentColor" stroke-width="1.2"/>
@@ -202,7 +204,7 @@
         </button>
 
         <div id="taskbar-apps" class="taskbar-apps">
-          <button type="button" id="taskbar-chrome-btn" class="taskbar-app-btn is-active" aria-label="Chrome Skills Trainer (Active Window)" title="Chrome Skills Trainer">
+          <button type="button" id="taskbar-chrome-btn" class="taskbar-app-btn is-active" data-simulator-control="chrome-taskbar" aria-label="Chrome Skills Trainer (Active Window)" title="Chrome Skills Trainer">
             <div class="taskbar-icon">
               <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
                 <circle cx="12" cy="12" r="10" fill="#4285f4"/>

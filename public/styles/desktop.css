@@ -1,8 +1,17 @@
-/* desktop.css - Layout for simulated Windows Desktop, Instruction Card, and Taskbar */
+/* desktop.css - Layout for simulated Windows Desktop, Instruction Panel, and Taskbar */
 
+/*
+ * #desktop is a flex column that owns the FULL viewport height (100dvh, with
+ * a 100vh fallback for browsers without dvh support). Every sibling that can
+ * appear above the desktop workspace (the student mode bar, the instruction
+ * panel) is a flex child INSIDE this column - never appended outside of it -
+ * so the workspace (flex: 1; min-height: 0) always shrinks to make room and
+ * the taskbar (flex-shrink: 0) always stays fully visible at the bottom.
+ */
 #desktop {
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -10,57 +19,98 @@
   user-select: none;
 }
 
-/* Desktop Workspace area above taskbar */
+/* Desktop Workspace area: takes whatever height remains after the mode bar,
+   instruction panel, and taskbar - never a hard-coded viewport fraction. */
 #desktop-workspace {
   flex: 1;
+  min-height: 0;
   position: relative;
   width: 100%;
-  height: calc(100vh - var(--taskbar-height));
   background: radial-gradient(circle at 50% 30%, #2b589a 0%, #1a3668 70%, #112244 100%);
   overflow: hidden;
 }
 
-/* Classroom Instruction Card */
-.instruction-card {
-  position: absolute;
-  top: 24px;
-  left: 24px;
-  width: 310px;
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 12px;
-  padding: 18px 20px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+/* Compact Instruction Panel (top strip, in normal flow - never behind the
+   simulated Chrome window, never absolutely positioned over the workspace) */
+.instruction-panel {
+  flex-shrink: 0;
+  width: 100%;
+  background: #ffffff;
+  border-bottom: 1px solid #dbe2ea;
+  padding: 8px 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   z-index: 5;
   color: var(--color-text-main);
+  transition: padding 0.15s ease;
 }
 
-.instruction-card-header {
+.instruction-panel-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 1.05rem;
+  font-size: 0.98rem;
   font-weight: 700;
   color: #1e3c72;
-  margin-bottom: 12px;
-  border-bottom: 2px solid #e5e7eb;
-  padding-bottom: 8px;
 }
 
-.instruction-card-header svg {
-  width: 20px;
-  height: 20px;
+.instruction-panel-icon {
+  width: 18px;
+  height: 18px;
   fill: #1e3c72;
+  flex-shrink: 0;
+}
+
+#instruction-step-badge {
+  background-color: #2563eb;
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+#preview-badge {
+  margin-left: auto;
+  background-color: #dbeafe;
+  color: #1e40af;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#instruction-card-body {
+  margin-top: 6px;
+  font-size: 0.86rem;
+}
+
+/*
+ * Collapsed state: applied while Chrome is minimized so the panel never
+ * shows a large empty white card competing with the taskbar for attention.
+ * The step title/instruction stays visible as a single compact line.
+ */
+.instruction-panel.is-collapsed {
+  padding: 4px 20px;
+}
+
+.instruction-panel.is-collapsed .instruction-panel-row {
+  font-size: 0.86rem;
+}
+
+.instruction-panel.is-collapsed #instruction-card-body {
+  display: none;
 }
 
 .instruction-list {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  font-size: 0.88rem;
-  line-height: 1.4;
+  gap: 6px;
+  font-size: 0.86rem;
+  line-height: 1.35;
 }
 
 .instruction-list li {
@@ -95,6 +145,7 @@
 /* Simulated Taskbar */
 #taskbar {
   height: var(--taskbar-height);
+  flex-shrink: 0;
   width: 100%;
   background-color: var(--color-taskbar-bg);
   backdrop-filter: blur(12px);

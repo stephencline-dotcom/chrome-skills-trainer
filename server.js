@@ -20,12 +20,20 @@ app.get('/student', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'student.html'));
 });
 
+app.get('/presentation', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'presentation.html'));
+});
+
 app.get('/teacher.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'teacher.html'));
 });
 
 app.get('/student.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'student.html'));
+});
+
+app.get('/presentation.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'presentation.html'));
 });
 
 app.listen(PORT, () => {

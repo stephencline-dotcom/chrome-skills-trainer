@@ -1,0 +1,205 @@
+/* presentation.css - Layout for the Classroom Presentation (projected) view.
+ * Reuses base.css/desktop.css/browser.css visual language for the simulated
+ * desktop, window, and taskbar. This file only adds the large classroom-facing
+ * header and the step-specific overlay panels (symbol, quiz, celebration).
+ * Designed to fit at 1366x768 and similar projector/Chromebook resolutions
+ * without whole-page scrolling.
+ */
+
+html, body {
+  overflow: hidden;
+}
+
+.presentation-body {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#presentation-root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Large Classroom Header */
+#presentation-header {
+  flex-shrink: 0;
+  padding: 14px 36px 12px;
+  background: linear-gradient(180deg, #0f172a 0%, #16213e 100%);
+  color: #ffffff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.presentation-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.presentation-badge {
+  background-color: #334155;
+  color: #e2e8f0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.presentation-step-indicator {
+  background-color: #2563eb;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 5px 14px;
+  border-radius: 20px;
+}
+
+.presentation-lesson-title {
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
+  font-weight: 800;
+  margin: 2px 0 8px;
+  line-height: 1.15;
+}
+
+.presentation-explanation {
+  font-size: clamp(1.05rem, 2vw, 1.35rem);
+  line-height: 1.4;
+  color: #e2e8f0;
+  max-width: 1200px;
+}
+
+.presentation-sync-status {
+  margin-top: 6px;
+  font-size: 0.78rem;
+  color: #94a3b8;
+}
+
+/* Simulated Desktop Workspace */
+#presentation-workspace {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  background: radial-gradient(circle at 50% 30%, #2b589a 0%, #1a3668 70%, #112244 100%);
+  overflow: hidden;
+}
+
+/* Step 3: Caption for the shared cursor demonstration */
+.presentation-demo-caption {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 50;
+  background: rgba(15, 23, 42, 0.85);
+  color: #ffffff;
+  font-size: 1.15rem;
+  padding: 10px 24px;
+  border-radius: 10px;
+  white-space: nowrap;
+  min-height: 1.4em;
+}
+
+/* Step 1: Prominent Minimize Symbol Callout */
+.presentation-symbol-badge {
+  position: absolute;
+  top: 28px;
+  right: 48px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-radius: 16px;
+  padding: 18px 26px;
+}
+
+.presentation-symbol-icon {
+  font-size: 3.4rem;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.presentation-symbol-caption {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Step 7: Minimize vs Close discussion cards (noninteractive) */
+.presentation-quiz-display {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+}
+
+.presentation-quiz-option {
+  background-color: #ffffff;
+  color: #1e293b;
+  border-radius: 18px;
+  padding: 36px 56px;
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  font-weight: 800;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+.presentation-quiz-icon {
+  font-size: 2.6rem;
+}
+
+/* Step 8: Lesson Complete celebration */
+.presentation-celebration {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 10px;
+  color: #ffffff;
+}
+
+.presentation-celebration h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.presentation-celebration p {
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  color: #e2e8f0;
+  max-width: 800px;
+}
+
+/* Presentation window controls are display-only: no pointer feedback affordance */
+.presentation-body .win-btn,
+.presentation-body .taskbar-app-btn,
+.presentation-body .nav-btn {
+  cursor: default;
+}
+
+@media (max-height: 700px) {
+  #presentation-header {
+    padding: 10px 28px 8px;
+  }
+  .presentation-explanation {
+    -webkit-line-clamp: 2;
+  }
+}

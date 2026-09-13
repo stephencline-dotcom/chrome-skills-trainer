@@ -1,0 +1,213 @@
+/**
+ * presentation.js
+ * Controller for the Classroom Presentation (projected) view.
+ *
+ * This page is intentionally NOT built on WindowManager - it has no drag,
+ * resize, or real interaction logic. It only renders visual lesson state
+ * (which control is highlighted, whether the window looks minimized, the
+ * Step 3 demonstration) driven by messages from a Teacher Control tab over
+ * LocalLessonChannel (same-browser BroadcastChannel only).
+ *
+ * If BroadcastChannel is unavailable, the page still loads its initial step
+ * from URL parameters and clearly explains that live local following is
+ * unavailable.
+ */
+
+import { lessonCatalog } from './lesson-catalog.js';
+import { LocalLessonChannel, LOCAL_LESSON_COMMANDS } from './local-lesson-channel.js';
+import { SimulatorHighlight } from './simulator-highlight.js';
+import { targetControlToControlKey, getSimulatorControlElement, getControlLabel } from './simulator-controls.js';
+import { MinimizeDemonstration } from './minimize-demonstration.js';
+
+class PresentationController {
+  constructor() {
+    this.workspaceEl = document.getElementById('presentation-workspace');
+    this.windowEl = document.getElementById('chrome-window');
+    this.titleEl = document.getElementById('presentation-lesson-title');
+    this.explanationEl = document.getElementById('presentation-explanation');
+    this.stepIndicatorEl = document.getElementById('presentation-step-indicator');
+    this.syncStatusEl = document.getElementById('presentation-sync-status');
+    this.symbolBadgeEl = document.getElementById('presentation-symbol-badge');
+    this.quizDisplayEl = document.getElementById('presentation-quiz-display');
+    this.celebrationEl = document.getElementById('presentation-celebration');
+
+    this.highlight = new SimulatorHighlight();
+    this.channel = new LocalLessonChannel();
+    this.demo = null;
+
+    this.skill = null;
+    this.currentStep = null;
+    this.connectedToTeacher = false;
+
+    this.handleResize = this.handleResize.bind(this);
+    this.handleChannelMessage = this.handleChannelMessage.bind(this);
+  }
+
+  async init() {
+    const params = new URLSearchParams(window.location.search);
+    const skillId = params.get('skill');
+
+    window.addEventListener('resize', this.handleResize);
+    this.centerWindow();
+
+    try {
+      await lessonCatalog.loadCatalog();
+      this.skill = skillId ? lessonCatalog.getSkillById(skillId) : null;
+    } catch (err) {
+      console.error('Classroom Presentation: failed to load lesson catalog.', err);
+    }
+
+    if (!this.skill || !Array.isArray(this.skill.lessonSections) || this.skill.lessonSections.length === 0) {
+      this.titleEl.textContent = 'No Lesson Selected';
+      this.explanationEl.textContent = 'Open this page from Teacher Control using "Open Classroom Presentation".';
+      this.syncStatusEl.textContent = '';
+      return;
+    }
+
+    this.demo = new MinimizeDemonstration({
+      windowEl: this.windowEl,
+      minimizeBtnEl: getSimulatorControlElement('minimize'),
+      taskbarBtnEl: getSimulatorControlElement('chrome-taskbar'),
+      cursorLayer: document.body,
+      onCaption: (text) => this.setDemoCaption(text)
+    });
+
+    // Render the first step immediately so the projection is never blank,
+    // then wait for the handshake to confirm a real Teacher Control state.
+    this.renderStep(this.skill.lessonSections[0], 0);
+
+    if (this.channel.isAvailable()) {
+      this.syncStatusEl.textContent = 'Waiting for Teacher Control\u2026';
+      this.channel.subscribe(this.handleChannelMessage);
+      this.channel.publish({ command: LOCAL_LESSON_COMMANDS.FOLLOWER_READY, skillId: this.skill.id });
+    } else {
+      this.syncStatusEl.textContent = 'Local live following is unavailable in this browser (BroadcastChannel not supported). Showing the first lesson step only.';
+    }
+  }
+
+  handleChannelMessage(data) {
+    if (!data || data.skillId !== this.skill.id) return;
+
+    if (data.command === LOCAL_LESSON_COMMANDS.TEACHER_STATE || data.command === LOCAL_LESSON_COMMANDS.SET_STEP) {
+      this.connectedToTeacher = true;
+      this.syncStatusEl.textContent = 'Connected \u2014 following Teacher Control automatically.';
+
+      const idx = this.skill.lessonSections.findIndex(s => s.id === data.stepId);
+      const step = idx !== -1 ? this.skill.lessonSections[idx] : this.skill.lessonSections[data.stepIndex] || null;
+      if (step) {
+        this.renderStep(step, idx !== -1 ? idx : data.stepIndex);
+      }
+    } else if (data.command === LOCAL_LESSON_COMMANDS.REPLAY_DEMONSTRATION) {
+      if (this.currentStep && this.currentStep.id === 'step-3-watch-it-work') {
+        this.demo.play();
+      }
+    } else if (data.command === LOCAL_LESSON_COMMANDS.RESET_LESSON) {
+      this.renderStep(this.skill.lessonSections[0], 0);
+    }
+  }
+
+  setDemoCaption(text) {
+    const el = document.getElementById('presentation-demo-caption');
+    if (el) el.textContent = text;
+  }
+
+  centerWindow() {
+    if (!this.workspaceEl || !this.windowEl) return;
+    const width = Math.min(760, Math.max(360, this.workspaceEl.clientWidth - 60));
+    const height = Math.min(440, Math.max(260, this.workspaceEl.clientHeight - 60));
+    const left = Math.max(0, Math.floor((this.workspaceEl.clientWidth - width) / 2));
+    const top = Math.max(0, Math.floor((this.workspaceEl.clientHeight - height) / 2));
+
+    this.windowEl.style.position = 'absolute';
+    this.windowEl.style.left = `${left}px`;
+    this.windowEl.style.top = `${top}px`;
+    this.windowEl.style.width = `${width}px`;
+    this.windowEl.style.height = `${height}px`;
+  }
+
+  handleResize() {
+    if (!this.windowEl.classList.contains('is-minimized')) {
+      this.centerWindow();
+    }
+  }
+
+  /** Resets all step-specific visual state before applying the new step. */
+  clearStepVisuals() {
+    this.highlight.clear();
+    if (this.demo) this.demo.stop();
+    this.windowEl.classList.remove('is-minimized');
+    this.windowEl.style.display = '';
+    this.symbolBadgeEl.style.display = 'none';
+    this.quizDisplayEl.style.display = 'none';
+    this.celebrationEl.style.display = 'none';
+    const captionEl = document.getElementById('presentation-demo-caption');
+    if (captionEl) {
+      captionEl.style.display = 'none';
+      captionEl.textContent = '';
+    }
+  }
+
+  renderStep(step, stepIndex) {
+    if (!step) return;
+    this.currentStep = step;
+    this.clearStepVisuals();
+
+    const total = this.skill.lessonSections.length;
+    this.stepIndicatorEl.textContent = `Step ${stepIndex + 1} of ${total}`;
+    this.titleEl.textContent = `${this.skill.iconText ? this.skill.iconText + ' ' : ''}${step.studentTitle || step.title}`;
+    this.explanationEl.textContent = step.studentInstruction || '';
+
+    switch (step.id) {
+      case 'step-1-meet-minimize':
+        this.symbolBadgeEl.style.display = 'flex';
+        break;
+
+      case 'step-2-find-button':
+      case 'step-4-guided-minimize':
+        this.applyControlHighlight('btn-minimize');
+        break;
+
+      case 'step-3-watch-it-work':
+        this.demo.play();
+        break;
+
+      case 'step-5-guided-restore':
+        this.windowEl.classList.add('is-minimized');
+        this.applyControlHighlight('taskbar-chrome-btn');
+        break;
+
+      case 'step-6-independent-challenge':
+        // No highlight, no special state - just the instruction
+        break;
+
+      case 'step-7-concept-check':
+        this.windowEl.style.display = 'none';
+        this.quizDisplayEl.style.display = 'flex';
+        break;
+
+      case 'step-8-lesson-complete':
+        this.windowEl.style.display = 'none';
+        this.celebrationEl.style.display = 'flex';
+        break;
+
+      default:
+        break;
+    }
+
+    // Recenter after any layout-affecting visibility changes
+    requestAnimationFrame(() => this.centerWindow());
+  }
+
+  applyControlHighlight(targetControlValue) {
+    const controlKey = targetControlToControlKey(targetControlValue);
+    if (!controlKey) return;
+    const el = getSimulatorControlElement(controlKey);
+    if (el) {
+      this.highlight.show(el, getControlLabel(controlKey));
+    }
+  }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const controller = new PresentationController();
+  controller.init();
+});

@@ -38,6 +38,27 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   windowManager.init();
 
+  // Compact instruction panel: collapse to a single-line strip while Chrome
+  // is minimized so the taskbar and its Chrome button stay visually
+  // dominant, then restore once Chrome is visible again. Applies generally
+  // (lesson or free-play) since the panel exists on every Student Practice
+  // load; StudentLesson additionally manages this directly during lesson
+  // step setup so it is correct immediately on step entry.
+  const instructionPanelEl = document.getElementById('instruction-panel');
+  const handlePanelCollapseEvent = (e) => {
+    if (!instructionPanelEl) return;
+    if (e.type === 'window:minimized') {
+      instructionPanelEl.classList.add('is-collapsed');
+    } else {
+      instructionPanelEl.classList.remove('is-collapsed');
+    }
+    windowManager.handleResize();
+  };
+  document.addEventListener('window:minimized', handlePanelCollapseEvent);
+  document.addEventListener('window:restored', handlePanelCollapseEvent);
+  document.addEventListener('window:taskbar-restored', handlePanelCollapseEvent);
+  document.addEventListener('window:opened', handlePanelCollapseEvent);
+
   // Initialize Taskbar System Clock
   initClock();
 
@@ -62,7 +83,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         studentLesson.init();
       } else {
         // Default static instruction card for skill
-        await updateInstructionCardForSkill(skill, previewMode);
+        await updateInstructionCardForSkill(skill);
       }
     } catch (err) {
       console.warn('Chrome Skills Trainer: Error setting up student lesson mode.', err);
@@ -73,14 +94,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 /**
  * Updates the instruction card for non-lesson preview or placeholder skills
  */
-async function updateInstructionCardForSkill(skill, previewMode) {
+async function updateInstructionCardForSkill(skill) {
   if (!skill) return;
 
   const titleEl = document.getElementById('instruction-card-title');
   const bodyEl = document.getElementById('instruction-card-body');
   const badgeEl = document.getElementById('preview-badge');
-  const backBannerEl = document.getElementById('teacher-back-banner');
-  const backLinkEl = document.getElementById('teacher-back-link');
 
   if (titleEl) {
     titleEl.textContent = `${skill.iconText ? skill.iconText + ' ' : ''}${skill.name}`;
@@ -89,11 +108,6 @@ async function updateInstructionCardForSkill(skill, previewMode) {
   if (badgeEl) {
     badgeEl.style.display = 'inline-block';
     badgeEl.textContent = 'Practice Preview';
-  }
-
-  if (previewMode === 'teacher' && backBannerEl && backLinkEl) {
-    backBannerEl.style.display = 'block';
-    backLinkEl.href = `teacher.html?skill=${encodeURIComponent(skill.id)}`;
   }
 
   if (bodyEl) {

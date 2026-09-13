@@ -7,6 +7,8 @@
 
 import { lessonCatalog } from './lesson-catalog.js';
 import { LessonEngine } from './lesson-engine.js';
+import { LocalLessonChannel, LOCAL_LESSON_COMMANDS, DELIVERY_MODES } from './local-lesson-channel.js';
+import { MinimizeDemonstration } from './minimize-demonstration.js';
 
 class LessonHub {
   constructor() {
@@ -246,6 +248,21 @@ class LessonHub {
   renderPresentationMode(skill) {
     this.selectedSkill = skill;
     this.engine = new LessonEngine(skill);
+    this.channel = new LocalLessonChannel();
+
+    // Defaults to teacher-led every time a lesson starts, per spec. Kept as
+    // a plain string (not a boolean) so this can later be sourced from
+    // shared classroom state instead of local toggle UI.
+    this.deliveryMode = DELIVERY_MODES.TEACHER_LED;
+
+    // Local handshake: respond to a follower (Classroom Presentation or
+    // Student Practice) announcing itself with the complete current state.
+    this.channel.subscribe((data) => {
+      if (!data || data.skillId !== skill.id) return;
+      if (data.command === LOCAL_LESSON_COMMANDS.FOLLOWER_READY) {
+        this.publishTeacherState();
+      }
+    });
 
     if (!this.mainContainer) return;
 
@@ -253,7 +270,7 @@ class LessonHub {
     this.mainContainer.innerHTML = `
       <div class="teacher-present-layout">
         <!-- Main Slide Card -->
-        <main class="teacher-slide-card" aria-label="Teacher Presentation Slide">
+        <main class="teacher-slide-card" aria-label="Teacher Lesson Control Slide">
           <div id="slide-content-area">
             <!-- Dynamically populated by updateSlideView -->
           </div>
@@ -263,12 +280,21 @@ class LessonHub {
         <aside class="teacher-steps-sidebar" aria-label="Lesson Steps Sidebar">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
             <span style="background-color: #3b82f6; color: #ffffff; font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; text-transform: uppercase;">
-              Local Preview Mode
+              Local Control Mode
             </span>
             <a href="teacher.html?skill=${encodeURIComponent(skill.id)}" class="slide-nav-btn" style="padding: 6px 12px; font-size: 0.8rem; text-decoration: none;">
               Exit Lesson
             </a>
           </div>
+
+          <div class="mode-toggle-row">
+            <span class="mode-toggle-label">Independent Mode</span>
+            <button type="button" id="independent-mode-toggle" class="mode-toggle-btn" aria-pressed="false">
+              Off
+            </button>
+          </div>
+          <p id="teacher-sync-status" class="teacher-sync-status" aria-live="polite">No followers connected yet.</p>
+
           <h3 class="sidebar-title">${skill.iconText || '📌'} ${skill.name} Steps</h3>
           <ul id="sidebar-step-list" class="sidebar-step-list">
             <!-- Dynamically populated by updateSidebarSteps -->
@@ -277,16 +303,72 @@ class LessonHub {
       </div>
     `;
 
+    const modeToggleBtn = document.getElementById('independent-mode-toggle');
+    if (modeToggleBtn) {
+      modeToggleBtn.onclick = () => {
+        this.deliveryMode = this.deliveryMode === DELIVERY_MODES.TEACHER_LED
+          ? DELIVERY_MODES.INDEPENDENT
+          : DELIVERY_MODES.TEACHER_LED;
+        this.updateModeToggleUi();
+        this.channel.publish({
+          command: LOCAL_LESSON_COMMANDS.SET_DELIVERY_MODE,
+          skillId: this.selectedSkill.id,
+          stepId: this.engine.getCurrentStep()?.id,
+          stepIndex: this.engine.getCurrentStepIndex(),
+          deliveryMode: this.deliveryMode
+        });
+      };
+    }
+    this.updateModeToggleUi();
+
     // Listen for step changes
     this.engine.addListener((eventName) => {
       if (eventName === 'lesson:step-changed') {
         this.updateSlideView();
         this.updateSidebarSteps();
+        this.publishTeacherState();
       }
     });
 
     this.updateSlideView();
     this.updateSidebarSteps();
+    this.publishTeacherState();
+  }
+
+  /**
+   * Reflects the current delivery mode on the Independent Mode toggle button.
+   */
+  updateModeToggleUi() {
+    const btn = document.getElementById('independent-mode-toggle');
+    if (!btn) return;
+    const isIndependent = this.deliveryMode === DELIVERY_MODES.INDEPENDENT;
+    btn.textContent = isIndependent ? 'On' : 'Off';
+    btn.setAttribute('aria-pressed', isIndependent ? 'true' : 'false');
+  }
+
+  /**
+   * Publish the complete current teacher state (skill, step, delivery mode)
+   * to followers over the local (same-browser only) BroadcastChannel sync
+   * channel. Used both for ongoing step changes and for handshake replies.
+   * @param {boolean} [isHandshakeReply]
+   */
+  publishTeacherState(isHandshakeReply = false) {
+    if (!this.channel || !this.engine || !this.selectedSkill) return;
+    const step = this.engine.getCurrentStep();
+    if (!step) return;
+
+    this.channel.publish({
+      command: isHandshakeReply ? LOCAL_LESSON_COMMANDS.TEACHER_STATE : LOCAL_LESSON_COMMANDS.SET_STEP,
+      skillId: this.selectedSkill.id,
+      stepId: step.id,
+      stepIndex: this.engine.getCurrentStepIndex(),
+      deliveryMode: this.deliveryMode
+    });
+
+    const statusEl = document.getElementById('teacher-sync-status');
+    if (statusEl) {
+      statusEl.textContent = 'Broadcasting to any connected Classroom Presentation / Student Practice tabs.';
+    }
   }
 
   /**
@@ -307,11 +389,11 @@ class LessonHub {
       demoStageHtml = `
         <div class="demo-stage">
           <div class="demo-mini-desktop">
-            <div id="demo-mini-window" class="demo-mini-window animating">
+            <div id="demo-mini-window" class="demo-mini-window">
               <div class="demo-mini-titlebar">
                 <span style="font-size: 0.65rem; font-weight: bold; color: #334155;">Chrome Skills Trainer</span>
                 <div class="demo-mini-controls">
-                  <span class="demo-mini-btn demo-mini-btn-min"></span>
+                  <button type="button" id="demo-mini-btn-minimize" class="demo-mini-btn demo-mini-btn-min" tabindex="-1" aria-hidden="true"></button>
                   <span class="demo-mini-btn"></span>
                   <span class="demo-mini-btn"></span>
                 </div>
@@ -321,11 +403,12 @@ class LessonHub {
               </div>
             </div>
             <div class="demo-mini-taskbar">
-              <div class="demo-mini-taskbar-btn">
+              <button type="button" id="demo-mini-taskbar-btn" class="demo-mini-taskbar-btn" tabindex="-1" aria-hidden="true">
                 <span>🌐</span> Chrome
-              </div>
+              </button>
             </div>
           </div>
+          <p id="demo-caption-mini" class="demo-caption demo-caption-mini" aria-live="polite"></p>
           <button type="button" id="replay-demo-btn" class="replay-demo-btn">
             <span>🔄</span> Replay Demonstration
           </button>
@@ -336,6 +419,9 @@ class LessonHub {
     slideArea.innerHTML = `
       <div>
         <span class="slide-section-badge">${step.section || step.type}</span>
+        <div style="font-size: 0.78rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
+          Teacher Lesson Control
+        </div>
         <h2 class="slide-title">${step.teacherTitle || step.title}</h2>
         <p class="slide-text">${step.teacherText || ''}</p>
 
@@ -361,9 +447,15 @@ class LessonHub {
           Step ${idx + 1} of ${total}
         </span>
 
-        <a href="student.html?skill=${encodeURIComponent(this.selectedSkill.id)}&lesson=active&preview=teacher" target="_blank" class="slide-nav-btn primary" title="Open student simulator preview in a new tab">
-          🚀 Open Student Preview
-        </a>
+        <div class="slide-footer-nav-launchers">
+          <a href="presentation.html?skill=${encodeURIComponent(this.selectedSkill.id)}&lesson=active" target="_blank" class="slide-nav-btn primary" title="Open the Classroom Presentation view in a new tab">
+            📺 Open Classroom Presentation
+          </a>
+
+          <a href="student.html?skill=${encodeURIComponent(this.selectedSkill.id)}&lesson=active&preview=teacher" target="_blank" class="slide-nav-btn primary" title="Open student simulator preview in a new tab">
+            🚀 Open Student Practice Preview
+          </a>
+        </div>
 
         <button type="button" id="slide-btn-next" class="slide-nav-btn primary" ${idx === total - 1 ? 'disabled' : ''}>
           Next &rarr;
@@ -371,15 +463,47 @@ class LessonHub {
       </div>
     `;
 
-    // Attach replay demo handler
+    // Attach the shared "Watch It Work" demonstration controller (same
+    // module used by Classroom Presentation and Student Practice) to the
+    // mini preview window, and stop/clear it when navigating away.
+    if (this.teacherDemo) {
+      this.teacherDemo.stop();
+      this.teacherDemo = null;
+    }
+
     if (step.id === 'step-3-watch-it-work') {
+      const miniWindow = document.getElementById('demo-mini-window');
+      const miniMinimizeBtn = document.getElementById('demo-mini-btn-minimize');
+      const miniTaskbarBtn = document.getElementById('demo-mini-taskbar-btn');
+      const miniCaptionEl = document.getElementById('demo-caption-mini');
       const replayBtn = document.getElementById('replay-demo-btn');
-      const miniWin = document.getElementById('demo-mini-window');
-      if (replayBtn && miniWin) {
+
+      if (miniWindow && miniMinimizeBtn && miniTaskbarBtn) {
+        this.teacherDemo = new MinimizeDemonstration({
+          windowEl: miniWindow,
+          minimizeBtnEl: miniMinimizeBtn,
+          taskbarBtnEl: miniTaskbarBtn,
+          cursorLayer: document.body,
+          onCaption: (text) => {
+            if (miniCaptionEl) miniCaptionEl.textContent = text;
+          }
+        });
+        this.teacherDemo.play();
+      }
+
+      if (replayBtn) {
         replayBtn.onclick = () => {
-          miniWin.classList.remove('animating');
-          void miniWin.offsetWidth; // Force reflow
-          miniWin.classList.add('animating');
+          if (this.teacherDemo) this.teacherDemo.play();
+
+          if (this.channel) {
+            this.channel.publish({
+              command: LOCAL_LESSON_COMMANDS.REPLAY_DEMONSTRATION,
+              skillId: this.selectedSkill.id,
+              stepId: step.id,
+              stepIndex: idx,
+              deliveryMode: this.deliveryMode
+            });
+          }
         };
       }
     }
