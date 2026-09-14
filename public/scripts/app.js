@@ -8,6 +8,7 @@
 import { WindowManager } from './window-manager.js';
 import { lessonCatalog } from './lesson-catalog.js';
 import { StudentLesson } from './student-lesson.js';
+import { BrowserNavigator } from './browser-navigator.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   // Retrieve DOM element references
@@ -37,6 +38,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   windowManager.init();
+
+  const browserNavigator = new BrowserNavigator({
+    backButton: document.getElementById('btn-back'),
+    forwardButton: document.getElementById('btn-forward'),
+    reloadButton: document.getElementById('btn-reload'),
+    addressElement: document.getElementById('browser-address'),
+    contentElement: document.getElementById('browser-content')
+  });
+  browserNavigator.init();
 
   // Compact instruction panel: collapse to a single-line strip while Chrome
   // is minimized so the taskbar and its Chrome button stay visually
@@ -78,6 +88,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const studentLesson = new StudentLesson({
           skill,
           windowManager,
+          browserNavigator,
           isPreview: previewMode === 'teacher'
         });
         studentLesson.init();

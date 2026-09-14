@@ -14,6 +14,7 @@ import { LocalLessonChannel, LOCAL_LESSON_COMMANDS, DELIVERY_MODES } from './loc
 import { MinimizeDemonstration } from './minimize-demonstration.js';
 import { MaximizeDemonstration } from './maximize-demonstration.js';
 import { CloseDemonstration } from './close-demonstration.js';
+import { BackForwardDemonstration } from './back-forward-demonstration.js';
 
 export class StudentLesson {
   /**
@@ -22,9 +23,15 @@ export class StudentLesson {
    * @param {Object} options.windowManager - Instance of WindowManager
    * @param {boolean} options.isPreview - Whether opened via the teacher's "Open Student Practice Preview" link
    */
-  constructor({ skill, windowManager, isPreview = false }) {
+  constructor({
+    skill,
+    windowManager,
+    browserNavigator = null,
+    isPreview = false
+  }) {
     this.skill = skill;
     this.windowManager = windowManager;
+    this.browserNavigator = browserNavigator;
     this.isPreview = isPreview;
 
     this.engine = new LessonEngine(skill);
@@ -97,6 +104,11 @@ export class StudentLesson {
     document.addEventListener('window:closed', this.handleWindowEvent);
     document.addEventListener('window:opened', this.handleWindowEvent);
     document.addEventListener('window:control-attempt', this.handleControlAttempt);
+    document.addEventListener('browser:back', this.handleWindowEvent);
+    document.addEventListener('browser:forward', this.handleWindowEvent);
+    document.addEventListener('browser:navigated', this.handleWindowEvent);
+    document.addEventListener('browser:reloaded', this.handleWindowEvent);
+    document.addEventListener('browser:control-attempt', this.handleControlAttempt);
 
     // Listen to LessonEngine events
     this.engine.addListener(this.handleEngineEvent);
@@ -109,7 +121,8 @@ export class StudentLesson {
     const DemonstrationClass = {
       'minimize-cycle': MinimizeDemonstration,
       'maximize-cycle': MaximizeDemonstration,
-      'close-reopen-cycle': CloseDemonstration
+      'close-reopen-cycle': CloseDemonstration,
+      'back-forward-cycle': BackForwardDemonstration
     }[demonstrationType] || MinimizeDemonstration;
 
     this.demo = new DemonstrationClass({
@@ -118,6 +131,9 @@ export class StudentLesson {
       closeBtnEl: this.windowManager.btnClose,
       maximizeBtnEl: this.windowManager.btnMaximize,
       taskbarBtnEl: this.windowManager.taskbarBtn,
+      backBtnEl: this.browserNavigator?.backButton,
+      forwardBtnEl: this.browserNavigator?.forwardButton,
+      browserNavigator: this.browserNavigator,
       cursorLayer: document.body,
       onCaption: (text) => this.setDemoCaption(text)
     });
@@ -369,6 +385,20 @@ export class StudentLesson {
       allowInteraction,
       allowedControls
     );
+
+    if (this.browserNavigator) {
+      this.browserNavigator.setInteractionEnabled(
+        allowInteraction,
+        allowedControls
+      );
+
+      this.browserNavigator.reset(
+        step.browserHistory || ['home'],
+        Number.isInteger(step.browserHistoryIndex)
+          ? step.browserHistoryIndex
+          : 0
+      );
+    }
 
     // 2. Set the simulator's starting state from lesson data.
     const startState = step.startState || 'restored';

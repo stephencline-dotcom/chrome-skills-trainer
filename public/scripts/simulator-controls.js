@@ -11,7 +11,10 @@ export const SIMULATOR_CONTROL_KEYS = {
   MINIMIZE: 'minimize',
   MAXIMIZE: 'maximize',
   CLOSE: 'close',
-  CHROME_TASKBAR: 'chrome-taskbar'
+  CHROME_TASKBAR: 'chrome-taskbar',
+  BACK: 'back',
+  FORWARD: 'forward',
+  RELOAD: 'reload'
 };
 
 // Maps legacy skills.json `targetControl` values to stable control keys
@@ -19,7 +22,10 @@ const TARGET_CONTROL_TO_KEY = {
   'btn-minimize': SIMULATOR_CONTROL_KEYS.MINIMIZE,
   'btn-maximize': SIMULATOR_CONTROL_KEYS.MAXIMIZE,
   'btn-close': SIMULATOR_CONTROL_KEYS.CLOSE,
-  'taskbar-chrome-btn': SIMULATOR_CONTROL_KEYS.CHROME_TASKBAR
+  'taskbar-chrome-btn': SIMULATOR_CONTROL_KEYS.CHROME_TASKBAR,
+  'btn-back': SIMULATOR_CONTROL_KEYS.BACK,
+  'btn-forward': SIMULATOR_CONTROL_KEYS.FORWARD,
+  'btn-reload': SIMULATOR_CONTROL_KEYS.RELOAD
 };
 
 // Human-friendly callout labels for highlighted controls
@@ -27,7 +33,10 @@ const CONTROL_LABELS = {
   [SIMULATOR_CONTROL_KEYS.MINIMIZE]: 'Minimize',
   [SIMULATOR_CONTROL_KEYS.MAXIMIZE]: 'Maximize',
   [SIMULATOR_CONTROL_KEYS.CLOSE]: 'Close',
-  [SIMULATOR_CONTROL_KEYS.CHROME_TASKBAR]: 'Chrome Taskbar'
+  [SIMULATOR_CONTROL_KEYS.CHROME_TASKBAR]: 'Chrome Taskbar',
+  [SIMULATOR_CONTROL_KEYS.BACK]: 'Back',
+  [SIMULATOR_CONTROL_KEYS.FORWARD]: 'Forward',
+  [SIMULATOR_CONTROL_KEYS.RELOAD]: 'Reload'
 };
 
 /**

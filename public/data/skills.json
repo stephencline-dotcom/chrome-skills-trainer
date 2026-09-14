@@ -610,73 +610,237 @@
     },
     {
       "id": "back",
-      "name": "Back",
+      "name": "Back & Forward",
       "category": "Navigation",
       "iconType": "symbol",
-      "iconText": "⬅️",
-      "shortExplanation": "Return to the previous web page you were looking at.",
-      "simulatorControl": "Left arrow button on the top navigation bar.",
+      "iconText": "↔️",
+      "shortExplanation": "Move to a page you visited before, then move forward again.",
+      "simulatorControl": "The left and right arrow buttons beside the address bar.",
       "lessonSections": [
         {
-          "id": "meet-the-button",
-          "title": "Meet the Button",
-          "type": "presentation",
-          "placeholderDescription": "Find the left-pointing arrow at the top-left of Chrome."
+          "id": "step-1-meet-back-forward",
+          "title": "Meet Back & Forward",
+          "section": "Meet the Buttons",
+          "type": "introduction",
+          "teacherTitle": "Meet Back and Forward",
+          "teacherText": "Back returns to a page you visited earlier. Forward revisits a page after you have used Back.",
+          "teacherPrompt": "Compare the arrows to walking backward and forward along the same path.",
+          "studentTitle": "Meet Back & Forward",
+          "studentInstruction": "Look for the left Back arrow and right Forward arrow beside the address bar.",
+          "studentMode": "observe",
+          "targetControl": null,
+          "completionMessage": "Ready to find Back!",
+          "allowStudentInteraction": false,
+          "presentationView": "symbol",
+          "startState": "restored",
+          "allowedControls": [],
+          "browserHistory": [
+            "home",
+            "reading"
+          ],
+          "browserHistoryIndex": 1
         },
         {
-          "id": "watch-it-work",
+          "id": "step-2-find-back",
+          "title": "Find Back",
+          "section": "Meet the Buttons",
+          "type": "identify",
+          "teacherTitle": "Locate the Back Button",
+          "teacherText": "Back is the arrow pointing left near the upper-left side of Chrome.",
+          "teacherPrompt": "Ask: “Which arrow points toward where we were before?”",
+          "studentTitle": "Find the Back Button",
+          "studentInstruction": "Click the highlighted Back arrow.",
+          "studentMode": "identify",
+          "targetControl": "btn-back",
+          "completionMessage": "Great job! You found the Back button!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "highlightControl": "btn-back",
+          "allowedControls": [
+            "btn-back"
+          ],
+          "identifyControl": "btn-back",
+          "browserHistory": [
+            "home",
+            "reading"
+          ],
+          "browserHistoryIndex": 1
+        },
+        {
+          "id": "step-3-watch-back-forward",
           "title": "Watch It Work",
+          "section": "Watch It Work",
           "type": "demonstration",
-          "placeholderDescription": "Learn how the back button takes you step-by-step to earlier pages."
+          "teacherTitle": "Watch Back and Forward",
+          "teacherText": "Back returns from Today’s Story to Reading Corner. Forward then revisits Today’s Story.",
+          "teacherPrompt": "Point out that Forward becomes useful after Back has been used.",
+          "studentTitle": "Watch Back & Forward",
+          "studentInstruction": "Watch Back return to the previous page, then watch Forward revisit the page.",
+          "studentMode": "observe",
+          "targetControl": null,
+          "completionMessage": "Now you are ready to try!",
+          "allowStudentInteraction": false,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [],
+          "demonstration": "back-forward-cycle",
+          "browserHistory": [
+            "home",
+            "reading",
+            "story"
+          ],
+          "browserHistoryIndex": 2
         },
         {
-          "id": "guided-practice",
-          "title": "Guided Practice",
-          "type": "practice",
-          "placeholderDescription": "Click Back to return to your previous activity."
+          "id": "step-4-guided-back",
+          "title": "Guided Practice — Back",
+          "section": "Guided Practice",
+          "type": "guided-practice",
+          "teacherTitle": "Practice: Go Back",
+          "teacherText": "Students are on Today’s Story and use Back to return to Reading Corner.",
+          "teacherPrompt": "Say: “Click Back to return to the page you just visited.”",
+          "studentTitle": "Go Back One Page",
+          "studentInstruction": "Click Back to return from Today’s Story to Reading Corner.",
+          "studentMode": "interact",
+          "targetControl": "btn-back",
+          "completionMessage": "Excellent! You returned to Reading Corner!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "highlightControl": "btn-back",
+          "allowedControls": [
+            "btn-back"
+          ],
+          "expectedActions": [
+            "back"
+          ],
+          "browserHistory": [
+            "home",
+            "reading",
+            "story"
+          ],
+          "browserHistoryIndex": 2
         },
         {
-          "id": "student-challenge",
-          "title": "Student Challenge",
-          "type": "challenge",
-          "placeholderDescription": "Use the Back button to return to the search results page."
+          "id": "step-5-guided-forward",
+          "title": "Guided Practice — Forward",
+          "section": "Guided Practice",
+          "type": "guided-practice",
+          "teacherTitle": "Practice: Go Forward",
+          "teacherText": "Students have returned to Reading Corner and use Forward to revisit Today’s Story.",
+          "teacherPrompt": "Say: “Now click Forward to revisit the story.”",
+          "studentTitle": "Go Forward One Page",
+          "studentInstruction": "Click Forward to revisit Today’s Story.",
+          "studentMode": "interact",
+          "targetControl": "btn-forward",
+          "completionMessage": "Nice work! You moved forward to Today’s Story!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "highlightControl": "btn-forward",
+          "allowedControls": [
+            "btn-forward"
+          ],
+          "expectedActions": [
+            "forward"
+          ],
+          "browserHistory": [
+            "home",
+            "reading",
+            "story"
+          ],
+          "browserHistoryIndex": 1
+        },
+        {
+          "id": "step-6-back-forward-challenge",
+          "title": "Independent Challenge",
+          "section": "Student Challenge",
+          "type": "independent-challenge",
+          "teacherTitle": "Student Challenge: Back and Forward",
+          "teacherText": "Students move back to Reading Corner and forward to Today’s Story without highlights.",
+          "teacherPrompt": "Say: “Go back one page, then move forward again.”",
+          "studentTitle": "Back & Forward Challenge",
+          "studentInstruction": "Go back to Reading Corner, then forward to Today’s Story.",
+          "studentMode": "interact",
+          "targetControl": "sequence",
+          "completionMessage": "Outstanding! You mastered Back and Forward!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [
+            "btn-back",
+            "btn-forward"
+          ],
+          "expectedActions": [
+            "back",
+            "forward"
+          ],
+          "intermediateMessages": [
+            "Great! Now click Forward to revisit Today’s Story."
+          ],
+          "browserHistory": [
+            "home",
+            "reading",
+            "story"
+          ],
+          "browserHistoryIndex": 2
+        },
+        {
+          "id": "step-7-back-concept-check",
+          "title": "Back or Reload?",
+          "section": "Student Challenge",
+          "type": "summary",
+          "teacherTitle": "Concept Check: Back vs Reload",
+          "teacherText": "Back returns to an earlier page. Reload refreshes the page currently displayed.",
+          "teacherPrompt": "Ask: “Which button returns to the page we just left?”",
+          "studentTitle": "Back or Reload?",
+          "studentInstruction": "Which button returns to the page you visited before?",
+          "studentMode": "quiz",
+          "targetControl": "quiz-back",
+          "completionMessage": "Correct! Back returns to the previous page.",
+          "allowStudentInteraction": true,
+          "presentationView": "quiz",
+          "startState": "restored",
+          "allowedControls": [],
+          "quiz": {
+            "choices": [
+              {
+                "id": "back",
+                "label": "Back",
+                "icon": "⬅️",
+                "correct": true
+              },
+              {
+                "id": "reload",
+                "label": "Reload",
+                "icon": "🔄",
+                "correct": false,
+                "feedback": "Reload refreshes the current page. Try Back!"
+              }
+            ]
+          }
+        },
+        {
+          "id": "step-8-back-forward-complete",
+          "title": "Lesson Complete",
+          "section": "Student Challenge",
+          "type": "summary",
+          "teacherTitle": "Back & Forward Mastered!",
+          "teacherText": "Celebrate success and reinforce how browsing history controls both arrows.",
+          "teacherPrompt": "Congratulate students on moving through pages safely.",
+          "studentTitle": "Lesson Complete!",
+          "studentInstruction": "Back returns to an earlier page. Forward revisits the page after using Back.",
+          "studentMode": "summary",
+          "targetControl": null,
+          "completionMessage": "Lesson Complete! You mastered Back and Forward!",
+          "allowStudentInteraction": false,
+          "presentationView": "completion",
+          "startState": "restored",
+          "allowedControls": []
         }
-      ]
-    },
-    {
-      "id": "forward",
-      "name": "Forward",
-      "category": "Navigation",
-      "iconType": "symbol",
-      "iconText": "➡️",
-      "shortExplanation": "Move forward to the page you were on before clicking Back.",
-      "simulatorControl": "Right arrow button on the top navigation bar.",
-      "lessonSections": [
-        {
-          "id": "meet-the-button",
-          "title": "Meet the Button",
-          "type": "presentation",
-          "placeholderDescription": "Locate the right-pointing arrow next to the Back button."
-        },
-        {
-          "id": "watch-it-work",
-          "title": "Watch It Work",
-          "type": "demonstration",
-          "placeholderDescription": "See how Forward re-visits pages after you went backwards."
-        },
-        {
-          "id": "guided-practice",
-          "title": "Guided Practice",
-          "type": "practice",
-          "placeholderDescription": "Go Back once, then click Forward to re-open the page."
-        },
-        {
-          "id": "student-challenge",
-          "title": "Student Challenge",
-          "type": "challenge",
-          "placeholderDescription": "Practice using Back and Forward to jump between pages."
-        }
-      ]
+      ],
+      "hasCompleteLesson": true
     },
     {
       "id": "reload",

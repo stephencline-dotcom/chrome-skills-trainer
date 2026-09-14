@@ -11,6 +11,7 @@ import { LocalLessonChannel, LOCAL_LESSON_COMMANDS, DELIVERY_MODES } from './loc
 import { MinimizeDemonstration } from './minimize-demonstration.js';
 import { MaximizeDemonstration } from './maximize-demonstration.js';
 import { CloseDemonstration } from './close-demonstration.js';
+import { BackForwardDemonstration } from './back-forward-demonstration.js';
 
 class LessonHub {
   constructor() {
@@ -424,7 +425,12 @@ class LessonHub {
                   <button type="button" id="demo-mini-btn-close" class="demo-mini-btn demo-mini-btn-close" tabindex="-1" aria-hidden="true">×</button>
                 </div>
               </div>
-              <div style="flex: 1; padding: 12px; font-size: 0.75rem; color: #475569; text-align: center; display: flex; align-items: center; justify-content: center;">
+              <div class="demo-mini-browser-toolbar">
+                <button type="button" id="demo-mini-btn-back" class="demo-mini-nav-btn" tabindex="-1" aria-hidden="true">←</button>
+                <button type="button" id="demo-mini-btn-forward" class="demo-mini-nav-btn" tabindex="-1" aria-hidden="true">→</button>
+                <span class="demo-mini-address">chrome-skills-trainer.local</span>
+              </div>
+              <div id="demo-mini-page-label" class="demo-mini-page-label">
                 Simulated Web Content
               </div>
             </div>
@@ -510,6 +516,9 @@ class LessonHub {
       const miniMaximizeBtn = document.getElementById('demo-mini-btn-maximize');
       const miniCloseBtn = document.getElementById('demo-mini-btn-close');
       const miniTaskbarBtn = document.getElementById('demo-mini-taskbar-btn');
+      const miniBackBtn = document.getElementById('demo-mini-btn-back');
+      const miniForwardBtn = document.getElementById('demo-mini-btn-forward');
+      const miniPageLabel = document.getElementById('demo-mini-page-label');
       const miniCaptionEl = document.getElementById('demo-caption-mini');
       const replayBtn = document.getElementById('replay-demo-btn');
 
@@ -523,7 +532,8 @@ class LessonHub {
         const DemonstrationClass = {
           'minimize-cycle': MinimizeDemonstration,
           'maximize-cycle': MaximizeDemonstration,
-          'close-reopen-cycle': CloseDemonstration
+          'close-reopen-cycle': CloseDemonstration,
+          'back-forward-cycle': BackForwardDemonstration
         }[step.demonstration] || MinimizeDemonstration;
 
         this.teacherDemo = new DemonstrationClass({
@@ -532,6 +542,9 @@ class LessonHub {
           maximizeBtnEl: miniMaximizeBtn,
           closeBtnEl: miniCloseBtn,
           taskbarBtnEl: miniTaskbarBtn,
+          backBtnEl: miniBackBtn,
+          forwardBtnEl: miniForwardBtn,
+          pageLabelEl: miniPageLabel,
           cursorLayer: document.body,
           maximizeBottomInset: 28,
           onCaption: (text) => {

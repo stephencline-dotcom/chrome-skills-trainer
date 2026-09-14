@@ -15,12 +15,14 @@
 
 import { lessonCatalog } from './lesson-catalog.js';
 import { WindowManager } from './window-manager.js';
+import { BrowserNavigator } from './browser-navigator.js';
 import { LocalLessonChannel, LOCAL_LESSON_COMMANDS } from './local-lesson-channel.js';
 import { SimulatorHighlight } from './simulator-highlight.js';
 import { targetControlToControlKey, getSimulatorControlElement, getControlLabel } from './simulator-controls.js';
 import { MinimizeDemonstration } from './minimize-demonstration.js';
 import { MaximizeDemonstration } from './maximize-demonstration.js';
 import { CloseDemonstration } from './close-demonstration.js';
+import { BackForwardDemonstration } from './back-forward-demonstration.js';
 
 class PresentationController {
   constructor() {
@@ -81,6 +83,15 @@ class PresentationController {
     this.windowManager.defaultHeight = 440;
     this.windowManager.init();
 
+    this.browserNavigator = new BrowserNavigator({
+      backButton: document.getElementById('btn-back'),
+      forwardButton: document.getElementById('btn-forward'),
+      reloadButton: document.getElementById('btn-reload'),
+      addressElement: document.getElementById('browser-address'),
+      contentElement: document.getElementById('browser-content')
+    });
+    this.browserNavigator.init();
+
     this.windowEl.addEventListener('window:control-attempt', (event) => {
       if (
         this.currentStep?.identifyControl &&
@@ -113,7 +124,8 @@ class PresentationController {
     const DemonstrationClass = {
       'minimize-cycle': MinimizeDemonstration,
       'maximize-cycle': MaximizeDemonstration,
-      'close-reopen-cycle': CloseDemonstration
+      'close-reopen-cycle': CloseDemonstration,
+      'back-forward-cycle': BackForwardDemonstration
     }[demonstrationType] || MinimizeDemonstration;
 
     this.demo = new DemonstrationClass({
@@ -122,6 +134,9 @@ class PresentationController {
       closeBtnEl: getSimulatorControlElement('close'),
       maximizeBtnEl: getSimulatorControlElement('maximize'),
       taskbarBtnEl: getSimulatorControlElement('chrome-taskbar'),
+      backBtnEl: getSimulatorControlElement('back'),
+      forwardBtnEl: getSimulatorControlElement('forward'),
+      browserNavigator: this.browserNavigator,
       cursorLayer: document.body,
       onCaption: (text) => this.setDemoCaption(text)
     });
@@ -269,6 +284,16 @@ class PresentationController {
     this.stepIndicatorEl.textContent = `Step ${stepIndex + 1} of ${total}`;
     this.titleEl.textContent = `${this.skill.iconText ? this.skill.iconText + ' ' : ''}${step.studentTitle || step.title}`;
     this.explanationEl.textContent = step.studentInstruction || '';
+
+    if (this.browserNavigator) {
+      this.browserNavigator.setInteractionEnabled(true, null);
+      this.browserNavigator.reset(
+        step.browserHistory || ['home'],
+        Number.isInteger(step.browserHistoryIndex)
+          ? step.browserHistoryIndex
+          : 0
+      );
+    }
 
     const startState = step.startState || 'restored';
 
