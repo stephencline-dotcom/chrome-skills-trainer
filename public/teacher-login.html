@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Sign In - Chrome Skills Trainer</title>
+  <link rel="stylesheet" href="styles/base.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at top, #eff6ff 0, #f8fafc 42%, #e2e8f0 100%);
+      color: #0f172a;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .login-shell {
+      width: 100%;
+      max-width: 460px;
+    }
+
+    .login-card {
+      background: #ffffff;
+      border: 1px solid #dbe4f0;
+      border-radius: 24px;
+      padding: 34px;
+      box-shadow:
+        0 20px 45px rgba(15, 23, 42, 0.12),
+        0 4px 12px rgba(15, 23, 42, 0.06);
+    }
+
+    .brand {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .brand-subtitle {
+      display: block;
+      margin-top: 8px;
+      color: #64748b;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .login-heading {
+      margin: 0 0 8px;
+      text-align: center;
+      font-size: 1.5rem;
+    }
+
+    .login-description {
+      margin: 0 0 26px;
+      text-align: center;
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    input {
+      width: 100%;
+      min-height: 50px;
+      border: 2px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 0 14px;
+      font: inherit;
+      outline: none;
+      transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    input:focus {
+      border-color: #4285f4;
+      box-shadow: 0 0 0 4px rgba(66, 133, 244, 0.14);
+    }
+
+    .login-button {
+      width: 100%;
+      min-height: 50px;
+      margin-top: 18px;
+      border: 0;
+      border-radius: 12px;
+      background: #2563eb;
+      color: #ffffff;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      transition:
+        background 0.15s ease,
+        transform 0.15s ease;
+    }
+
+    .login-button:hover {
+      background: #1d4ed8;
+    }
+
+    .login-button:active {
+      transform: translateY(1px);
+    }
+
+    .login-button:disabled {
+      opacity: 0.65;
+      cursor: wait;
+    }
+
+    .login-message {
+      min-height: 24px;
+      margin: 14px 0 0;
+      text-align: center;
+      color: #b91c1c;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .back-link {
+      display: block;
+      margin-top: 20px;
+      text-align: center;
+      color: #475569;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      color: #2563eb;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="login-shell">
+    <section class="login-card" aria-labelledby="login-heading">
+      <div class="brand">
+        <h1 class="brand-title">
+          <span style="color:#4285f4;">C</span><span style="color:#ea4335;">h</span><span style="color:#fbbc05;">r</span><span style="color:#4285f4;">o</span><span style="color:#34a853;">m</span><span style="color:#ea4335;">e</span>
+          Skills Trainer
+        </h1>
+        <span class="brand-subtitle">Teacher Access</span>
+      </div>
+
+      <h2 id="login-heading" class="login-heading">Teacher Sign In</h2>
+
+      <p class="login-description">
+        Enter the teacher password to open the classroom controls.
+      </p>
+
+      <form id="teacher-login-form">
+        <label for="teacher-password">Teacher Password</label>
+
+        <input
+          id="teacher-password"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          required
+          autofocus
+        >
+
+        <button
+          id="login-button"
+          class="login-button"
+          type="submit"
+        >
+          Sign In
+        </button>
+
+        <p
+          id="login-message"
+          class="login-message"
+          role="status"
+          aria-live="polite"
+        ></p>
+      </form>
+
+      <a class="back-link" href="/">
+        ← Back to Chrome Skills Trainer
+      </a>
+    </section>
+  </main>
+
+  <script>
+    const TOKEN_KEY = 'chromeSkillsTeacherToken';
+
+    const form = document.getElementById('teacher-login-form');
+    const passwordInput = document.getElementById('teacher-password');
+    const loginButton = document.getElementById('login-button');
+    const message = document.getElementById('login-message');
+
+    const params = new URLSearchParams(window.location.search);
+    const requestedNext = params.get('next');
+
+    const nextUrl =
+      requestedNext &&
+      requestedNext.startsWith('/') &&
+      !requestedNext.startsWith('//')
+        ? requestedNext
+        : '/teacher.html';
+
+    async function checkExistingSession() {
+      const token = localStorage.getItem(TOKEN_KEY);
+
+      if (!token) return;
+
+      try {
+        const response = await fetch('/api/teacher-session', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        const result = await response.json();
+
+        if (result.authenticated) {
+          window.location.replace(nextUrl);
+          return;
+        }
+      } catch (error) {
+        console.error('Unable to check teacher session:', error);
+      }
+
+      localStorage.removeItem(TOKEN_KEY);
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      message.textContent = '';
+      loginButton.disabled = true;
+      loginButton.textContent = 'Signing In...';
+
+      try {
+        const response = await fetch('/api/teacher-login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            password: passwordInput.value
+          })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            result.error || 'Unable to sign in.'
+          );
+        }
+
+        if (!result.token) {
+          throw new Error(
+            'The server did not return a teacher session.'
+          );
+        }
+
+        localStorage.setItem(TOKEN_KEY, result.token);
+        passwordInput.value = '';
+
+        window.location.replace(nextUrl);
+      } catch (error) {
+        message.textContent = error.message;
+        passwordInput.select();
+      } finally {
+        loginButton.disabled = false;
+        loginButton.textContent = 'Sign In';
+      }
+    });
+
+    checkExistingSession();
+  </script>
+</body>
+</html>

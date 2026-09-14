@@ -15,6 +15,57 @@ import { BackForwardDemonstration } from './back-forward-demonstration.js';
 import { ReloadDemonstration } from './reload-demonstration.js';
 import { TabDemonstration } from './tab-demonstration.js';
 
+const TEACHER_TOKEN_KEY = 'chromeSkillsTeacherToken';
+
+function redirectToTeacherLogin() {
+  const next =
+    window.location.pathname +
+    window.location.search;
+
+  window.location.replace(
+    `/teacher-login.html?next=${encodeURIComponent(next)}`
+  );
+}
+
+async function requireTeacherSession() {
+  const token = localStorage.getItem(
+    TEACHER_TOKEN_KEY
+  );
+
+  if (!token) {
+    redirectToTeacherLogin();
+    return false;
+  }
+
+  try {
+    const response = await fetch(
+      '/api/teacher-session',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    if (response.ok) {
+      const result = await response.json();
+
+      if (result.authenticated) {
+        return true;
+      }
+    }
+  } catch (error) {
+    console.error(
+      'Unable to verify teacher session:',
+      error
+    );
+  }
+
+  localStorage.removeItem(TEACHER_TOKEN_KEY);
+  redirectToTeacherLogin();
+  return false;
+}
+
 class LessonHub {
   constructor() {
     this.currentCategory = 'All Skills';
@@ -639,8 +690,13 @@ class LessonHub {
   }
 }
 
-// Initialize on DOM ready
-document.addEventListener('DOMContentLoaded', () => {
+// Initialize on DOM ready after confirming teacher access.
+document.addEventListener('DOMContentLoaded', async () => {
+  const authenticated =
+    await requireTeacherSession();
+
+  if (!authenticated) return;
+
   const hub = new LessonHub();
   hub.init();
 });
