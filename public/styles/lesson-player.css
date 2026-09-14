@@ -882,3 +882,44 @@ button[data-demo-available="false"]:disabled {
   opacity: 0.45 !important;
   cursor: default !important;
 }
+
+
+.tab-demo-mini-window {
+  height: 174px;
+}
+.tab-demo-mini-window .demo-mini-titlebar {
+  min-height: 50px;
+  padding: 0 4px;
+}
+.tab-demo-mini-window .demo-mini-controls {
+  flex-shrink: 0;
+}
+.tab-demo-mini-window .browser-tab-item {
+  flex-basis: 90px;
+}
+.tab-demo-mini-window .browser-tab-select {
+  font-size: 0.6rem;
+  padding: 0 4px;
+}
+.tab-demo-mini-window .browser-tab-close,
+.tab-demo-mini-window .browser-tab-add {
+  min-width: 26px;
+  width: 26px;
+}
+.tab-demo-mini-window .demo-mini-page-label {
+  display: block;
+  overflow: auto;
+  padding: 5px;
+}
+.tab-demo-mini-window .sim-page {
+  padding: 2px;
+}
+.tab-demo-mini-window .sim-page h2 {
+  font-size: 0.85rem;
+  margin: 3px 0;
+}
+.tab-demo-mini-window .sim-page p,
+.tab-demo-mini-window .sim-page button,
+.tab-demo-mini-window .sim-page-icon {
+  display: none;
+}

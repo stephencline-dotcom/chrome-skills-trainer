@@ -16,6 +16,7 @@
 import { lessonCatalog } from './lesson-catalog.js';
 import { WindowManager } from './window-manager.js';
 import { BrowserNavigator } from './browser-navigator.js';
+import { BrowserTabs } from './browser-tabs.js';
 import { LocalLessonChannel, LOCAL_LESSON_COMMANDS } from './local-lesson-channel.js';
 import { SimulatorHighlight } from './simulator-highlight.js';
 import { targetControlToControlKey, getSimulatorControlElement, getControlLabel } from './simulator-controls.js';
@@ -24,6 +25,7 @@ import { MaximizeDemonstration } from './maximize-demonstration.js';
 import { CloseDemonstration } from './close-demonstration.js';
 import { BackForwardDemonstration } from './back-forward-demonstration.js';
 import { ReloadDemonstration } from './reload-demonstration.js';
+import { TabDemonstration } from './tab-demonstration.js';
 
 class PresentationController {
   constructor() {
@@ -92,6 +94,12 @@ class PresentationController {
       contentElement: document.getElementById('browser-content')
     });
     this.browserNavigator.init();
+    this.browserTabs = new BrowserTabs({
+      browserNavigator: this.browserNavigator,
+      windowManager: this.windowManager,
+      strip: document.querySelector('.chrome-tabstrip')
+    });
+    this.browserTabs.init();
 
     this.windowEl.addEventListener('window:control-attempt', (event) => {
       if (
@@ -136,11 +144,15 @@ class PresentationController {
       'minimize-cycle': MinimizeDemonstration,
       'maximize-cycle': MaximizeDemonstration,
       'close-reopen-cycle': CloseDemonstration,
+      'new-tab-cycle': TabDemonstration,
+      'switch-tab-cycle': TabDemonstration,
+      'close-tab-cycle': TabDemonstration,
       'reload-cycle': ReloadDemonstration,
       'back-forward-cycle': BackForwardDemonstration
     }[demonstrationType] || MinimizeDemonstration;
 
     this.demo = new DemonstrationClass({
+      demonstrationType,
       windowEl: this.windowEl,
       minimizeBtnEl: getSimulatorControlElement('minimize'),
       closeBtnEl: getSimulatorControlElement('close'),
@@ -306,6 +318,10 @@ class PresentationController {
           ? step.browserHistoryIndex
           : 0
       );
+    }
+
+    if (step.tabs && this.browserNavigator?.tabs) {
+      this.browserNavigator.tabs.resetTabs(step.tabs, step.activeTabIndex || 0);
     }
 
     const startState = step.startState || 'restored';

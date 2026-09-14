@@ -55,6 +55,7 @@ export class BrowserNavigator {
     this.interactionEnabled = enabled;
     this.allowedControls = allowedControls;
     this.updateButtons();
+    this.dispatch('browser:permissions-changed');
   }
 
   dispatch(name, detail = {}) {
@@ -211,6 +212,7 @@ export class BrowserNavigator {
       Math.min(historyIndex, this.history.length - 1)
     );
 
+    this.dispatch('browser:reset');
     this.render();
   }
 
@@ -263,6 +265,7 @@ export class BrowserNavigator {
     }
 
     this.updateButtons();
+    this.dispatch('browser:rendered');
   }
 
   getPage(pageId) {

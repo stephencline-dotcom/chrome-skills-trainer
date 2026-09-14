@@ -14,7 +14,10 @@ export const SIMULATOR_CONTROL_KEYS = {
   CHROME_TASKBAR: 'chrome-taskbar',
   BACK: 'back',
   FORWARD: 'forward',
-  RELOAD: 'reload'
+  RELOAD: 'reload',
+  NEW_TAB: 'new-tab',
+  SWITCH_TAB: 'switch-tab',
+  CLOSE_TAB: 'close-tab'
 };
 
 // Maps legacy skills.json `targetControl` values to stable control keys
@@ -25,7 +28,10 @@ const TARGET_CONTROL_TO_KEY = {
   'taskbar-chrome-btn': SIMULATOR_CONTROL_KEYS.CHROME_TASKBAR,
   'btn-back': SIMULATOR_CONTROL_KEYS.BACK,
   'btn-forward': SIMULATOR_CONTROL_KEYS.FORWARD,
-  'btn-reload': SIMULATOR_CONTROL_KEYS.RELOAD
+  'btn-reload': SIMULATOR_CONTROL_KEYS.RELOAD,
+  'btn-new-tab': SIMULATOR_CONTROL_KEYS.NEW_TAB,
+  'btn-switch-tab': SIMULATOR_CONTROL_KEYS.SWITCH_TAB,
+  'btn-close-tab': SIMULATOR_CONTROL_KEYS.CLOSE_TAB
 };
 
 // Human-friendly callout labels for highlighted controls
@@ -36,7 +42,10 @@ const CONTROL_LABELS = {
   [SIMULATOR_CONTROL_KEYS.CHROME_TASKBAR]: 'Chrome Taskbar',
   [SIMULATOR_CONTROL_KEYS.BACK]: 'Back',
   [SIMULATOR_CONTROL_KEYS.FORWARD]: 'Forward',
-  [SIMULATOR_CONTROL_KEYS.RELOAD]: 'Reload'
+  [SIMULATOR_CONTROL_KEYS.RELOAD]: 'Reload',
+  [SIMULATOR_CONTROL_KEYS.NEW_TAB]: 'New Tab',
+  [SIMULATOR_CONTROL_KEYS.SWITCH_TAB]: 'Switch Tab',
+  [SIMULATOR_CONTROL_KEYS.CLOSE_TAB]: 'Close Tab'
 };
 
 /**

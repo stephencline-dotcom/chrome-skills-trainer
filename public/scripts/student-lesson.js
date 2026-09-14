@@ -16,6 +16,7 @@ import { MaximizeDemonstration } from './maximize-demonstration.js';
 import { CloseDemonstration } from './close-demonstration.js';
 import { BackForwardDemonstration } from './back-forward-demonstration.js';
 import { ReloadDemonstration } from './reload-demonstration.js';
+import { TabDemonstration } from './tab-demonstration.js';
 
 export class StudentLesson {
   /**
@@ -109,6 +110,9 @@ export class StudentLesson {
     document.addEventListener('browser:forward', this.handleWindowEvent);
     document.addEventListener('browser:navigated', this.handleWindowEvent);
     document.addEventListener('browser:reloaded', this.handleWindowEvent);
+    document.addEventListener('browser:tab-opened', this.handleWindowEvent);
+    document.addEventListener('browser:tab-switched', this.handleWindowEvent);
+    document.addEventListener('browser:tab-closed', this.handleWindowEvent);
     document.addEventListener('browser:control-attempt', this.handleControlAttempt);
 
     // Listen to LessonEngine events
@@ -123,11 +127,15 @@ export class StudentLesson {
       'minimize-cycle': MinimizeDemonstration,
       'maximize-cycle': MaximizeDemonstration,
       'close-reopen-cycle': CloseDemonstration,
+      'new-tab-cycle': TabDemonstration,
+      'switch-tab-cycle': TabDemonstration,
+      'close-tab-cycle': TabDemonstration,
       'reload-cycle': ReloadDemonstration,
       'back-forward-cycle': BackForwardDemonstration
     }[demonstrationType] || MinimizeDemonstration;
 
     this.demo = new DemonstrationClass({
+      demonstrationType,
       windowEl: this.windowManager.windowEl,
       minimizeBtnEl: this.windowManager.btnMinimize,
       closeBtnEl: this.windowManager.btnClose,
@@ -403,6 +411,10 @@ export class StudentLesson {
       );
     }
 
+    if (step.tabs && this.browserNavigator?.tabs) {
+      this.browserNavigator.tabs.resetTabs(step.tabs, step.activeTabIndex || 0);
+    }
+
     // 2. Set the simulator's starting state from lesson data.
     const startState = step.startState || 'restored';
     this.setPanelCollapsed(startState === 'minimized');
@@ -599,6 +611,9 @@ export class StudentLesson {
   handleWindowEvent(e) {
     const eventType = e.type;
     const action = e.detail?.action;
+    if (['new-tab', 'switch-tab', 'close-tab'].includes(action)) {
+      this.highlight.clear();
+    }
 
     // Keep the compact instruction panel visible while Chrome is minimized.
     if (
@@ -622,6 +637,8 @@ export class StudentLesson {
     const expectedAction = step.expectedActions[expectedIndex];
 
     if (action !== expectedAction) return;
+    const expectedPage = step.expectedPages?.[expectedIndex];
+    if (expectedPage && e.detail?.pageId !== expectedPage) return;
 
     this.challengeSequence.push(action);
 
@@ -663,6 +680,22 @@ export class StudentLesson {
       this.engine.setStepCompleted(step.id, true);
       this.renderModeBar();
       return;
+    }
+
+    // Keep an incorrect tab choice from making a sequence impossible.
+    if (allowed && ['switch-tab', 'close-tab'].includes(e.detail?.action)) {
+      const index = this.challengeSequence.length;
+      const expectedAction = step.expectedActions?.[index];
+      const expectedPage = step.expectedPages?.[index];
+      if (
+        expectedAction &&
+        (e.detail.action !== expectedAction ||
+          (expectedPage && e.detail.pageId !== expectedPage))
+      ) {
+        e.preventDefault();
+        this.showFeedback('try-again', 'Look at the instruction and try that tab.');
+        return;
+      }
     }
 
     if (!allowed && step.allowStudentInteraction !== false) {

@@ -1166,28 +1166,484 @@
       "simulatorControl": "Plus (+) button next to the active tab.",
       "lessonSections": [
         {
-          "id": "meet-the-button",
-          "title": "Meet the Button",
-          "type": "presentation",
-          "placeholderDescription": "Find the small plus icon next to open tabs."
+          "id": "step-1-new-tab",
+          "title": "Meet New Tab",
+          "section": "Meet the Button",
+          "type": "introduction",
+          "teacherTitle": "Meet New Tab",
+          "teacherText": "The plus button opens another tab. Your current page stays open.",
+          "teacherPrompt": "Point to the plus beside the open tab.",
+          "studentTitle": "Meet New Tab",
+          "studentInstruction": "The plus button opens another tab. Your current page stays open.",
+          "studentMode": "observe",
+          "allowStudentInteraction": false,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "tabs": [
+            "reading"
+          ],
+          "activeTabIndex": 0,
+          "allowedControls": [],
+          "targetControl": "btn-new-tab",
+          "completionMessage": "You did it!",
+          "highlightControl": "btn-new-tab"
         },
         {
-          "id": "watch-it-work",
-          "title": "Watch It Work",
+          "id": "step-2-new-tab",
+          "title": "Find the Plus",
+          "section": "Find the Button",
+          "type": "identify",
+          "teacherTitle": "Find the Plus",
+          "teacherText": "Click the plus button to show where New Tab is.",
+          "teacherPrompt": "This step identifies the button without opening a tab.",
+          "studentTitle": "Find the Plus",
+          "studentInstruction": "Click the plus button to show where New Tab is.",
+          "studentMode": "identify",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "tabs": [
+            "reading"
+          ],
+          "activeTabIndex": 0,
+          "allowedControls": [
+            "btn-new-tab"
+          ],
+          "targetControl": "btn-new-tab",
+          "completionMessage": "You found New Tab!",
+          "highlightControl": "btn-new-tab",
+          "identifyControl": "btn-new-tab"
+        },
+        {
+          "id": "step-3-new-tab",
+          "title": "Watch a New Tab Open",
+          "section": "Watch It Work",
           "type": "demonstration",
-          "placeholderDescription": "See how opening multiple tabs keeps several pages accessible."
+          "teacherTitle": "Watch a New Tab Open",
+          "teacherText": "Watch the cursor click plus. Notice that Reading Corner stays open.",
+          "teacherPrompt": "Point out the original tab and the newly selected tab.",
+          "studentTitle": "Watch a New Tab Open",
+          "studentInstruction": "Watch the cursor click plus. Notice that Reading Corner stays open.",
+          "studentMode": "observe",
+          "allowStudentInteraction": false,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "tabs": [
+            "reading"
+          ],
+          "activeTabIndex": 0,
+          "allowedControls": [],
+          "targetControl": null,
+          "completionMessage": "You did it!",
+          "demonstration": "new-tab-cycle"
         },
         {
-          "id": "guided-practice",
-          "title": "Guided Practice",
-          "type": "practice",
-          "placeholderDescription": "Click the New Tab button to open a second tab."
+          "id": "step-4-new-tab",
+          "title": "Open Another Tab",
+          "section": "Guided Practice",
+          "type": "guided-practice",
+          "teacherTitle": "Open Another Tab",
+          "teacherText": "Click plus once to open a new tab.",
+          "teacherPrompt": "Ask students to count the tabs afterward.",
+          "studentTitle": "Open Another Tab",
+          "studentInstruction": "Click plus once to open a new tab.",
+          "studentMode": "interact",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "tabs": [
+            "reading"
+          ],
+          "activeTabIndex": 0,
+          "allowedControls": [
+            "btn-new-tab"
+          ],
+          "targetControl": "btn-new-tab",
+          "completionMessage": "You opened another tab!",
+          "expectedActions": [
+            "new-tab"
+          ],
+          "highlightControl": "btn-new-tab"
         },
         {
-          "id": "student-challenge",
-          "title": "Student Challenge",
-          "type": "challenge",
-          "placeholderDescription": "Open two new tabs and switch between them."
+          "id": "step-5-new-tab",
+          "title": "Your First Page Is Still There",
+          "section": "Guided Practice",
+          "type": "guided-practice",
+          "teacherTitle": "Your First Page Is Still There",
+          "teacherText": "Click the Reading Corner tab to return to your first page.",
+          "teacherPrompt": "Explain that opening a tab did not replace Reading Corner.",
+          "studentTitle": "Your First Page Is Still There",
+          "studentInstruction": "Click the Reading Corner tab to return to your first page.",
+          "studentMode": "interact",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "tabs": [
+            "reading",
+            "home"
+          ],
+          "activeTabIndex": 1,
+          "allowedControls": [
+            "btn-switch-tab"
+          ],
+          "targetControl": "btn-switch-tab",
+          "completionMessage": "Reading Corner was still open!",
+          "expectedActions": [
+            "switch-tab"
+          ],
+          "expectedPages": [
+            "reading"
+          ],
+          "highlightControl": "btn-switch-tab"
+        },
+        {
+          "id": "step-6-new-tab",
+          "title": "New Tab Challenge",
+          "section": "Student Challenge",
+          "type": "independent-challenge",
+          "teacherTitle": "New Tab Challenge",
+          "teacherText": "Open a new tab, then switch back to Reading Corner.",
+          "teacherPrompt": "Let students complete the two actions without highlights.",
+          "studentTitle": "New Tab Challenge",
+          "studentInstruction": "Open a new tab, then switch back to Reading Corner.",
+          "studentMode": "interact",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "tabs": [
+            "reading"
+          ],
+          "activeTabIndex": 0,
+          "allowedControls": [
+            "btn-new-tab",
+            "btn-switch-tab"
+          ],
+          "targetControl": null,
+          "completionMessage": "You opened another tab and returned to your first page!",
+          "expectedActions": [
+            "new-tab",
+            "switch-tab"
+          ],
+          "expectedPages": [
+            null,
+            "reading"
+          ],
+          "intermediateMessages": [
+            "New tab opened. Now choose Reading Corner."
+          ]
+        },
+        {
+          "id": "step-7-new-tab",
+          "title": "Which Button Opens a Tab?",
+          "section": "Check Your Understanding",
+          "type": "quiz",
+          "teacherTitle": "Which Button Opens a Tab?",
+          "teacherText": "Which button opens a new tab?",
+          "teacherPrompt": "Ask students to explain what the plus does.",
+          "studentTitle": "Which Button Opens a Tab?",
+          "studentInstruction": "Which button opens a new tab?",
+          "studentMode": "quiz",
+          "allowStudentInteraction": true,
+          "presentationView": "quiz",
+          "startState": "restored",
+          "tabs": [
+            "reading"
+          ],
+          "activeTabIndex": 0,
+          "allowedControls": [],
+          "targetControl": null,
+          "completionMessage": "Correct! Plus opens a new tab.",
+          "quiz": {
+            "choices": [
+              {
+                "id": "plus",
+                "label": "Plus",
+                "icon": "+",
+                "correct": true
+              },
+              {
+                "id": "x",
+                "label": "Tab X",
+                "icon": "×",
+                "correct": false,
+                "feedback": "The small X closes a tab. Choose plus to open one."
+              }
+            ]
+          }
+        },
+        {
+          "id": "step-8-new-tab",
+          "title": "New Tab Complete",
+          "section": "Lesson Complete",
+          "type": "summary",
+          "teacherTitle": "New Tab Complete",
+          "teacherText": "Plus opens another tab. Your other tabs stay open.",
+          "teacherPrompt": "Have students explain what happened to their first page.",
+          "studentTitle": "New Tab Complete",
+          "studentInstruction": "Plus opens another tab. Your other tabs stay open.",
+          "studentMode": "observe",
+          "allowStudentInteraction": false,
+          "presentationView": "completion",
+          "startState": "restored",
+          "tabs": [
+            "reading"
+          ],
+          "activeTabIndex": 0,
+          "allowedControls": [],
+          "targetControl": null,
+          "completionMessage": "You did it!"
+        }
+      ],
+      "hasCompleteLesson": true
+    },
+    {
+      "id": "switch-tab",
+      "name": "Switch Between Tabs",
+      "category": "Tabs",
+      "iconType": "symbol",
+      "iconText": "⇄",
+      "shortExplanation": "Choose another open tab while keeping your pages open.",
+      "simulatorControl": "Click the title of another open tab.",
+      "hasCompleteLesson": true,
+      "lessonSections": [
+        {
+          "id": "step-1-switch-tab",
+          "title": "Meet Open Tabs",
+          "section": "Meet the Button",
+          "type": "introduction",
+          "teacherTitle": "Meet Open Tabs",
+          "teacherText": "Tabs let you keep several pages open. The active tab is the page you see.",
+          "teacherPrompt": "Compare the active white tab with the other tab.",
+          "studentTitle": "Meet Open Tabs",
+          "studentInstruction": "Tabs let you keep several pages open. The active tab is the page you see.",
+          "studentMode": "observe",
+          "allowStudentInteraction": false,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "tabs": [
+            "reading",
+            "science"
+          ],
+          "activeTabIndex": 1,
+          "allowedControls": [],
+          "targetControl": null,
+          "completionMessage": "You did it!"
+        },
+        {
+          "id": "step-2-switch-tab",
+          "title": "Find Another Tab",
+          "section": "Find the Button",
+          "type": "identify",
+          "teacherTitle": "Find Another Tab",
+          "teacherText": "Click the Reading Corner tab title.",
+          "teacherPrompt": "Identify the title area, away from its small X.",
+          "studentTitle": "Find Another Tab",
+          "studentInstruction": "Click the Reading Corner tab title.",
+          "studentMode": "identify",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "tabs": [
+            "reading",
+            "science"
+          ],
+          "activeTabIndex": 1,
+          "allowedControls": [
+            "btn-switch-tab"
+          ],
+          "targetControl": "btn-switch-tab",
+          "completionMessage": "You found another open tab!",
+          "highlightControl": "btn-switch-tab",
+          "identifyControl": "btn-switch-tab"
+        },
+        {
+          "id": "step-3-switch-tab",
+          "title": "Watch Tabs Switch",
+          "section": "Watch It Work",
+          "type": "demonstration",
+          "teacherTitle": "Watch Tabs Switch",
+          "teacherText": "Watch Reading Corner and Science Lab take turns being the active page.",
+          "teacherPrompt": "Point out that neither tab closes.",
+          "studentTitle": "Watch Tabs Switch",
+          "studentInstruction": "Watch Reading Corner and Science Lab take turns being the active page.",
+          "studentMode": "observe",
+          "allowStudentInteraction": false,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "tabs": [
+            "reading",
+            "science"
+          ],
+          "activeTabIndex": 1,
+          "allowedControls": [],
+          "targetControl": null,
+          "completionMessage": "You did it!",
+          "demonstration": "switch-tab-cycle"
+        },
+        {
+          "id": "step-4-switch-tab",
+          "title": "Choose Reading Corner",
+          "section": "Guided Practice",
+          "type": "guided-practice",
+          "teacherTitle": "Choose Reading Corner",
+          "teacherText": "Click Reading Corner to make it the active tab.",
+          "teacherPrompt": "Ask which page is now visible.",
+          "studentTitle": "Choose Reading Corner",
+          "studentInstruction": "Click Reading Corner to make it the active tab.",
+          "studentMode": "interact",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "tabs": [
+            "reading",
+            "science"
+          ],
+          "activeTabIndex": 1,
+          "allowedControls": [
+            "btn-switch-tab"
+          ],
+          "targetControl": "btn-switch-tab",
+          "completionMessage": "Reading Corner is now active!",
+          "expectedActions": [
+            "switch-tab"
+          ],
+          "expectedPages": [
+            "reading"
+          ],
+          "highlightControl": "btn-switch-tab"
+        },
+        {
+          "id": "step-5-switch-tab",
+          "title": "Switch Back to Science",
+          "section": "Guided Practice",
+          "type": "guided-practice",
+          "teacherTitle": "Switch Back to Science",
+          "teacherText": "Click Science Lab to bring its page back.",
+          "teacherPrompt": "Notice that the page remained open while another tab was active.",
+          "studentTitle": "Switch Back to Science",
+          "studentInstruction": "Click Science Lab to bring its page back.",
+          "studentMode": "interact",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "tabs": [
+            "reading",
+            "science"
+          ],
+          "activeTabIndex": 0,
+          "allowedControls": [
+            "btn-switch-tab"
+          ],
+          "targetControl": "btn-switch-tab",
+          "completionMessage": "Science Lab was still open!",
+          "expectedActions": [
+            "switch-tab"
+          ],
+          "expectedPages": [
+            "science"
+          ],
+          "highlightControl": "btn-switch-tab"
+        },
+        {
+          "id": "step-6-switch-tab",
+          "title": "Three-Tab Challenge",
+          "section": "Student Challenge",
+          "type": "independent-challenge",
+          "teacherTitle": "Three-Tab Challenge",
+          "teacherText": "Choose Art Studio, then Reading Corner.",
+          "teacherPrompt": "Let students find the correct titles without highlights.",
+          "studentTitle": "Three-Tab Challenge",
+          "studentInstruction": "Choose Art Studio, then Reading Corner.",
+          "studentMode": "interact",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "tabs": [
+            "reading",
+            "science",
+            "art"
+          ],
+          "activeTabIndex": 1,
+          "allowedControls": [
+            "btn-switch-tab"
+          ],
+          "targetControl": null,
+          "completionMessage": "You switched between the correct tabs!",
+          "expectedActions": [
+            "switch-tab",
+            "switch-tab"
+          ],
+          "expectedPages": [
+            "art",
+            "reading"
+          ],
+          "intermediateMessages": [
+            "Art Studio is active. Now choose Reading Corner."
+          ]
+        },
+        {
+          "id": "step-7-switch-tab",
+          "title": "Switch or Close?",
+          "section": "Check Your Understanding",
+          "type": "quiz",
+          "teacherTitle": "Switch or Close?",
+          "teacherText": "How do you see another open tab without closing it?",
+          "teacherPrompt": "Discuss why the title and the X do different things.",
+          "studentTitle": "Switch or Close?",
+          "studentInstruction": "How do you see another open tab without closing it?",
+          "studentMode": "quiz",
+          "allowStudentInteraction": true,
+          "presentationView": "quiz",
+          "startState": "restored",
+          "tabs": [
+            "reading",
+            "science"
+          ],
+          "activeTabIndex": 1,
+          "allowedControls": [],
+          "targetControl": null,
+          "completionMessage": "Correct! Clicking the title switches tabs.",
+          "quiz": {
+            "choices": [
+              {
+                "id": "title",
+                "label": "Click its title",
+                "icon": "⇄",
+                "correct": true
+              },
+              {
+                "id": "x",
+                "label": "Click its X",
+                "icon": "×",
+                "correct": false,
+                "feedback": "The X closes a tab. Click its title to switch to it."
+              }
+            ]
+          }
+        },
+        {
+          "id": "step-8-switch-tab",
+          "title": "Switching Complete",
+          "section": "Lesson Complete",
+          "type": "summary",
+          "teacherTitle": "Switching Complete",
+          "teacherText": "Click a tab title to see its page. Your other tabs stay open.",
+          "teacherPrompt": "Ask a student to explain which tab is active.",
+          "studentTitle": "Switching Complete",
+          "studentInstruction": "Click a tab title to see its page. Your other tabs stay open.",
+          "studentMode": "observe",
+          "allowStudentInteraction": false,
+          "presentationView": "completion",
+          "startState": "restored",
+          "tabs": [
+            "reading",
+            "science"
+          ],
+          "activeTabIndex": 1,
+          "allowedControls": [],
+          "targetControl": null,
+          "completionMessage": "You did it!"
         }
       ]
     },
@@ -1201,30 +1657,246 @@
       "simulatorControl": "Small x icon on the right side of tab title.",
       "lessonSections": [
         {
-          "id": "meet-the-button",
-          "title": "Meet the Button",
-          "type": "presentation",
-          "placeholderDescription": "Locate the tiny 'x' inside the tab tab shape."
+          "id": "step-1-close-tab",
+          "title": "Meet Close Tab",
+          "section": "Meet the Button",
+          "type": "introduction",
+          "teacherTitle": "Meet Close Tab",
+          "teacherText": "The small X on a tab closes that tab. The window X is a different control.",
+          "teacherPrompt": "Compare the small tab X with the window X in the far corner.",
+          "studentTitle": "Meet Close Tab",
+          "studentInstruction": "The small X on a tab closes that tab. The window X is a different control.",
+          "studentMode": "observe",
+          "allowStudentInteraction": false,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "tabs": [
+            "reading",
+            "science"
+          ],
+          "activeTabIndex": 1,
+          "allowedControls": [],
+          "targetControl": "btn-close-tab",
+          "completionMessage": "You did it!",
+          "highlightControl": "btn-close-tab"
         },
         {
-          "id": "watch-it-work",
-          "title": "Watch It Work",
+          "id": "step-2-close-tab",
+          "title": "Find the Tab X",
+          "section": "Find the Button",
+          "type": "identify",
+          "teacherTitle": "Find the Tab X",
+          "teacherText": "Click the small X on the Science Lab tab.",
+          "teacherPrompt": "This identification step leaves the tab open.",
+          "studentTitle": "Find the Tab X",
+          "studentInstruction": "Click the small X on the Science Lab tab.",
+          "studentMode": "identify",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "tabs": [
+            "reading",
+            "science"
+          ],
+          "activeTabIndex": 1,
+          "allowedControls": [
+            "btn-close-tab"
+          ],
+          "targetControl": "btn-close-tab",
+          "completionMessage": "You found the tab’s small X!",
+          "highlightControl": "btn-close-tab",
+          "identifyControl": "btn-close-tab"
+        },
+        {
+          "id": "step-3-close-tab",
+          "title": "Watch One Tab Close",
+          "section": "Watch It Work",
           "type": "demonstration",
-          "placeholderDescription": "Watch a single tab close cleanly without losing other open tabs."
+          "teacherTitle": "Watch One Tab Close",
+          "teacherText": "Watch Science Lab close while Reading Corner stays open.",
+          "teacherPrompt": "Point out that the Chrome window remains on the desktop.",
+          "studentTitle": "Watch One Tab Close",
+          "studentInstruction": "Watch Science Lab close while Reading Corner stays open.",
+          "studentMode": "observe",
+          "allowStudentInteraction": false,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "tabs": [
+            "reading",
+            "science"
+          ],
+          "activeTabIndex": 1,
+          "allowedControls": [],
+          "targetControl": null,
+          "completionMessage": "You did it!",
+          "demonstration": "close-tab-cycle"
         },
         {
-          "id": "guided-practice",
-          "title": "Guided Practice",
-          "type": "practice",
-          "placeholderDescription": "Close an extra tab using its small close button."
+          "id": "step-4-close-tab",
+          "title": "Close Science Lab",
+          "section": "Guided Practice",
+          "type": "guided-practice",
+          "teacherTitle": "Close Science Lab",
+          "teacherText": "Close Science Lab using the small X on its tab.",
+          "teacherPrompt": "Ask students which tab remains afterward.",
+          "studentTitle": "Close Science Lab",
+          "studentInstruction": "Close Science Lab using the small X on its tab.",
+          "studentMode": "interact",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "tabs": [
+            "reading",
+            "science"
+          ],
+          "activeTabIndex": 1,
+          "allowedControls": [
+            "btn-close-tab"
+          ],
+          "targetControl": "btn-close-tab",
+          "completionMessage": "Science Lab closed. Reading Corner stayed open!",
+          "expectedActions": [
+            "close-tab"
+          ],
+          "expectedPages": [
+            "science"
+          ],
+          "highlightControl": "btn-close-tab"
         },
         {
-          "id": "student-challenge",
-          "title": "Student Challenge",
-          "type": "challenge",
-          "placeholderDescription": "Close three open tabs one by one."
+          "id": "step-5-close-tab",
+          "title": "Keep the Page You Need",
+          "section": "Guided Practice",
+          "type": "guided-practice",
+          "teacherTitle": "Keep the Page You Need",
+          "teacherText": "Close Art Studio. Keep Reading Corner open.",
+          "teacherPrompt": "Students choose the tab they are finished using.",
+          "studentTitle": "Keep the Page You Need",
+          "studentInstruction": "Close Art Studio. Keep Reading Corner open.",
+          "studentMode": "interact",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "tabs": [
+            "reading",
+            "art"
+          ],
+          "activeTabIndex": 1,
+          "allowedControls": [
+            "btn-close-tab"
+          ],
+          "targetControl": "btn-close-tab",
+          "completionMessage": "You kept Reading Corner open!",
+          "expectedActions": [
+            "close-tab"
+          ],
+          "expectedPages": [
+            "art"
+          ],
+          "highlightControl": "btn-close-tab"
+        },
+        {
+          "id": "step-6-close-tab",
+          "title": "Close Tab Challenge",
+          "section": "Student Challenge",
+          "type": "independent-challenge",
+          "teacherTitle": "Close Tab Challenge",
+          "teacherText": "Close Art Studio, then Science Lab. Leave Reading Corner open.",
+          "teacherPrompt": "Let students remove the two extra tabs without highlights.",
+          "studentTitle": "Close Tab Challenge",
+          "studentInstruction": "Close Art Studio, then Science Lab. Leave Reading Corner open.",
+          "studentMode": "interact",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "tabs": [
+            "reading",
+            "science",
+            "art"
+          ],
+          "activeTabIndex": 2,
+          "allowedControls": [
+            "btn-close-tab"
+          ],
+          "targetControl": null,
+          "completionMessage": "You closed the extra tabs and kept Reading Corner!",
+          "expectedActions": [
+            "close-tab",
+            "close-tab"
+          ],
+          "expectedPages": [
+            "art",
+            "science"
+          ],
+          "intermediateMessages": [
+            "Art Studio closed. Now close Science Lab."
+          ]
+        },
+        {
+          "id": "step-7-close-tab",
+          "title": "One Tab or Whole Window?",
+          "section": "Check Your Understanding",
+          "type": "quiz",
+          "teacherTitle": "One Tab or Whole Window?",
+          "teacherText": "Which control closes just one tab when several are open?",
+          "teacherPrompt": "Point to both kinds of X as you discuss the choices.",
+          "studentTitle": "One Tab or Whole Window?",
+          "studentInstruction": "Which control closes just one tab when several are open?",
+          "studentMode": "quiz",
+          "allowStudentInteraction": true,
+          "presentationView": "quiz",
+          "startState": "restored",
+          "tabs": [
+            "reading",
+            "science"
+          ],
+          "activeTabIndex": 1,
+          "allowedControls": [],
+          "targetControl": null,
+          "completionMessage": "Correct! The small tab X closes that tab.",
+          "quiz": {
+            "choices": [
+              {
+                "id": "tab",
+                "label": "Small X on the tab",
+                "icon": "×",
+                "correct": true
+              },
+              {
+                "id": "window",
+                "label": "Window X in the corner",
+                "icon": "✕",
+                "correct": false,
+                "feedback": "The window X closes the whole window. Choose the tab’s small X."
+              }
+            ]
+          }
+        },
+        {
+          "id": "step-8-close-tab",
+          "title": "Close Tab Complete",
+          "section": "Lesson Complete",
+          "type": "summary",
+          "teacherTitle": "Close Tab Complete",
+          "teacherText": "The small X closes a tab. Closing the last tab also closes the window.",
+          "teacherPrompt": "Explain the last-tab exception and remind students to finish their work first.",
+          "studentTitle": "Close Tab Complete",
+          "studentInstruction": "The small X closes a tab. Closing the last tab also closes the window.",
+          "studentMode": "observe",
+          "allowStudentInteraction": false,
+          "presentationView": "completion",
+          "startState": "restored",
+          "tabs": [
+            "reading",
+            "science"
+          ],
+          "activeTabIndex": 1,
+          "allowedControls": [],
+          "targetControl": null,
+          "completionMessage": "You did it!"
         }
-      ]
+      ],
+      "hasCompleteLesson": true
     },
     {
       "id": "bookmark-this-page",

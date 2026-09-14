@@ -9,6 +9,7 @@ import { WindowManager } from './window-manager.js';
 import { lessonCatalog } from './lesson-catalog.js';
 import { StudentLesson } from './student-lesson.js';
 import { BrowserNavigator } from './browser-navigator.js';
+import { BrowserTabs } from './browser-tabs.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   // Retrieve DOM element references
@@ -47,6 +48,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     contentElement: document.getElementById('browser-content')
   });
   browserNavigator.init();
+  const browserTabs = new BrowserTabs({
+    browserNavigator,
+    windowManager,
+    strip: document.querySelector('.chrome-tabstrip')
+  });
+  browserTabs.init();
 
   // Compact instruction panel: collapse to a single-line strip while Chrome
   // is minimized so the taskbar and its Chrome button stay visually

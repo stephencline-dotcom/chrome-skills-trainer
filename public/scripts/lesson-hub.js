@@ -13,6 +13,7 @@ import { MaximizeDemonstration } from './maximize-demonstration.js';
 import { CloseDemonstration } from './close-demonstration.js';
 import { BackForwardDemonstration } from './back-forward-demonstration.js';
 import { ReloadDemonstration } from './reload-demonstration.js';
+import { TabDemonstration } from './tab-demonstration.js';
 
 class LessonHub {
   constructor() {
@@ -535,11 +536,15 @@ class LessonHub {
           'minimize-cycle': MinimizeDemonstration,
           'maximize-cycle': MaximizeDemonstration,
           'close-reopen-cycle': CloseDemonstration,
-          'reload-cycle': ReloadDemonstration,
+          'new-tab-cycle': TabDemonstration,
+      'switch-tab-cycle': TabDemonstration,
+      'close-tab-cycle': TabDemonstration,
+      'reload-cycle': ReloadDemonstration,
       'back-forward-cycle': BackForwardDemonstration
         }[step.demonstration] || MinimizeDemonstration;
 
         this.teacherDemo = new DemonstrationClass({
+          demonstrationType: step.demonstration,
           windowEl: miniWindow,
           minimizeBtnEl: miniMinimizeBtn,
           maximizeBtnEl: miniMaximizeBtn,
