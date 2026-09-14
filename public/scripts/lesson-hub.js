@@ -12,6 +12,7 @@ import { MinimizeDemonstration } from './minimize-demonstration.js';
 import { MaximizeDemonstration } from './maximize-demonstration.js';
 import { CloseDemonstration } from './close-demonstration.js';
 import { BackForwardDemonstration } from './back-forward-demonstration.js';
+import { ReloadDemonstration } from './reload-demonstration.js';
 
 class LessonHub {
   constructor() {
@@ -428,6 +429,7 @@ class LessonHub {
               <div class="demo-mini-browser-toolbar">
                 <button type="button" id="demo-mini-btn-back" class="demo-mini-nav-btn" tabindex="-1" aria-hidden="true">←</button>
                 <button type="button" id="demo-mini-btn-forward" class="demo-mini-nav-btn" tabindex="-1" aria-hidden="true">→</button>
+                <button type="button" id="demo-mini-btn-reload" class="demo-mini-nav-btn" tabindex="-1" aria-hidden="true">↻</button>
                 <span class="demo-mini-address">chrome-skills-trainer.local</span>
               </div>
               <div id="demo-mini-page-label" class="demo-mini-page-label">
@@ -533,7 +535,8 @@ class LessonHub {
           'minimize-cycle': MinimizeDemonstration,
           'maximize-cycle': MaximizeDemonstration,
           'close-reopen-cycle': CloseDemonstration,
-          'back-forward-cycle': BackForwardDemonstration
+          'reload-cycle': ReloadDemonstration,
+      'back-forward-cycle': BackForwardDemonstration
         }[step.demonstration] || MinimizeDemonstration;
 
         this.teacherDemo = new DemonstrationClass({
@@ -544,6 +547,7 @@ class LessonHub {
           taskbarBtnEl: miniTaskbarBtn,
           backBtnEl: miniBackBtn,
           forwardBtnEl: miniForwardBtn,
+          reloadBtnEl: document.getElementById('demo-mini-btn-reload'),
           pageLabelEl: miniPageLabel,
           cursorLayer: document.body,
           maximizeBottomInset: 28,

@@ -847,35 +847,244 @@
       "name": "Reload",
       "category": "Navigation",
       "iconType": "symbol",
-      "iconText": "🔄",
+      "iconText": "↻",
       "shortExplanation": "Refresh the current web page to get the latest updates.",
       "simulatorControl": "Circular arrow button next to Forward.",
       "lessonSections": [
         {
-          "id": "meet-the-button",
-          "title": "Meet the Button",
-          "type": "presentation",
-          "placeholderDescription": "Identify the circular arrow reload button."
+          "id": "step-1-meet-reload",
+          "title": "Meet Reload",
+          "section": "Meet the Buttons",
+          "type": "introduction",
+          "teacherTitle": "Meet Reload",
+          "teacherText": "Introduce the circular arrow. Reload loads the current page again; it does not go Back or Forward.",
+          "teacherPrompt": "Trace a circle with your finger and say: “Reload refreshes this page.”",
+          "studentTitle": "Meet Reload",
+          "studentInstruction": "Find the circular arrow near the address bar. Reload refreshes the page you are viewing.",
+          "studentMode": "observe",
+          "completionMessage": "Ready for the next step.",
+          "allowStudentInteraction": false,
+          "presentationView": "symbol",
+          "startState": "restored",
+          "allowedControls": [],
+          "browserHistory": [
+            "home",
+            "noticeboard"
+          ],
+          "browserHistoryIndex": 1,
+          "targetControl": null
         },
         {
-          "id": "watch-it-work",
-          "title": "Watch It Work",
+          "id": "step-2-find-reload",
+          "title": "Find the Reload Button",
+          "section": "Meet the Buttons",
+          "type": "identify",
+          "teacherTitle": "Find the Reload Button",
+          "teacherText": "Let students identify Reload before using it.",
+          "teacherPrompt": "Ask: “Which arrow goes around in a circle?”",
+          "studentTitle": "Find the Reload Button",
+          "studentInstruction": "Click the circular Reload arrow.",
+          "studentMode": "identify",
+          "completionMessage": "You found Reload!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [
+            "btn-reload"
+          ],
+          "browserHistory": [
+            "home",
+            "noticeboard"
+          ],
+          "browserHistoryIndex": 1,
+          "identifyControl": "btn-reload",
+          "highlightControl": "btn-reload",
+          "targetControl": "btn-reload",
+          "highlightLabel": "Reload"
+        },
+        {
+          "id": "step-3-watch-reload",
+          "title": "Watch Reload Work",
+          "section": "Watch It Work",
           "type": "demonstration",
-          "placeholderDescription": "Watch how refreshing reloads all content on the page."
+          "teacherTitle": "Watch Reload Work",
+          "teacherText": "Model refreshing the noticeboard. Point out the unchanged address and the updated message.",
+          "teacherPrompt": "Say: “We are still on the Class Noticeboard. We loaded it again.”",
+          "studentTitle": "Watch Reload Work",
+          "studentInstruction": "Watch the cursor click Reload. The notice updates, but the address stays the same.",
+          "studentMode": "observe",
+          "completionMessage": "Ready for the next step.",
+          "allowStudentInteraction": false,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [],
+          "browserHistory": [
+            "home",
+            "noticeboard"
+          ],
+          "browserHistoryIndex": 1,
+          "demonstration": "reload-cycle",
+          "targetControl": null
         },
         {
-          "id": "guided-practice",
-          "title": "Guided Practice",
-          "type": "practice",
-          "placeholderDescription": "Click Reload to refresh the classroom website."
+          "id": "step-4-guided-reload",
+          "title": "Refresh the Noticeboard",
+          "section": "Guided Practice",
+          "type": "guided-practice",
+          "teacherTitle": "Refresh the Noticeboard",
+          "teacherText": "Students refresh the current noticeboard page.",
+          "teacherPrompt": "Ask students to click once, then look for the updated message.",
+          "studentTitle": "Refresh the Noticeboard",
+          "studentInstruction": "Click Reload once to see the latest class message.",
+          "studentMode": "interact",
+          "completionMessage": "You refreshed the noticeboard and stayed on the same page!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [
+            "btn-reload"
+          ],
+          "browserHistory": [
+            "home",
+            "noticeboard"
+          ],
+          "browserHistoryIndex": 1,
+          "highlightControl": "btn-reload",
+          "expectedActions": [
+            "reload"
+          ],
+          "targetControl": "btn-reload",
+          "highlightLabel": "Reload"
         },
         {
-          "id": "student-challenge",
-          "title": "Student Challenge",
-          "type": "challenge",
-          "placeholderDescription": "Use Reload when a web page is loading slowly or stuck."
+          "id": "step-5-reload-again",
+          "title": "Same Page, Another Refresh",
+          "section": "Guided Practice",
+          "type": "guided-practice",
+          "teacherTitle": "Same Page, Another Refresh",
+          "teacherText": "Two refreshes demonstrate that reloading does not move through browser history.",
+          "teacherPrompt": "Point to the address before and after each refresh. Explain that a real page might not visibly change.",
+          "studentTitle": "Same Page, Another Refresh",
+          "studentInstruction": "Reload once. Check the address, then reload again. Are you still on the same page?",
+          "studentMode": "interact",
+          "completionMessage": "Two refreshes, and the address stayed the same!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [
+            "btn-reload"
+          ],
+          "browserHistory": [
+            "home",
+            "noticeboard"
+          ],
+          "browserHistoryIndex": 1,
+          "highlightControl": "btn-reload",
+          "expectedActions": [
+            "reload",
+            "reload"
+          ],
+          "intermediateMessages": [
+            "One refresh! Check the address, then reload once more."
+          ],
+          "targetControl": "btn-reload",
+          "highlightLabel": "Reload"
+        },
+        {
+          "id": "step-6-reload-challenge",
+          "title": "Reload Challenge",
+          "section": "Student Challenge",
+          "type": "independent-challenge",
+          "teacherTitle": "Reload Challenge",
+          "teacherText": "Students choose Reload without a highlight.",
+          "teacherPrompt": "Ask: “How can you refresh this page while staying here?”",
+          "studentTitle": "Reload Challenge",
+          "studentInstruction": "Refresh the Class Noticeboard without using Back or Forward.",
+          "studentMode": "interact",
+          "completionMessage": "You chose Reload to refresh the current page!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [
+            "btn-reload"
+          ],
+          "browserHistory": [
+            "home",
+            "noticeboard"
+          ],
+          "browserHistoryIndex": 1,
+          "expectedActions": [
+            "reload"
+          ],
+          "targetControl": null
+        },
+        {
+          "id": "step-7-reload-quiz",
+          "title": "Reload or Back?",
+          "section": "Student Challenge",
+          "type": "quiz",
+          "teacherTitle": "Reload or Back?",
+          "teacherText": "Check that students distinguish refreshing from returning to a previous page.",
+          "teacherPrompt": "Ask students to explain their choice.",
+          "studentTitle": "Reload or Back?",
+          "studentInstruction": "Which button refreshes the page you are viewing?",
+          "studentMode": "quiz",
+          "completionMessage": "Correct! Reload refreshes the current page.",
+          "allowStudentInteraction": true,
+          "presentationView": "quiz",
+          "startState": "restored",
+          "allowedControls": [],
+          "quiz": {
+            "choices": [
+              {
+                "id": "reload",
+                "label": "Reload",
+                "icon": "↻",
+                "correct": true
+              },
+              {
+                "id": "back",
+                "label": "Back",
+                "icon": "←",
+                "correct": false,
+                "feedback": "Back returns to a previous page. Try Reload to refresh this page."
+              }
+            ]
+          },
+          "browserHistory": [
+            "home",
+            "noticeboard"
+          ],
+          "browserHistoryIndex": 1,
+          "targetControl": null
+        },
+        {
+          "id": "step-8-reload-complete",
+          "title": "Reload Complete",
+          "section": "Student Challenge",
+          "type": "summary",
+          "teacherTitle": "Reload Complete",
+          "teacherText": "Review the difference between Reload and Back/Forward.",
+          "teacherPrompt": "Ask: “Does Reload take us to a different page?”",
+          "studentTitle": "Reload Complete",
+          "studentInstruction": "Reload refreshes the current page. Back and Forward move between pages you have visited.",
+          "studentMode": "observe",
+          "completionMessage": "Ready for the next step.",
+          "allowStudentInteraction": false,
+          "presentationView": "completion",
+          "startState": "restored",
+          "allowedControls": [],
+          "browserHistory": [
+            "home",
+            "noticeboard"
+          ],
+          "browserHistoryIndex": 1,
+          "targetControl": null
         }
-      ]
+      ],
+      "description": "Refresh the current page without going Back or Forward.",
+      "shortDescription": "Refresh the current page without going Back or Forward.",
+      "hasCompleteLesson": true
     },
     {
       "id": "home",

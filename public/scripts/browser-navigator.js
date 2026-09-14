@@ -16,6 +16,7 @@ export class BrowserNavigator {
     this.addressElement = addressElement;
     this.contentElement = contentElement;
 
+    this.reloadCount = 0;
     this.history = ['home'];
     this.historyIndex = 0;
     this.interactionEnabled = true;
@@ -123,12 +124,46 @@ export class BrowserNavigator {
 
     if (!allowed || attempt.defaultPrevented) return;
 
+    this.performReload();
+  }
+
+  // Demo setup can refresh without completing a student activity.
+  performReload(emitEvent = true) {
+    this.reloadCount += 1;
     this.render();
-    this.dispatch('browser:reloaded', {
-      control: 'btn-reload',
-      action: 'reload',
-      pageId: this.currentPageId
-    });
+
+    if (this.contentElement?.animate) {
+      const reducedMotion = window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+      ).matches;
+
+      const cover = document.createElement('div');
+      cover.className = 'reload-visual-cue';
+      cover.setAttribute('role', 'status');
+      cover.textContent = '↻ Refreshing page…';
+      this.contentElement.appendChild(cover);
+
+      const animation = cover.animate(
+        reducedMotion
+          ? [{ opacity: 1 }, { opacity: 1 }]
+          : [
+              { opacity: 1, offset: 0 },
+              { opacity: 1, offset: 0.65 },
+              { opacity: 0, offset: 1 }
+            ],
+        { duration: 1400, fill: 'forwards' }
+      );
+
+      animation.onfinish = () => cover.remove();
+    }
+
+    if (emitEvent) {
+      this.dispatch('browser:reloaded', {
+        control: 'btn-reload',
+        action: 'reload',
+        pageId: this.currentPageId
+      });
+    }
   }
 
   handleContentClick(event) {
@@ -165,6 +200,7 @@ export class BrowserNavigator {
   }
 
   reset(history = ['home'], historyIndex = 0) {
+    this.reloadCount = 0;
     const validHistory = history.filter(
       (pageId) => this.getPage(pageId)
     );
@@ -231,6 +267,24 @@ export class BrowserNavigator {
 
   getPage(pageId) {
     return {
+      noticeboard: {
+        address: 'https://chrome-skills-trainer.local/noticeboard',
+        html: `
+          <article class="sim-page">
+            <span class="sim-page-icon">📌</span>
+            <h2>Class Noticeboard</h2>
+            <p>${this.reloadCount === 0
+              ? 'An updated class message is ready. Reload this page to see it.'
+              : 'Latest class message: Bring your favorite book tomorrow!'}</p>
+            <p><strong>${this.reloadCount === 0
+              ? 'Showing the earlier message'
+              : 'Page refreshed · ' + this.reloadCount +
+                (this.reloadCount === 1 ? ' time' : ' times')}</strong></p>
+            <p>This practice page changes to help you see a refresh.
+            Real pages may look the same after reloading.</p>
+          </article>
+        `
+      },
       home: {
         address: 'https://chrome-skills-trainer.local/home',
         html: `

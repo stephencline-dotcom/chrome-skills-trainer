@@ -23,6 +23,7 @@ import { MinimizeDemonstration } from './minimize-demonstration.js';
 import { MaximizeDemonstration } from './maximize-demonstration.js';
 import { CloseDemonstration } from './close-demonstration.js';
 import { BackForwardDemonstration } from './back-forward-demonstration.js';
+import { ReloadDemonstration } from './reload-demonstration.js';
 
 class PresentationController {
   constructor() {
@@ -118,6 +119,16 @@ class PresentationController {
       }
     });
 
+    // Browser identification does not navigate or refresh.
+    this.windowEl.addEventListener('browser:control-attempt', (event) => {
+      if (
+        this.currentStep?.identifyControl &&
+        event.detail?.control === this.currentStep.identifyControl
+      ) {
+        event.preventDefault();
+      }
+    });
+
     const demonstrationType = this.skill.lessonSections.find(
       (step) => step.demonstration
     )?.demonstration;
@@ -125,6 +136,7 @@ class PresentationController {
       'minimize-cycle': MinimizeDemonstration,
       'maximize-cycle': MaximizeDemonstration,
       'close-reopen-cycle': CloseDemonstration,
+      'reload-cycle': ReloadDemonstration,
       'back-forward-cycle': BackForwardDemonstration
     }[demonstrationType] || MinimizeDemonstration;
 
@@ -137,6 +149,7 @@ class PresentationController {
       backBtnEl: getSimulatorControlElement('back'),
       forwardBtnEl: getSimulatorControlElement('forward'),
       browserNavigator: this.browserNavigator,
+      reloadBtnEl: this.browserNavigator?.reloadButton,
       cursorLayer: document.body,
       onCaption: (text) => this.setDemoCaption(text)
     });
@@ -189,7 +202,7 @@ class PresentationController {
         this.renderStep(step, idx !== -1 ? idx : data.stepIndex);
       }
     } else if (data.command === LOCAL_LESSON_COMMANDS.REPLAY_DEMONSTRATION) {
-      if (this.currentStep && this.currentStep.id === 'step-3-watch-it-work') {
+      if (this.currentStep?.demonstration) {
         this.demo.play();
       }
     } else if (data.command === LOCAL_LESSON_COMMANDS.RESET_LESSON) {

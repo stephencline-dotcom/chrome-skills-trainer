@@ -15,6 +15,7 @@ import { MinimizeDemonstration } from './minimize-demonstration.js';
 import { MaximizeDemonstration } from './maximize-demonstration.js';
 import { CloseDemonstration } from './close-demonstration.js';
 import { BackForwardDemonstration } from './back-forward-demonstration.js';
+import { ReloadDemonstration } from './reload-demonstration.js';
 
 export class StudentLesson {
   /**
@@ -122,6 +123,7 @@ export class StudentLesson {
       'minimize-cycle': MinimizeDemonstration,
       'maximize-cycle': MaximizeDemonstration,
       'close-reopen-cycle': CloseDemonstration,
+      'reload-cycle': ReloadDemonstration,
       'back-forward-cycle': BackForwardDemonstration
     }[demonstrationType] || MinimizeDemonstration;
 
@@ -134,6 +136,7 @@ export class StudentLesson {
       backBtnEl: this.browserNavigator?.backButton,
       forwardBtnEl: this.browserNavigator?.forwardButton,
       browserNavigator: this.browserNavigator,
+      reloadBtnEl: this.browserNavigator?.reloadButton,
       cursorLayer: document.body,
       onCaption: (text) => this.setDemoCaption(text)
     });
@@ -204,7 +207,7 @@ export class StudentLesson {
 
       case LOCAL_LESSON_COMMANDS.REPLAY_DEMONSTRATION: {
         const step = this.engine.getCurrentStep();
-        if (this.deliveryMode === DELIVERY_MODES.TEACHER_LED && step && step.id === 'step-3-watch-it-work') {
+        if (this.deliveryMode === DELIVERY_MODES.TEACHER_LED && step && step.demonstration) {
           this.demo.play();
         }
         break;

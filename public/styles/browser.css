@@ -458,3 +458,25 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Visible simulated page refresh */
+.chrome-content {
+  position: relative;
+}
+
+.reload-visual-cue {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #ffffff;
+  color: #1e40af;
+  font-size: clamp(20px, 3vw, 32px);
+  font-weight: 700;
+  text-align: center;
+  pointer-events: none;
+}
