@@ -26,6 +26,7 @@ import { CloseDemonstration } from './close-demonstration.js';
 import { BackForwardDemonstration } from './back-forward-demonstration.js';
 import { ReloadDemonstration } from './reload-demonstration.js';
 import { TabDemonstration } from './tab-demonstration.js';
+import { AddressBarDemonstration } from './address-bar-demonstration.js';
 
 class PresentationController {
   constructor() {
@@ -148,7 +149,8 @@ class PresentationController {
       'switch-tab-cycle': TabDemonstration,
       'close-tab-cycle': TabDemonstration,
       'reload-cycle': ReloadDemonstration,
-      'back-forward-cycle': BackForwardDemonstration
+      'back-forward-cycle': BackForwardDemonstration,
+      'address-bar-cycle': AddressBarDemonstration
     }[demonstrationType] || MinimizeDemonstration;
 
     this.demo = new DemonstrationClass({
@@ -162,6 +164,11 @@ class PresentationController {
       forwardBtnEl: getSimulatorControlElement('forward'),
       browserNavigator: this.browserNavigator,
       reloadBtnEl: this.browserNavigator?.reloadButton,
+      addressBarEl: getSimulatorControlElement(
+        'address-bar'
+      ),
+      addressElement:
+        this.browserNavigator?.addressElement,
       cursorLayer: document.body,
       onCaption: (text) => this.setDemoCaption(text)
     });

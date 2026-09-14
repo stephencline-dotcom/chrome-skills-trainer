@@ -1123,38 +1123,257 @@
     },
     {
       "id": "address-bar",
-      "name": "Address Bar",
+      "name": "Using the Address Bar",
       "category": "Navigation",
       "iconType": "symbol",
       "iconText": "🔍",
-      "shortExplanation": "Type web addresses (URLs) or search terms here.",
-      "simulatorControl": "Long white text box at the top of the browser.",
+      "shortExplanation": "Use the Address Bar to visit a website or search for information.",
+      "simulatorControl": "Long text box near the top of Chrome.",
       "lessonSections": [
         {
-          "id": "meet-the-button",
-          "title": "Meet the Button",
-          "type": "presentation",
-          "placeholderDescription": "Locate the long text box containing the web address."
+          "id": "step-1-address-bar",
+          "title": "Meet the Address Bar",
+          "section": "Meet the Address Bar",
+          "type": "introduction",
+          "teacherTitle": "Meet the Address Bar",
+          "teacherText": "The Address Bar is the long box near the top of Chrome. It can take you directly to a website or search for information.",
+          "teacherPrompt": "Point to the Address Bar and say: “This box has two jobs: go to a website or search.”",
+          "studentTitle": "Meet the Address Bar",
+          "studentInstruction": "The Address Bar is the long box near the top of Chrome. You can type a website or a search here.",
+          "studentMode": "observe",
+          "targetControl": "btn-address-bar",
+          "completionMessage": "Ready to find the Address Bar!",
+          "allowStudentInteraction": false,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [],
+          "highlightControl": "btn-address-bar",
+          "highlightLabel": "Address Bar",
+          "browserHistory": [
+            "home"
+          ],
+          "browserHistoryIndex": 0
         },
         {
-          "id": "watch-it-work",
-          "title": "Watch It Work",
+          "id": "step-2-address-bar",
+          "title": "Find the Address Bar",
+          "section": "Meet the Address Bar",
+          "type": "identify",
+          "teacherTitle": "Find the Address Bar",
+          "teacherText": "Students identify the long Address Bar before typing into it.",
+          "teacherPrompt": "Ask: “Where would you click before typing a website?”",
+          "studentTitle": "Find the Address Bar",
+          "studentInstruction": "Click the highlighted Address Bar.",
+          "studentMode": "identify",
+          "targetControl": "btn-address-bar",
+          "completionMessage": "You found the Address Bar!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [
+            "btn-address-bar"
+          ],
+          "identifyControl": "btn-address-bar",
+          "highlightControl": "btn-address-bar",
+          "highlightLabel": "Address Bar",
+          "browserHistory": [
+            "home"
+          ],
+          "browserHistoryIndex": 0
+        },
+        {
+          "id": "step-3-address-bar",
+          "title": "Watch: Click, Type, Enter",
+          "section": "Watch It Work",
           "type": "demonstration",
-          "placeholderDescription": "Learn how typing an address leads directly to a website."
+          "teacherTitle": "Watch: Click, Type, Enter",
+          "teacherText": "Model the three-step routine: click the Address Bar, type nasa.gov, then press Enter.",
+          "teacherPrompt": "Have students repeat: “Click, Type, Enter.”",
+          "studentTitle": "Watch: Click, Type, Enter",
+          "studentInstruction": "Watch the cursor click the Address Bar, type nasa.gov, and press Enter.",
+          "studentMode": "observe",
+          "targetControl": null,
+          "completionMessage": "Now you are ready to try!",
+          "allowStudentInteraction": false,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [],
+          "demonstration": "address-bar-cycle",
+          "browserHistory": [
+            "home"
+          ],
+          "browserHistoryIndex": 0
         },
         {
-          "id": "guided-practice",
-          "title": "Guided Practice",
-          "type": "practice",
-          "placeholderDescription": "Click inside the address bar to select the text."
+          "id": "step-4-address-bar",
+          "title": "Go to a Website",
+          "section": "Guided Practice",
+          "type": "guided-practice",
+          "teacherTitle": "Go to nasa.gov",
+          "teacherText": "Students use the Address Bar to go directly to the simulated NASA website.",
+          "teacherPrompt": "Say: “Click the Address Bar, type nasa.gov, then press Enter.”",
+          "studentTitle": "Go to nasa.gov",
+          "studentInstruction": "Click the Address Bar. Type nasa.gov. Press Enter.",
+          "studentMode": "interact",
+          "targetControl": "btn-address-bar",
+          "completionMessage": "Excellent! You used a web address to go directly to NASA!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [
+            "btn-address-bar"
+          ],
+          "highlightControl": "btn-address-bar",
+          "highlightLabel": "Address Bar",
+          "expectedActions": [
+            "address-go"
+          ],
+          "expectedPages": [
+            "nasa"
+          ],
+          "expectedValues": [
+            "nasa.gov"
+          ],
+          "browserHistory": [
+            "home"
+          ],
+          "browserHistoryIndex": 0
         },
         {
-          "id": "student-challenge",
-          "title": "Student Challenge",
-          "type": "challenge",
-          "placeholderDescription": "Identify whether a web address begins with https."
+          "id": "step-5-address-bar",
+          "title": "Search with the Address Bar",
+          "section": "Guided Practice",
+          "type": "guided-practice",
+          "teacherTitle": "Search for Ocean Animals",
+          "teacherText": "The Address Bar can also search. Students type words instead of a website address.",
+          "teacherPrompt": "Say: “This time we are searching for a topic, not typing a website.”",
+          "studentTitle": "Search for Ocean Animals",
+          "studentInstruction": "Click the Address Bar. Type ocean animals. Press Enter.",
+          "instructionHighlights": ["ocean animals"],
+          "studentMode": "interact",
+          "targetControl": "btn-address-bar",
+          "completionMessage": "Great! You used the Address Bar to search!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [
+            "btn-address-bar"
+          ],
+          "highlightControl": "btn-address-bar",
+          "highlightLabel": "Address Bar",
+          "expectedActions": [
+            "address-search"
+          ],
+          "expectedPages": [
+            "search"
+          ],
+          "expectedValues": [
+            "ocean animals"
+          ],
+          "browserHistory": [
+            "home"
+          ],
+          "browserHistoryIndex": 0
+        },
+        {
+          "id": "step-6-address-bar",
+          "title": "Replace the Old Address",
+          "section": "Guided Practice",
+          "type": "guided-practice",
+          "teacherTitle": "Replace the Current Address",
+          "teacherText": "Clicking the Address Bar selects the current address. Students can type something new without erasing it one letter at a time.",
+          "teacherPrompt": "Point out the blue selection and say: “When it is selected, just start typing.”",
+          "studentTitle": "Replace the Old Address",
+          "studentInstruction": "You are on NASA. Click the Address Bar, type space facts, and press Enter.",
+          "instructionHighlights": ["space facts"],
+          "studentMode": "interact",
+          "targetControl": "btn-address-bar",
+          "completionMessage": "Nice work! You replaced the old address without backspacing through it!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [
+            "btn-address-bar"
+          ],
+          "highlightControl": "btn-address-bar",
+          "highlightLabel": "Address Bar",
+          "expectedActions": [
+            "address-search"
+          ],
+          "expectedPages": [
+            "search"
+          ],
+          "expectedValues": [
+            "space facts"
+          ],
+          "browserHistory": [
+            "home",
+            "nasa"
+          ],
+          "browserHistoryIndex": 1
+        },
+        {
+          "id": "step-7-address-bar",
+          "title": "Address Bar Challenge",
+          "section": "Student Challenge",
+          "type": "independent-challenge",
+          "teacherTitle": "Address Bar Challenge",
+          "teacherText": "Students first visit nasa.gov, then use the same Address Bar to search for ocean animals without highlights.",
+          "teacherPrompt": "Say: “Go to NASA. Then search for ocean animals.”",
+          "studentTitle": "Address Bar Challenge",
+          "studentInstruction": "Go to nasa.gov. Then search for ocean animals.",
+          "instructionHighlights": ["nasa.gov", "ocean animals"],
+          "studentMode": "interact",
+          "targetControl": null,
+          "completionMessage": "Outstanding! You can use the Address Bar for websites and searches!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [
+            "btn-address-bar"
+          ],
+          "expectedActions": [
+            "address-go",
+            "address-search"
+          ],
+          "expectedPages": [
+            "nasa",
+            "search"
+          ],
+          "expectedValues": [
+            "nasa.gov",
+            "ocean animals"
+          ],
+          "intermediateMessages": [
+            "NASA opened! Now click the Address Bar and search for ocean animals."
+          ],
+          "browserHistory": [
+            "home"
+          ],
+          "browserHistoryIndex": 0
+        },
+        {
+          "id": "step-8-address-bar",
+          "title": "Address Bar Complete",
+          "section": "Lesson Complete",
+          "type": "summary",
+          "teacherTitle": "Address Bar Mastered!",
+          "teacherText": "Review the two jobs of the Address Bar: go directly to a website or search for information.",
+          "teacherPrompt": "Have students say the routine together: “Click, Type, Enter.”",
+          "studentTitle": "Lesson Complete!",
+          "studentInstruction": "The Address Bar can open a website or search. Remember: Click, Type, Enter.",
+          "studentMode": "summary",
+          "targetControl": null,
+          "completionMessage": "Lesson Complete! You mastered the Address Bar!",
+          "allowStudentInteraction": false,
+          "presentationView": "completion",
+          "startState": "restored",
+          "allowedControls": []
         }
-      ]
+      ],
+      "description": "Use the Address Bar to visit websites and search for information.",
+      "shortDescription": "Click, type, and press Enter to visit a website or search.",
+      "hasCompleteLesson": true
     },
     {
       "id": "new-tab",

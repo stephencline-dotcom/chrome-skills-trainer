@@ -17,6 +17,7 @@ import { CloseDemonstration } from './close-demonstration.js';
 import { BackForwardDemonstration } from './back-forward-demonstration.js';
 import { ReloadDemonstration } from './reload-demonstration.js';
 import { TabDemonstration } from './tab-demonstration.js';
+import { AddressBarDemonstration } from './address-bar-demonstration.js';
 
 export class StudentLesson {
   /**
@@ -135,7 +136,8 @@ export class StudentLesson {
       'switch-tab-cycle': TabDemonstration,
       'close-tab-cycle': TabDemonstration,
       'reload-cycle': ReloadDemonstration,
-      'back-forward-cycle': BackForwardDemonstration
+      'back-forward-cycle': BackForwardDemonstration,
+      'address-bar-cycle': AddressBarDemonstration
     }[demonstrationType] || MinimizeDemonstration;
 
     this.demo = new DemonstrationClass({
@@ -149,6 +151,11 @@ export class StudentLesson {
       forwardBtnEl: this.browserNavigator?.forwardButton,
       browserNavigator: this.browserNavigator,
       reloadBtnEl: this.browserNavigator?.reloadButton,
+      addressBarEl: getSimulatorControlElement(
+        'address-bar'
+      ),
+      addressElement:
+        this.browserNavigator?.addressElement,
       cursorLayer: document.body,
       onCaption: (text) => this.setDemoCaption(text)
     });
@@ -489,9 +496,52 @@ export class StudentLesson {
 
     if (!this.bodyEl) return;
 
+    const escapeInstructionHtml = (value) =>
+      String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+
+    let instructionHtml =
+      escapeInstructionHtml(step.studentInstruction);
+
+    const instructionHighlights =
+      Array.isArray(step.instructionHighlights)
+        ? step.instructionHighlights
+        : [];
+
+    instructionHighlights.forEach((phrase) => {
+      const safePhrase =
+        escapeInstructionHtml(phrase);
+
+      const pattern = safePhrase.replace(
+        /[.*+?^${}()|[\\]\\]/g,
+        '\\$&'
+      );
+
+      instructionHtml = instructionHtml.replace(
+        new RegExp(pattern, 'gi'),
+        (match) => `
+          <mark
+            style="
+              background: #fef08a;
+              color: #713f12;
+              font-weight: 800;
+              padding: 0.08em 0.3em;
+              border-radius: 0.3em;
+              box-decoration-break: clone;
+              -webkit-box-decoration-break: clone;
+            "
+          >${match}</mark>
+        `
+      );
+    });
+
     let contentHtml = `
       <p class="instruction-body-text" id="instruction-body-text">
-        ${step.studentInstruction}
+        ${instructionHtml}
       </p>
     `;
 
@@ -649,8 +699,40 @@ export class StudentLesson {
     const expectedAction = step.expectedActions[expectedIndex];
 
     if (action !== expectedAction) return;
-    const expectedPage = step.expectedPages?.[expectedIndex];
-    if (expectedPage && e.detail?.pageId !== expectedPage) return;
+    const expectedPage =
+      step.expectedPages?.[expectedIndex];
+
+    if (
+      expectedPage &&
+      e.detail?.pageId !== expectedPage
+    ) {
+      return;
+    }
+
+    const expectedValue =
+      step.expectedValues?.[expectedIndex];
+
+    if (expectedValue) {
+      const actualValue = String(
+        e.detail?.value || ''
+      )
+        .trim()
+        .toLowerCase();
+
+      if (
+        actualValue !==
+        String(expectedValue)
+          .trim()
+          .toLowerCase()
+      ) {
+        this.showFeedback(
+          'try-again',
+          `Type ${expectedValue} and press Enter.`
+        );
+
+        return;
+      }
+    }
 
     this.challengeSequence.push(action);
 

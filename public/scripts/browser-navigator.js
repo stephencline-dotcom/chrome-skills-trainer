@@ -223,7 +223,7 @@ export class BrowserNavigator {
     this.submitAddress(this.addressElement?.value || '');
   }
 
-  submitAddress(rawValue) {
+  submitAddress(rawValue, emitEvent = true) {
     const value = String(rawValue || '').trim();
     if (!value) return;
 
@@ -262,12 +262,17 @@ export class BrowserNavigator {
 
     this.render();
 
-    this.dispatch('browser:address-submitted', {
-      control: 'btn-address-bar',
-      action,
-      pageId,
-      value
-    });
+    if (emitEvent) {
+      this.dispatch(
+        'browser:address-submitted',
+        {
+          control: 'btn-address-bar',
+          action,
+          pageId,
+          value
+        }
+      );
+    }
   }
 
   escapeHtml(value) {
@@ -682,6 +687,311 @@ export class BrowserNavigator {
                         Octopuses have eight arms, excellent
                         camouflage, and are known for solving
                         problems.
+                      </p>
+                    </section>
+                  `
+                  : this.searchQuery.trim().toLowerCase() ===
+                    'space facts'
+                  ? `
+                    <section
+                      style="
+                        margin-bottom: 22px;
+                        border: 1px solid #dadce0;
+                        border-radius: 12px;
+                        padding: 18px;
+                      "
+                    >
+                      <div
+                        style="
+                          color: #5f6368;
+                          font-size: 13px;
+                          margin-bottom: 8px;
+                        "
+                      >
+                        Featured answer
+                      </div>
+
+                      <h2
+                        style="
+                          margin: 0 0 10px;
+                          font-size: 21px;
+                          font-weight: 500;
+                          color: #202124;
+                        "
+                      >
+                        Quick Space Facts
+                      </h2>
+
+                      <ul
+                        style="
+                          margin: 0;
+                          padding-left: 22px;
+                          line-height: 1.65;
+                          font-size: 14px;
+                        "
+                      >
+                        <li>
+                          Earth is one of eight planets
+                          orbiting the Sun.
+                        </li>
+                        <li>
+                          The Moon takes about one month
+                          to orbit Earth.
+                        </li>
+                        <li>
+                          Jupiter is the largest planet
+                          in our solar system.
+                        </li>
+                        <li>
+                          Stars are giant balls of
+                          extremely hot gas.
+                        </li>
+                      </ul>
+                    </section>
+
+                    <section
+                      style="
+                        margin-bottom: 25px;
+                      "
+                    >
+                      <h3
+                        style="
+                          margin: 0 0 12px;
+                          font-size: 18px;
+                          font-weight: 500;
+                        "
+                      >
+                        Images for space facts
+                      </h3>
+
+                      <div
+                        style="
+                          display: grid;
+                          grid-template-columns:
+                            repeat(4, minmax(0, 1fr));
+                          gap: 9px;
+                        "
+                      >
+                        <div
+                          style="
+                            height: 100px;
+                            border-radius: 10px;
+                            background:
+                              radial-gradient(
+                                circle at 50% 50%,
+                                #fbbf24 0 22%,
+                                #f97316 23% 34%,
+                                #111827 35%
+                              );
+                            display: flex;
+                            align-items: flex-end;
+                            justify-content: center;
+                            padding: 8px;
+                            color: white;
+                            font-size: 11px;
+                            font-weight: 700;
+                          "
+                        >
+                          The Sun
+                        </div>
+
+                        <div
+                          style="
+                            height: 100px;
+                            border-radius: 10px;
+                            background:
+                              radial-gradient(
+                                circle at 52% 45%,
+                                #60a5fa 0 25%,
+                                #15803d 26% 32%,
+                                #1e3a8a 33% 38%,
+                                #020617 39%
+                              );
+                            display: flex;
+                            align-items: flex-end;
+                            justify-content: center;
+                            padding: 8px;
+                            color: white;
+                            font-size: 11px;
+                            font-weight: 700;
+                          "
+                        >
+                          Earth
+                        </div>
+
+                        <div
+                          style="
+                            height: 100px;
+                            border-radius: 10px;
+                            background:
+                              radial-gradient(
+                                circle at 50% 46%,
+                                #d6d3d1 0 28%,
+                                #78716c 29% 34%,
+                                #020617 35%
+                              );
+                            display: flex;
+                            align-items: flex-end;
+                            justify-content: center;
+                            padding: 8px;
+                            color: white;
+                            font-size: 11px;
+                            font-weight: 700;
+                          "
+                        >
+                          The Moon
+                        </div>
+
+                        <div
+                          style="
+                            height: 100px;
+                            border-radius: 10px;
+                            background:
+                              linear-gradient(
+                                #020617,
+                                #172554
+                              );
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            flex-direction: column;
+                            color: white;
+                            font-size: 42px;
+                          "
+                        >
+                          🚀
+                          <span
+                            style="
+                              margin-top: 2px;
+                              font-size: 11px;
+                              font-weight: 700;
+                            "
+                          >
+                            Exploration
+                          </span>
+                        </div>
+                      </div>
+                    </section>
+
+                    <section
+                      style="
+                        margin-bottom: 24px;
+                      "
+                    >
+                      <div
+                        style="
+                          font-size: 13px;
+                          color: #4d5156;
+                          margin-bottom: 4px;
+                        "
+                      >
+                        spaceplace.nasa.local › space
+                      </div>
+
+                      <h2
+                        style="
+                          color: #1a0dab;
+                          font-size: 20px;
+                          font-weight: 500;
+                          margin: 0 0 6px;
+                        "
+                      >
+                        Space Facts for Kids
+                      </h2>
+
+                      <p
+                        style="
+                          margin: 0;
+                          color: #4d5156;
+                          line-height: 1.5;
+                          font-size: 14px;
+                        "
+                      >
+                        Learn about planets, stars,
+                        galaxies, black holes, and the
+                        spacecraft scientists use to
+                        explore our universe.
+                      </p>
+                    </section>
+
+                    <section
+                      style="
+                        margin-bottom: 24px;
+                      "
+                    >
+                      <div
+                        style="
+                          font-size: 13px;
+                          color: #4d5156;
+                          margin-bottom: 4px;
+                        "
+                      >
+                        kidsastronomy.local › solar-system
+                      </div>
+
+                      <h2
+                        style="
+                          color: #1a0dab;
+                          font-size: 20px;
+                          font-weight: 500;
+                          margin: 0 0 6px;
+                        "
+                      >
+                        10 Amazing Facts About Space
+                      </h2>
+
+                      <p
+                        style="
+                          margin: 0;
+                          color: #4d5156;
+                          line-height: 1.5;
+                          font-size: 14px;
+                        "
+                      >
+                        How big is Jupiter? Why does
+                        Saturn have rings? Discover ten
+                        fascinating facts about our
+                        solar system.
+                      </p>
+                    </section>
+
+                    <section
+                      style="
+                        margin-bottom: 24px;
+                      "
+                    >
+                      <div
+                        style="
+                          font-size: 13px;
+                          color: #4d5156;
+                          margin-bottom: 4px;
+                        "
+                      >
+                        scienceforkids.local › universe
+                      </div>
+
+                      <h2
+                        style="
+                          color: #1a0dab;
+                          font-size: 20px;
+                          font-weight: 500;
+                          margin: 0 0 6px;
+                        "
+                      >
+                        Planets, Stars, and Galaxies
+                      </h2>
+
+                      <p
+                        style="
+                          margin: 0;
+                          color: #4d5156;
+                          line-height: 1.5;
+                          font-size: 14px;
+                        "
+                      >
+                        Explore the solar system and
+                        learn how our Sun is just one
+                        star among billions.
                       </p>
                     </section>
                   `
