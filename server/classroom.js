@@ -58,8 +58,27 @@ module.exports = function registerClassroom(app, express) {
     next();
   }
 
+  const teacherPasswordFile = path.join(
+    __dirname,
+    '../.teacher-password'
+  );
+
+  function getTeacherPassword() {
+    if (process.env.TEACHER_PASSWORD) {
+      return process.env.TEACHER_PASSWORD;
+    }
+
+    try {
+      return fs
+        .readFileSync(teacherPasswordFile, 'utf8')
+        .replace(/\\r?\\n$/, '');
+    } catch {
+      return '';
+    }
+  }
+
   function passwordMatches(value) {
-    const expected = process.env.TEACHER_PASSWORD;
+    const expected = getTeacherPassword();
     if (!expected || typeof value !== 'string') return false;
     const hash = text => crypto.createHash('sha256').update(text).digest();
     return crypto.timingSafeEqual(hash(value), hash(expected));
@@ -70,7 +89,7 @@ module.exports = function registerClassroom(app, express) {
   let retryAfter = 0;
 
   function checkPassword(req, res) {
-    if (!process.env.TEACHER_PASSWORD) {
+    if (!getTeacherPassword()) {
       res.status(503).json({ error: 'Teacher password is not configured.' });
       return false;
     }

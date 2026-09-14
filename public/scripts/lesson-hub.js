@@ -27,6 +27,61 @@ function redirectToTeacherLogin() {
   );
 }
 
+async function signOutTeacher() {
+  const token = localStorage.getItem(
+    TEACHER_TOKEN_KEY
+  );
+
+  const button = document.getElementById(
+    'teacher-sign-out'
+  );
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Signing Out...';
+  }
+
+  try {
+    if (token) {
+      await fetch(
+        '/api/teacher-logout',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+    }
+  } catch (error) {
+    console.error(
+      'Unable to complete teacher logout request:',
+      error
+    );
+  } finally {
+    localStorage.removeItem(
+      TEACHER_TOKEN_KEY
+    );
+
+    window.location.replace(
+      '/teacher-login.html'
+    );
+  }
+}
+
+function attachTeacherSignOut() {
+  const button = document.getElementById(
+    'teacher-sign-out'
+  );
+
+  if (!button) return;
+
+  button.addEventListener(
+    'click',
+    signOutTeacher
+  );
+}
+
 async function requireTeacherSession() {
   const token = localStorage.getItem(
     TEACHER_TOKEN_KEY
@@ -696,6 +751,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     await requireTeacherSession();
 
   if (!authenticated) return;
+
+  attachTeacherSignOut();
 
   const hub = new LessonHub();
   hub.init();

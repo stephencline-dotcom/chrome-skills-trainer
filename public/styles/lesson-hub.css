@@ -45,6 +45,40 @@
   font-weight: 600;
 }
 
+.hub-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.teacher-sign-out-btn {
+  min-height: 32px;
+  padding: 5px 13px;
+  border: 1px solid #cbd5e1;
+  border-radius: 20px;
+  background: #ffffff;
+  color: #475569;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.teacher-sign-out-btn:hover {
+  background-color: #fef2f2;
+  border-color: #fca5a5;
+  color: #b91c1c;
+}
+
+.teacher-sign-out-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
 .connection-indicator {
   display: flex;
   align-items: center;
