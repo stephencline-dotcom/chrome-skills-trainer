@@ -21,6 +21,7 @@ const CHANNEL_NAME = 'chrome-skills-trainer-local-lesson-sync-v1';
 // Supported local sync commands
 export const LOCAL_LESSON_COMMANDS = {
   SET_STEP: 'set-step',
+  SET_LESSON: 'set-lesson',
   SET_DELIVERY_MODE: 'set-delivery-mode',
   RESET_LESSON: 'reset-lesson',
   REPLAY_DEMONSTRATION: 'replay-demonstration',

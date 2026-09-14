@@ -236,8 +236,12 @@ export class WindowManager {
    */
   handleMaximizeToggle() {
     const action = this.isMaximized ? 'restore' : 'maximize';
-    this.dispatchEvent('window:control-attempt', { control: 'btn-maximize', action, allowed: this.canInteract('btn-maximize') });
-    if (!this.canInteract('btn-maximize')) return;
+    const attemptEvent = this.dispatchEvent('window:control-attempt', {
+      control: 'btn-maximize',
+      action,
+      allowed: this.canInteract('btn-maximize')
+    });
+    if (attemptEvent.defaultPrevented || !this.canInteract('btn-maximize')) return;
     if (this.isClosed) return;
 
     if (this.isMinimized) {

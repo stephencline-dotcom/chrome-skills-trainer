@@ -12,6 +12,7 @@ import { SimulatorHighlight } from './simulator-highlight.js';
 import { targetControlToControlKey, getSimulatorControlElement, getControlLabel } from './simulator-controls.js';
 import { LocalLessonChannel, LOCAL_LESSON_COMMANDS, DELIVERY_MODES } from './local-lesson-channel.js';
 import { MinimizeDemonstration } from './minimize-demonstration.js';
+import { MaximizeDemonstration } from './maximize-demonstration.js';
 
 export class StudentLesson {
   /**
@@ -101,9 +102,17 @@ export class StudentLesson {
 
     // Shared "Watch It Work" demonstration controller, reused identically by
     // Classroom Presentation and Teacher Lesson Control's preview.
-    this.demo = new MinimizeDemonstration({
+    const demonstrationType = this.skill.lessonSections.find(
+      (step) => step.demonstration
+    )?.demonstration;
+    const DemonstrationClass = demonstrationType === 'maximize-cycle'
+      ? MaximizeDemonstration
+      : MinimizeDemonstration;
+
+    this.demo = new DemonstrationClass({
       windowEl: this.windowManager.windowEl,
       minimizeBtnEl: this.windowManager.btnMinimize,
+      maximizeBtnEl: this.windowManager.btnMaximize,
       taskbarBtnEl: this.windowManager.taskbarBtn,
       cursorLayer: document.body,
       onCaption: (text) => this.setDemoCaption(text)
@@ -127,7 +136,21 @@ export class StudentLesson {
    * Handle incoming local sync messages from Teacher Control.
    */
   handleChannelMessage(data) {
-    if (!data || data.skillId !== this.skill.id) return;
+    if (!data) return;
+
+    if (
+      data.command === LOCAL_LESSON_COMMANDS.SET_LESSON &&
+      data.skillId &&
+      data.skillId !== this.skill.id
+    ) {
+      const nextUrl = new URL(window.location.href);
+      nextUrl.searchParams.set('skill', data.skillId);
+      nextUrl.searchParams.set('lesson', 'active');
+      window.location.replace(nextUrl);
+      return;
+    }
+
+    if (data.skillId !== this.skill.id) return;
 
     switch (data.command) {
       case LOCAL_LESSON_COMMANDS.TEACHER_STATE:
@@ -365,7 +388,10 @@ export class StudentLesson {
     if (controlKey) {
       const targetEl = getSimulatorControlElement(controlKey);
       if (targetEl) {
-        this.highlight.show(targetEl, getControlLabel(controlKey));
+        this.highlight.show(
+          targetEl,
+          step.highlightLabel || getControlLabel(controlKey)
+        );
       }
     }
 
@@ -374,7 +400,7 @@ export class StudentLesson {
 
     // 5. Step 3: play the same reusable cursor demonstration used by
     // Classroom Presentation and Teacher Lesson Control.
-    if (step.demonstration === 'minimize-cycle') {
+    if (step.demonstration === 'minimize-cycle' || step.demonstration === 'maximize-cycle') {
       this.demo.play();
     }
 
@@ -416,24 +442,28 @@ export class StudentLesson {
       </p>
     `;
 
-    // Special quiz rendering for Step 7
-    if (step.studentMode === 'quiz') {
+    // Render data-driven concept-check choices.
+    if (step.presentationView === 'quiz' && step.quiz?.choices) {
+      const choicesHtml = step.quiz.choices.map((choice) => `
+        <button
+          type="button"
+          class="quiz-option-btn"
+          data-quiz-choice="${choice.id}"
+        >
+          <span style="font-size: 1.4rem;">${choice.icon || ''}</span>
+          <span>${choice.label}</span>
+        </button>
+      `).join('');
+
       contentHtml += `
         <div class="quiz-container">
-          <button type="button" id="quiz-btn-minimize" class="quiz-option-btn">
-            <span style="font-size: 1.4rem;">➖</span>
-            <span>Minimize</span>
-          </button>
-          <button type="button" id="quiz-btn-close" class="quiz-option-btn">
-            <span style="font-size: 1.4rem;">❌</span>
-            <span>Close</span>
-          </button>
+          ${choicesHtml}
         </div>
       `;
     }
 
-    // Completion state / summary rendering for Step 8
-    if (step.id === 'step-8-lesson-complete') {
+    // Data-driven completion state.
+    if (step.presentationView === 'completion') {
       const isIndependent = this.deliveryMode === DELIVERY_MODES.INDEPENDENT;
       const actionsHtml = isIndependent
         ? `
@@ -447,36 +477,44 @@ export class StudentLesson {
       contentHtml += `
         <div class="celebration-banner">
           <h3>🎉 Lesson Complete!</h3>
-          <p>You mastered the <strong>Minimize</strong> button!</p>
+          <p>You mastered the <strong>${this.skill.name}</strong> button!</p>
           ${actionsHtml}
         </div>
       `;
     }
 
     this.bodyEl.innerHTML = contentHtml;
-    this.demoCaptionEl = step.id === 'step-3-watch-it-work' ? document.getElementById('instruction-body-text') : null;
+    this.demoCaptionEl = step.demonstration
+      ? document.getElementById('instruction-body-text')
+      : null;
 
-    // Attach Step 7 Quiz handlers if present
-    if (step.studentMode === 'quiz') {
-      const btnMin = document.getElementById('quiz-btn-minimize');
-      const btnClose = document.getElementById('quiz-btn-close');
+    // Attach data-driven quiz handlers.
+    if (step.presentationView === 'quiz' && step.quiz?.choices) {
+      this.bodyEl.querySelectorAll('[data-quiz-choice]').forEach((button) => {
+        button.onclick = () => {
+          const choice = step.quiz.choices.find(
+            (item) => item.id === button.dataset.quizChoice
+          );
 
-      if (btnMin) {
-        btnMin.onclick = () => {
-          btnMin.classList.add('is-correct');
-          if (btnClose) btnClose.classList.remove('is-incorrect');
-          this.showFeedback('success', step.completionMessage);
-          this.engine.setStepCompleted(step.id, true);
-          this.renderModeBar();
+          if (!choice) return;
+
+          if (choice.correct) {
+            this.bodyEl.querySelectorAll('[data-quiz-choice]').forEach(
+              (item) => item.classList.remove('is-incorrect')
+            );
+            button.classList.add('is-correct');
+            this.showFeedback('success', step.completionMessage);
+            this.engine.setStepCompleted(step.id, true);
+            this.renderModeBar();
+          } else {
+            button.classList.add('is-incorrect');
+            this.showFeedback(
+              'try-again',
+              choice.feedback || 'Try another answer.'
+            );
+          }
         };
-      }
-
-      if (btnClose) {
-        btnClose.onclick = () => {
-          btnClose.classList.add('is-incorrect');
-          this.showFeedback('try-again', 'Close shuts the window completely. Try Minimize!');
-        };
-      }
+      });
     }
 
     // Restart Lesson (independent mode only, Step 8)
@@ -486,7 +524,10 @@ export class StudentLesson {
     }
 
     // Auto-complete presentation observation steps that require no student action
-    if (step.allowStudentInteraction === false && step.id !== 'step-8-lesson-complete') {
+    if (
+      step.allowStudentInteraction === false &&
+      step.presentationView !== 'completion'
+    ) {
       this.engine.setStepCompleted(step.id, true);
     }
   }

@@ -218,30 +218,195 @@
       "simulatorControl": "Top right window control button (Square box) or double-click title bar.",
       "lessonSections": [
         {
-          "id": "meet-the-button",
-          "title": "Meet the Button",
-          "type": "presentation",
-          "placeholderDescription": "Find the square maximize button next to the close button."
+          "id": "step-1-meet-maximize",
+          "title": "Meet Maximize",
+          "section": "Meet the Button",
+          "type": "introduction",
+          "teacherTitle": "Meet the Maximize Button",
+          "teacherText": "The Maximize button looks like a square in the top-right corner. It makes a window grow to fill the available desktop.",
+          "teacherPrompt": "Point to the square beside Minimize. Ask: “Which button looks like one large window?”",
+          "studentTitle": "Meet the Maximize Button",
+          "studentInstruction": "Look for the square button in the top-right corner of the Chrome window.",
+          "studentMode": "observe",
+          "targetControl": null,
+          "completionMessage": "Ready to find Maximize!",
+          "allowStudentInteraction": false,
+          "presentationView": "symbol",
+          "startState": "restored",
+          "allowedControls": []
         },
         {
-          "id": "watch-it-work",
+          "id": "step-2-find-maximize",
+          "title": "Find the Button",
+          "section": "Meet the Button",
+          "type": "identify",
+          "teacherTitle": "Locate the Maximize Button",
+          "teacherText": "Help students locate the square Maximize button between Minimize and Close.",
+          "teacherPrompt": "Ask: “Can you find the highlighted square button?”",
+          "studentTitle": "Find the Maximize Button",
+          "studentInstruction": "Click the highlighted square Maximize button.",
+          "studentMode": "identify",
+          "targetControl": "btn-maximize",
+          "completionMessage": "Great job! You found the Maximize button!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "highlightControl": "btn-maximize",
+          "allowedControls": [
+            "btn-maximize"
+          ],
+          "identifyControl": "btn-maximize"
+        },
+        {
+          "id": "step-3-watch-maximize",
           "title": "Watch It Work",
+          "section": "Watch It Work",
           "type": "demonstration",
-          "placeholderDescription": "See how maximizing gives you the largest possible view of your browser."
+          "teacherTitle": "Watch Maximize and Restore Down",
+          "teacherText": "Maximize makes Chrome fill the desktop. The same button then changes into Restore Down, which returns Chrome to its smaller size.",
+          "teacherPrompt": "Point out how the square icon changes after Chrome becomes maximized.",
+          "studentTitle": "Watch Chrome Grow and Return",
+          "studentInstruction": "Watch Maximize fill the desktop, then watch Restore Down return the window to its smaller size.",
+          "studentMode": "observe",
+          "targetControl": null,
+          "completionMessage": "Now you are ready to try it!",
+          "allowStudentInteraction": false,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [],
+          "demonstration": "maximize-cycle"
         },
         {
-          "id": "guided-practice",
-          "title": "Guided Practice",
-          "type": "practice",
-          "placeholderDescription": "Maximize the window, then practice double-clicking the title bar."
+          "id": "step-4-guided-maximize",
+          "title": "Guided Practice — Maximize",
+          "section": "Guided Practice",
+          "type": "guided-practice",
+          "teacherTitle": "Practice: Maximize Chrome",
+          "teacherText": "Students click Maximize to make Chrome fill the available desktop.",
+          "teacherPrompt": "Say: “Click the square Maximize button.”",
+          "studentTitle": "Maximize the Window",
+          "studentInstruction": "Click the square Maximize button to make Chrome fill the desktop.",
+          "studentMode": "interact",
+          "targetControl": "btn-maximize",
+          "completionMessage": "Excellent! Chrome now fills the desktop!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "highlightControl": "btn-maximize",
+          "allowedControls": [
+            "btn-maximize"
+          ],
+          "expectedActions": [
+            "maximize"
+          ]
         },
         {
-          "id": "student-challenge",
-          "title": "Student Challenge",
-          "type": "challenge",
-          "placeholderDescription": "Maximize Chrome so no desktop wallpaper is visible on the sides."
+          "id": "step-5-guided-restore-down",
+          "title": "Guided Practice — Restore Down",
+          "section": "Guided Practice",
+          "type": "guided-practice",
+          "teacherTitle": "Practice: Restore Down",
+          "teacherText": "When Chrome is maximized, the button changes to Restore Down. Clicking it returns the window to its previous size.",
+          "teacherPrompt": "Say: “Click Restore Down to make Chrome a smaller window again.”",
+          "studentTitle": "Restore the Window Down",
+          "studentInstruction": "Click the Restore Down button to return Chrome to its smaller size.",
+          "studentMode": "interact",
+          "targetControl": "btn-maximize",
+          "completionMessage": "Nice work! Chrome is a smaller window again!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "maximized",
+          "highlightControl": "btn-maximize",
+          "highlightLabel": "Restore Down",
+          "allowedControls": [
+            "btn-maximize"
+          ],
+          "expectedActions": [
+            "restore"
+          ]
+        },
+        {
+          "id": "step-6-maximize-challenge",
+          "title": "Independent Challenge",
+          "section": "Student Challenge",
+          "type": "independent-challenge",
+          "teacherTitle": "Student Challenge: Maximize and Restore",
+          "teacherText": "Students maximize Chrome and then restore it down without visual highlights.",
+          "teacherPrompt": "Say: “Make Chrome fill the desktop, then return it to a smaller window.”",
+          "studentTitle": "Maximize & Restore Challenge",
+          "studentInstruction": "Make Chrome fill the desktop, then return it to its smaller size.",
+          "studentMode": "interact",
+          "targetControl": "sequence",
+          "completionMessage": "Outstanding! You mastered Maximize and Restore Down!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [
+            "btn-maximize"
+          ],
+          "expectedActions": [
+            "maximize",
+            "restore"
+          ],
+          "intermediateMessages": [
+            "Great! Now click Restore Down to make the window smaller again."
+          ]
+        },
+        {
+          "id": "step-7-maximize-concept-check",
+          "title": "Maximize or Minimize?",
+          "section": "Student Challenge",
+          "type": "summary",
+          "teacherTitle": "Concept Check: Maximize vs Minimize",
+          "teacherText": "Review that Maximize fills the desktop while Minimize hides the window in the taskbar.",
+          "teacherPrompt": "Ask: “Which button makes a window fill the desktop?”",
+          "studentTitle": "Maximize or Minimize?",
+          "studentInstruction": "Which button makes a window grow to fill the desktop?",
+          "studentMode": "quiz",
+          "targetControl": "quiz-maximize",
+          "completionMessage": "Correct! Maximize makes the window fill the desktop.",
+          "allowStudentInteraction": true,
+          "presentationView": "quiz",
+          "startState": "restored",
+          "allowedControls": [],
+          "quiz": {
+            "choices": [
+              {
+                "id": "maximize",
+                "label": "Maximize",
+                "icon": "🔲",
+                "correct": true
+              },
+              {
+                "id": "minimize",
+                "label": "Minimize",
+                "icon": "➖",
+                "correct": false,
+                "feedback": "Minimize hides the window. Try Maximize!"
+              }
+            ]
+          }
+        },
+        {
+          "id": "step-8-maximize-complete",
+          "title": "Lesson Complete",
+          "section": "Student Challenge",
+          "type": "summary",
+          "teacherTitle": "Maximize Skill Mastered!",
+          "teacherText": "Celebrate success and reinforce that Maximize fills the available desktop.",
+          "teacherPrompt": "Congratulate students on learning Maximize and Restore Down.",
+          "studentTitle": "Lesson Complete!",
+          "studentInstruction": "Maximize makes a window fill the desktop. Excellent job!",
+          "studentMode": "summary",
+          "targetControl": null,
+          "completionMessage": "Lesson Complete! You are a Maximize master!",
+          "allowStudentInteraction": false,
+          "presentationView": "completion",
+          "startState": "restored",
+          "allowedControls": []
         }
-      ]
+      ],
+      "hasCompleteLesson": true
     },
     {
       "id": "restore-down",

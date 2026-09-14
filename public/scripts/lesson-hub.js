@@ -9,6 +9,7 @@ import { lessonCatalog } from './lesson-catalog.js';
 import { LessonEngine } from './lesson-engine.js';
 import { LocalLessonChannel, LOCAL_LESSON_COMMANDS, DELIVERY_MODES } from './local-lesson-channel.js';
 import { MinimizeDemonstration } from './minimize-demonstration.js';
+import { MaximizeDemonstration } from './maximize-demonstration.js';
 
 class LessonHub {
   constructor() {
@@ -337,6 +338,15 @@ class LessonHub {
 
     this.updateSlideView();
     this.updateSidebarSteps();
+
+    this.channel.publish({
+      command: LOCAL_LESSON_COMMANDS.SET_LESSON,
+      skillId: this.selectedSkill.id,
+      stepId: this.engine.getCurrentStep()?.id,
+      stepIndex: this.engine.getCurrentStepIndex(),
+      deliveryMode: this.deliveryMode
+    });
+
     this.publishTeacherState();
   }
 
@@ -400,7 +410,7 @@ class LessonHub {
     if (!step) return;
 
     let demoStageHtml = '';
-    if (step.id === 'step-3-watch-it-work') {
+    if (step.demonstration) {
       demoStageHtml = `
         <div class="demo-stage">
           <div class="demo-mini-desktop">
@@ -409,7 +419,7 @@ class LessonHub {
                 <span style="font-size: 0.65rem; font-weight: bold; color: #334155;">Chrome Skills Trainer</span>
                 <div class="demo-mini-controls">
                   <button type="button" id="demo-mini-btn-minimize" class="demo-mini-btn demo-mini-btn-min" tabindex="-1" aria-hidden="true"></button>
-                  <span class="demo-mini-btn"></span>
+                  <button type="button" id="demo-mini-btn-maximize" class="demo-mini-btn demo-mini-btn-max" tabindex="-1" aria-hidden="true">□</button>
                   <span class="demo-mini-btn"></span>
                 </div>
               </div>
@@ -493,19 +503,32 @@ class LessonHub {
       this.teacherDemo = null;
     }
 
-    if (step.id === 'step-3-watch-it-work') {
+    if (step.demonstration) {
       const miniWindow = document.getElementById('demo-mini-window');
       const miniMinimizeBtn = document.getElementById('demo-mini-btn-minimize');
+      const miniMaximizeBtn = document.getElementById('demo-mini-btn-maximize');
       const miniTaskbarBtn = document.getElementById('demo-mini-taskbar-btn');
       const miniCaptionEl = document.getElementById('demo-caption-mini');
       const replayBtn = document.getElementById('replay-demo-btn');
 
-      if (miniWindow && miniMinimizeBtn && miniTaskbarBtn) {
-        this.teacherDemo = new MinimizeDemonstration({
+      if (
+        miniWindow &&
+        miniMinimizeBtn &&
+        miniMaximizeBtn &&
+        miniTaskbarBtn
+      ) {
+        const DemonstrationClass =
+          step.demonstration === 'maximize-cycle'
+            ? MaximizeDemonstration
+            : MinimizeDemonstration;
+
+        this.teacherDemo = new DemonstrationClass({
           windowEl: miniWindow,
           minimizeBtnEl: miniMinimizeBtn,
+          maximizeBtnEl: miniMaximizeBtn,
           taskbarBtnEl: miniTaskbarBtn,
           cursorLayer: document.body,
+          maximizeBottomInset: 28,
           onCaption: (text) => {
             if (miniCaptionEl) miniCaptionEl.textContent = text;
           }

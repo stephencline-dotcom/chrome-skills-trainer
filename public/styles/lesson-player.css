@@ -783,3 +783,13 @@
   color: #64748b;
   margin-top: 6px;
 }
+
+
+.demo-mini-btn-max {
+  border-radius: 3px;
+  background-color: #3b82f6;
+  color: #ffffff;
+  font-size: 11px;
+  line-height: 1;
+  cursor: default;
+}

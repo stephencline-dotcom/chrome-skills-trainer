@@ -19,6 +19,7 @@ import { LocalLessonChannel, LOCAL_LESSON_COMMANDS } from './local-lesson-channe
 import { SimulatorHighlight } from './simulator-highlight.js';
 import { targetControlToControlKey, getSimulatorControlElement, getControlLabel } from './simulator-controls.js';
 import { MinimizeDemonstration } from './minimize-demonstration.js';
+import { MaximizeDemonstration } from './maximize-demonstration.js';
 
 class PresentationController {
   constructor() {
@@ -92,9 +93,17 @@ class PresentationController {
       }
     });
 
-    this.demo = new MinimizeDemonstration({
+    const demonstrationType = this.skill.lessonSections.find(
+      (step) => step.demonstration
+    )?.demonstration;
+    const DemonstrationClass = demonstrationType === 'maximize-cycle'
+      ? MaximizeDemonstration
+      : MinimizeDemonstration;
+
+    this.demo = new DemonstrationClass({
       windowEl: this.windowEl,
       minimizeBtnEl: getSimulatorControlElement('minimize'),
+      maximizeBtnEl: getSimulatorControlElement('maximize'),
       taskbarBtnEl: getSimulatorControlElement('chrome-taskbar'),
       cursorLayer: document.body,
       onCaption: (text) => this.setDemoCaption(text)
@@ -122,7 +131,21 @@ class PresentationController {
   }
 
   handleChannelMessage(data) {
-    if (!data || data.skillId !== this.skill.id) return;
+    if (!data) return;
+
+    if (
+      data.command === LOCAL_LESSON_COMMANDS.SET_LESSON &&
+      data.skillId &&
+      data.skillId !== this.skill.id
+    ) {
+      const nextUrl = new URL(window.location.href);
+      nextUrl.searchParams.set('skill', data.skillId);
+      nextUrl.searchParams.set('lesson', 'active');
+      window.location.replace(nextUrl);
+      return;
+    }
+
+    if (data.skillId !== this.skill.id) return;
 
     if (data.command === LOCAL_LESSON_COMMANDS.TEACHER_STATE || data.command === LOCAL_LESSON_COMMANDS.SET_STEP) {
       this.connectedToTeacher = true;
@@ -230,41 +253,57 @@ class PresentationController {
     this.titleEl.textContent = `${this.skill.iconText ? this.skill.iconText + ' ' : ''}${step.studentTitle || step.title}`;
     this.explanationEl.textContent = step.studentInstruction || '';
 
-    switch (step.id) {
-      case 'step-1-meet-minimize':
-        this.symbolBadgeEl.style.display = 'flex';
-        break;
+    const startState = step.startState || 'restored';
 
-      case 'step-2-find-button':
-      case 'step-4-guided-minimize':
-        this.applyControlHighlight('btn-minimize');
-        break;
+    if (startState === 'minimized') {
+      this.windowManager.minimize();
+    } else if (startState === 'maximized') {
+      this.windowManager.maximize();
+    } else if (startState === 'closed') {
+      this.windowManager.close();
+    }
 
-      case 'step-3-watch-it-work':
-        this.demo.play();
-        break;
+    if (step.presentationView === 'symbol') {
+      const icon = this.symbolBadgeEl.querySelector(
+        '.presentation-symbol-icon'
+      );
+      const caption = this.symbolBadgeEl.querySelector(
+        '.presentation-symbol-caption'
+      );
 
-      case 'step-5-guided-restore':
-        this.windowManager.minimize();
-        this.applyControlHighlight('taskbar-chrome-btn');
-        break;
+      if (icon) icon.textContent = this.skill.iconText || '';
+      if (caption) caption.textContent = `The ${this.skill.name} Symbol`;
+      this.symbolBadgeEl.style.display = 'flex';
+    }
 
-      case 'step-6-independent-challenge':
-        // No highlight, no special state - just the instruction
-        break;
+    if (step.highlightControl) {
+      this.applyControlHighlight(step.highlightControl);
+    }
 
-      case 'step-7-concept-check':
-        this.windowEl.style.display = 'none';
-        this.quizDisplayEl.style.display = 'flex';
-        break;
+    if (step.demonstration === 'minimize-cycle' || step.demonstration === 'maximize-cycle') {
+      this.demo.play();
+    }
 
-      case 'step-8-lesson-complete':
-        this.windowEl.style.display = 'none';
-        this.celebrationEl.style.display = 'flex';
-        break;
+    if (step.presentationView === 'quiz') {
+      this.windowEl.style.display = 'none';
+      this.quizDisplayEl.innerHTML = (step.quiz?.choices || [])
+        .map((choice) => `
+          <div class="presentation-quiz-option">
+            <span class="presentation-quiz-icon">${choice.icon || ''}</span>
+            <span>${choice.label}</span>
+          </div>
+        `)
+        .join('');
+      this.quizDisplayEl.style.display = 'flex';
+    }
 
-      default:
-        break;
+    if (step.presentationView === 'completion') {
+      this.windowEl.style.display = 'none';
+      const text = document.getElementById(
+        'presentation-celebration-text'
+      );
+      if (text) text.textContent = step.studentInstruction || '';
+      this.celebrationEl.style.display = 'flex';
     }
 
     // Recenter after any layout-affecting visibility changes
@@ -276,7 +315,10 @@ class PresentationController {
     if (!controlKey) return;
     const el = getSimulatorControlElement(controlKey);
     if (el) {
-      this.highlight.show(el, getControlLabel(controlKey));
+      this.highlight.show(
+        el,
+        this.currentStep?.highlightLabel || getControlLabel(controlKey)
+      );
     }
   }
 }
