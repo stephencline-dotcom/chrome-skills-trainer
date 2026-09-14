@@ -210,12 +210,12 @@
     },
     {
       "id": "maximize",
-      "name": "Maximize",
+      "name": "Maximize & Restore",
       "category": "Window Controls",
       "iconType": "symbol",
       "iconText": "🔲",
-      "shortExplanation": "Expand the window to fill the entire desktop screen.",
-      "simulatorControl": "Top right window control button (Square box) or double-click title bar.",
+      "shortExplanation": "Make a window fill the desktop, then return it to its smaller size.",
+      "simulatorControl": "The square Maximize button changes into Restore Down when the window fills the desktop.",
       "lessonSections": [
         {
           "id": "step-1-meet-maximize",
@@ -407,41 +407,6 @@
         }
       ],
       "hasCompleteLesson": true
-    },
-    {
-      "id": "restore-down",
-      "name": "Restore Down",
-      "category": "Window Controls",
-      "iconType": "symbol",
-      "iconText": "❐",
-      "shortExplanation": "Return a maximized window back to its floating size and position.",
-      "simulatorControl": "Top right window control button (Overlapping squares) when maximized.",
-      "lessonSections": [
-        {
-          "id": "meet-the-button",
-          "title": "Meet the Button",
-          "type": "presentation",
-          "placeholderDescription": "Notice how the maximize button turns into two overlapping squares."
-        },
-        {
-          "id": "watch-it-work",
-          "title": "Watch It Work",
-          "type": "demonstration",
-          "placeholderDescription": "Watch the window shrink back so you can see your desktop wallpaper."
-        },
-        {
-          "id": "guided-practice",
-          "title": "Guided Practice",
-          "type": "practice",
-          "placeholderDescription": "Restore Down the window and drag it slightly to the left."
-        },
-        {
-          "id": "student-challenge",
-          "title": "Student Challenge",
-          "type": "challenge",
-          "placeholderDescription": "Switch between Maximized and Restore Down using the button."
-        }
-      ]
     },
     {
       "id": "close",

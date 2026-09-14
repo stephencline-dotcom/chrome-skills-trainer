@@ -477,7 +477,7 @@ export class StudentLesson {
       contentHtml += `
         <div class="celebration-banner">
           <h3>🎉 Lesson Complete!</h3>
-          <p>You mastered the <strong>${this.skill.name}</strong> button!</p>
+          <p>You mastered the <strong>${this.skill.name}</strong> skill!</p>
           ${actionsHtml}
         </div>
       `;
