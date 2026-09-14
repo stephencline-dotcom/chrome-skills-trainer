@@ -4,6 +4,8 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+require('./server/classroom')(app, express);
+
 // Serve static assets from the public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
