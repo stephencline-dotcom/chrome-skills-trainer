@@ -110,6 +110,10 @@ export class StudentLesson {
     document.addEventListener('browser:forward', this.handleWindowEvent);
     document.addEventListener('browser:navigated', this.handleWindowEvent);
     document.addEventListener('browser:reloaded', this.handleWindowEvent);
+    document.addEventListener(
+      'browser:address-submitted',
+      this.handleWindowEvent
+    );
     document.addEventListener('browser:tab-opened', this.handleWindowEvent);
     document.addEventListener('browser:tab-switched', this.handleWindowEvent);
     document.addEventListener('browser:tab-closed', this.handleWindowEvent);
@@ -611,7 +615,15 @@ export class StudentLesson {
   handleWindowEvent(e) {
     const eventType = e.type;
     const action = e.detail?.action;
-    if (['new-tab', 'switch-tab', 'close-tab'].includes(action)) {
+    if (
+      [
+        'new-tab',
+        'switch-tab',
+        'close-tab',
+        'address-go',
+        'address-search'
+      ].includes(action)
+    ) {
       this.highlight.clear();
     }
 

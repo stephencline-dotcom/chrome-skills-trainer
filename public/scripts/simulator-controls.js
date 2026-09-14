@@ -15,6 +15,7 @@ export const SIMULATOR_CONTROL_KEYS = {
   BACK: 'back',
   FORWARD: 'forward',
   RELOAD: 'reload',
+  ADDRESS_BAR: 'address-bar',
   NEW_TAB: 'new-tab',
   SWITCH_TAB: 'switch-tab',
   CLOSE_TAB: 'close-tab'
@@ -29,6 +30,7 @@ const TARGET_CONTROL_TO_KEY = {
   'btn-back': SIMULATOR_CONTROL_KEYS.BACK,
   'btn-forward': SIMULATOR_CONTROL_KEYS.FORWARD,
   'btn-reload': SIMULATOR_CONTROL_KEYS.RELOAD,
+  'btn-address-bar': SIMULATOR_CONTROL_KEYS.ADDRESS_BAR,
   'btn-new-tab': SIMULATOR_CONTROL_KEYS.NEW_TAB,
   'btn-switch-tab': SIMULATOR_CONTROL_KEYS.SWITCH_TAB,
   'btn-close-tab': SIMULATOR_CONTROL_KEYS.CLOSE_TAB
@@ -43,6 +45,7 @@ const CONTROL_LABELS = {
   [SIMULATOR_CONTROL_KEYS.BACK]: 'Back',
   [SIMULATOR_CONTROL_KEYS.FORWARD]: 'Forward',
   [SIMULATOR_CONTROL_KEYS.RELOAD]: 'Reload',
+  [SIMULATOR_CONTROL_KEYS.ADDRESS_BAR]: 'Address Bar',
   [SIMULATOR_CONTROL_KEYS.NEW_TAB]: 'New Tab',
   [SIMULATOR_CONTROL_KEYS.SWITCH_TAB]: 'Switch Tab',
   [SIMULATOR_CONTROL_KEYS.CLOSE_TAB]: 'Close Tab'
