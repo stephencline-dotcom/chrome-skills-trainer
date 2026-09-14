@@ -261,6 +261,11 @@ class LessonHub {
       if (!data || data.skillId !== skill.id) return;
       if (data.command === LOCAL_LESSON_COMMANDS.FOLLOWER_READY) {
         this.publishTeacherState();
+      } else if (
+        data.command === LOCAL_LESSON_COMMANDS.REQUEST_STEP_CHANGE &&
+        Number.isInteger(data.stepIndex)
+      ) {
+        this.engine.goToStep(data.stepIndex);
       }
     });
 
@@ -339,11 +344,21 @@ class LessonHub {
    * Reflects the current delivery mode on the Independent Mode toggle button.
    */
   updateModeToggleUi() {
-    const btn = document.getElementById('independent-mode-toggle');
-    if (!btn) return;
-    const isIndependent = this.deliveryMode === DELIVERY_MODES.INDEPENDENT;
-    btn.textContent = isIndependent ? 'On' : 'Off';
-    btn.setAttribute('aria-pressed', isIndependent ? 'true' : 'false');
+    const buttons = [
+      document.getElementById('independent-mode-toggle'),
+      document.getElementById('toolbar-independent-mode-toggle')
+    ].filter(Boolean);
+
+    const isIndependent =
+      this.deliveryMode === DELIVERY_MODES.INDEPENDENT;
+
+    buttons.forEach((btn) => {
+      btn.textContent = isIndependent ? 'On' : 'Off';
+      btn.setAttribute(
+        'aria-pressed',
+        isIndependent ? 'true' : 'false'
+      );
+    });
   }
 
   /**
@@ -447,6 +462,13 @@ class LessonHub {
           Step ${idx + 1} of ${total}
         </span>
 
+        <div class="toolbar-mode-toggle">
+          <span class="mode-toggle-label">Independent Mode</span>
+          <button type="button" id="toolbar-independent-mode-toggle" class="mode-toggle-btn" aria-pressed="false">
+            Off
+          </button>
+        </div>
+
         <div class="slide-footer-nav-launchers">
           <a href="presentation.html?skill=${encodeURIComponent(this.selectedSkill.id)}&lesson=active" target="_blank" class="slide-nav-btn primary" title="Open the Classroom Presentation view in a new tab">
             📺 Open Classroom Presentation
@@ -511,6 +533,19 @@ class LessonHub {
     // Attach prev/next handlers
     const btnPrev = document.getElementById('slide-btn-prev');
     const btnNext = document.getElementById('slide-btn-next');
+    const toolbarModeToggle = document.getElementById(
+      'toolbar-independent-mode-toggle'
+    );
+
+    if (toolbarModeToggle) {
+      toolbarModeToggle.onclick = () => {
+        const sidebarToggle = document.getElementById(
+          'independent-mode-toggle'
+        );
+        if (sidebarToggle) sidebarToggle.click();
+      };
+      this.updateModeToggleUi();
+    }
 
     if (btnPrev) btnPrev.onclick = () => this.engine.previousStep();
     if (btnNext) btnNext.onclick = () => this.engine.nextStep();

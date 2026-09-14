@@ -38,7 +38,10 @@ class PresentationController {
 
     this.skill = null;
     this.currentStep = null;
+    this.currentStepIndex = 0;
     this.connectedToTeacher = false;
+    this.prevButtonEl = document.getElementById('presentation-prev-btn');
+    this.nextButtonEl = document.getElementById('presentation-next-btn');
 
     this.handleResize = this.handleResize.bind(this);
     this.handleChannelMessage = this.handleChannelMessage.bind(this);
@@ -97,6 +100,14 @@ class PresentationController {
       onCaption: (text) => this.setDemoCaption(text)
     });
 
+    this.prevButtonEl?.addEventListener('click', () => {
+      this.requestStepChange(this.currentStepIndex - 1);
+    });
+
+    this.nextButtonEl?.addEventListener('click', () => {
+      this.requestStepChange(this.currentStepIndex + 1);
+    });
+
     // Render the first step immediately so the projection is never blank,
     // then wait for the handshake to confirm a real Teacher Control state.
     this.renderStep(this.skill.lessonSections[0], 0);
@@ -128,6 +139,38 @@ class PresentationController {
       }
     } else if (data.command === LOCAL_LESSON_COMMANDS.RESET_LESSON) {
       this.renderStep(this.skill.lessonSections[0], 0);
+    }
+  }
+
+  requestStepChange(stepIndex) {
+    if (
+      !Number.isInteger(stepIndex) ||
+      stepIndex < 0 ||
+      stepIndex >= this.skill.lessonSections.length
+    ) {
+      return;
+    }
+
+    if (this.connectedToTeacher && this.channel.isAvailable()) {
+      this.channel.publish({
+        command: LOCAL_LESSON_COMMANDS.REQUEST_STEP_CHANGE,
+        skillId: this.skill.id,
+        stepIndex
+      });
+      return;
+    }
+
+    this.renderStep(this.skill.lessonSections[stepIndex], stepIndex);
+  }
+
+  updateNavigationButtons() {
+    if (this.prevButtonEl) {
+      this.prevButtonEl.disabled = this.currentStepIndex === 0;
+    }
+
+    if (this.nextButtonEl) {
+      this.nextButtonEl.disabled =
+        this.currentStepIndex === this.skill.lessonSections.length - 1;
     }
   }
 
@@ -178,7 +221,9 @@ class PresentationController {
   renderStep(step, stepIndex) {
     if (!step) return;
     this.currentStep = step;
+    this.currentStepIndex = stepIndex;
     this.clearStepVisuals();
+    this.updateNavigationButtons();
 
     const total = this.skill.lessonSections.length;
     this.stepIndicatorEl.textContent = `Step ${stepIndex + 1} of ${total}`;

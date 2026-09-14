@@ -28,7 +28,8 @@ export const LOCAL_LESSON_COMMANDS = {
   // announces itself, and Teacher Control responds with the full current
   // state so the follower never has to guess/assume Step 1.
   FOLLOWER_READY: 'follower-ready',
-  TEACHER_STATE: 'teacher-state'
+  TEACHER_STATE: 'teacher-state',
+  REQUEST_STEP_CHANGE: 'request-step-change'
 };
 
 // Delivery modes. Structured as plain string constants (rather than a

@@ -31,7 +31,10 @@
           "studentMode": "observe",
           "targetControl": null,
           "completionMessage": "Ready to find the button!",
-          "allowStudentInteraction": false
+          "allowStudentInteraction": false,
+          "presentationView": "symbol",
+          "startState": "restored",
+          "allowedControls": []
         },
         {
           "id": "step-2-find-button",
@@ -46,7 +49,14 @@
           "studentMode": "identify",
           "targetControl": "btn-minimize",
           "completionMessage": "Great job! You found the Minimize button!",
-          "allowStudentInteraction": true
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "highlightControl": "btn-minimize",
+          "allowedControls": [
+            "btn-minimize"
+          ],
+          "identifyControl": "btn-minimize"
         },
         {
           "id": "step-3-watch-it-work",
@@ -61,7 +71,11 @@
           "studentMode": "observe",
           "targetControl": null,
           "completionMessage": "Now you are ready to try it yourself!",
-          "allowStudentInteraction": false
+          "allowStudentInteraction": false,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [],
+          "demonstration": "minimize-cycle"
         },
         {
           "id": "step-4-guided-minimize",
@@ -76,7 +90,16 @@
           "studentMode": "interact",
           "targetControl": "btn-minimize",
           "completionMessage": "Awesome! Chrome is now minimized in your taskbar!",
-          "allowStudentInteraction": true
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "highlightControl": "btn-minimize",
+          "allowedControls": [
+            "btn-minimize"
+          ],
+          "expectedActions": [
+            "minimize"
+          ]
         },
         {
           "id": "step-5-guided-restore",
@@ -91,7 +114,16 @@
           "studentMode": "interact",
           "targetControl": "taskbar-chrome-btn",
           "completionMessage": "Nice work! You brought Chrome back onto the screen!",
-          "allowStudentInteraction": true
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "minimized",
+          "highlightControl": "taskbar-chrome-btn",
+          "allowedControls": [
+            "taskbar-chrome-btn"
+          ],
+          "expectedActions": [
+            "taskbar-restore"
+          ]
         },
         {
           "id": "step-6-independent-challenge",
@@ -106,7 +138,20 @@
           "studentMode": "interact",
           "targetControl": "sequence",
           "completionMessage": "Outstanding! You mastered minimizing and restoring Chrome!",
-          "allowStudentInteraction": true
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [
+            "btn-minimize",
+            "taskbar-chrome-btn"
+          ],
+          "expectedActions": [
+            "minimize",
+            "taskbar-restore"
+          ],
+          "intermediateMessages": [
+            "Great! Now click the Chrome taskbar button to bring it back."
+          ]
         },
         {
           "id": "step-7-concept-check",
@@ -121,7 +166,27 @@
           "studentMode": "quiz",
           "targetControl": "quiz-minimize",
           "completionMessage": "Correct! Minimize hides your window without closing your work.",
-          "allowStudentInteraction": true
+          "allowStudentInteraction": true,
+          "presentationView": "quiz",
+          "startState": "restored",
+          "allowedControls": [],
+          "quiz": {
+            "choices": [
+              {
+                "id": "minimize",
+                "label": "Minimize",
+                "icon": "➖",
+                "correct": true
+              },
+              {
+                "id": "close",
+                "label": "Close",
+                "icon": "❌",
+                "correct": false,
+                "feedback": "Close shuts the window completely. Try Minimize!"
+              }
+            ]
+          }
         },
         {
           "id": "step-8-lesson-complete",
@@ -136,7 +201,10 @@
           "studentMode": "summary",
           "targetControl": null,
           "completionMessage": "Lesson Complete! You are a Minimize master!",
-          "allowStudentInteraction": false
+          "allowStudentInteraction": false,
+          "presentationView": "completion",
+          "startState": "restored",
+          "allowedControls": []
         }
       ]
     },

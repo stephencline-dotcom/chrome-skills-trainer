@@ -237,10 +237,6 @@ export class StudentLesson {
       `
       : '';
 
-    const exitHtml = this.isPreview
-      ? `<a href="teacher.html?skill=${encodeURIComponent(this.skill.id)}&mode=present" class="student-mode-nav-btn">Exit Preview</a>`
-      : '';
-
     this.modeBarEl.innerHTML = `
       <div class="student-mode-bar-left">
         <span class="${modeBadgeClass}">${modeLabel}</span>
@@ -248,7 +244,6 @@ export class StudentLesson {
       </div>
       <div class="student-mode-bar-right">
         ${navHtml}
-        ${exitHtml}
       </div>
     `;
 
@@ -283,17 +278,28 @@ export class StudentLesson {
     this.panelEl.classList.toggle('is-collapsed', shouldCollapse);
 
     if (changed && !shouldCollapse) {
-      requestAnimationFrame(() => {
-        if (
-          !this.windowManager.isMinimized &&
-          !this.windowManager.isClosed &&
-          !this.windowManager.isMaximized
-        ) {
-          this.windowManager.centerWindow();
-          this.windowManager.applyRestoredBounds();
-        }
-      });
+      this.fitWindowToWorkspace();
     }
+  }
+
+  /**
+   * Refit the restored Chrome window after instruction content changes size.
+   * Runs immediately and after the short panel transition finishes.
+   */
+  fitWindowToWorkspace() {
+    const fitWindow = () => {
+      if (
+        !this.windowManager.isMinimized &&
+        !this.windowManager.isClosed &&
+        !this.windowManager.isMaximized
+      ) {
+        this.windowManager.centerWindow();
+        this.windowManager.applyRestoredBounds();
+      }
+    };
+
+    requestAnimationFrame(fitWindow);
+    window.setTimeout(fitWindow, 180);
   }
 
   /**
@@ -326,35 +332,36 @@ export class StudentLesson {
 
     this.cleanupCurrentStep();
 
-    // 1. Configure interaction protection
+    // 1. Configure interaction protection from lesson data.
     const allowInteraction = step.allowStudentInteraction !== false;
-    let allowedControls = null;
+    const allowedControls = Array.isArray(step.allowedControls)
+      ? step.allowedControls
+      : null;
 
-    if (allowInteraction) {
-      if (step.targetControl === 'btn-minimize') {
-        allowedControls = ['btn-minimize'];
-      } else if (step.targetControl === 'taskbar-chrome-btn') {
-        allowedControls = ['taskbar-chrome-btn'];
-      } else if (step.targetControl === 'sequence') {
-        allowedControls = ['btn-minimize', 'taskbar-chrome-btn'];
-      }
-    }
+    this.windowManager.setInteractionEnabled(
+      allowInteraction,
+      allowedControls
+    );
 
-    this.windowManager.setInteractionEnabled(allowInteraction, allowedControls);
-
-    // 2. Set initial window state for step. The instruction panel's
-    // collapsed state is applied BEFORE resetToDefault()/minimize() so the
-    // workspace has its final height when the window is centered.
-    const shouldStartMinimized = step.id === 'step-5-guided-restore';
-    this.setPanelCollapsed(shouldStartMinimized);
+    // 2. Set the simulator's starting state from lesson data.
+    const startState = step.startState || 'restored';
+    this.setPanelCollapsed(startState === 'minimized');
     this.windowManager.resetToDefault();
-    if (shouldStartMinimized) {
+
+    if (startState === 'minimized') {
       this.windowManager.minimize();
+    } else if (startState === 'maximized') {
+      this.windowManager.maximize();
+    } else if (startState === 'closed') {
+      this.windowManager.close();
     }
 
     // 3. Target highlighting - uses stable data-simulator-control attributes,
     // not fragile ids/classes, and renders as a non-clipping fixed overlay.
-    const controlKey = targetControlToControlKey(step.targetControl);
+    const highlightTarget =
+      step.highlightControl || step.targetControl;
+    const controlKey =
+      targetControlToControlKey(highlightTarget);
     if (controlKey) {
       const targetEl = getSimulatorControlElement(controlKey);
       if (targetEl) {
@@ -367,7 +374,7 @@ export class StudentLesson {
 
     // 5. Step 3: play the same reusable cursor demonstration used by
     // Classroom Presentation and Teacher Lesson Control.
-    if (step.id === 'step-3-watch-it-work') {
+    if (step.demonstration === 'minimize-cycle') {
       this.demo.play();
     }
 
@@ -502,6 +509,7 @@ export class StudentLesson {
 
     if (this.bodyEl) {
       this.bodyEl.appendChild(banner);
+      this.fitWindowToWorkspace();
     }
 
     this.announce(message);
@@ -512,55 +520,47 @@ export class StudentLesson {
    */
   handleWindowEvent(e) {
     const eventType = e.type;
+    const action = e.detail?.action;
 
-    // Keep the instruction panel collapsed while Chrome is minimized so the
-    // taskbar and its highlighted button stay visually dominant.
+    // Keep the compact instruction panel visible while Chrome is minimized.
     if (eventType === 'window:minimized') {
       this.setPanelCollapsed(true);
-    } else if (eventType === 'window:restored' || eventType === 'window:taskbar-restored' || eventType === 'window:opened') {
+      this.highlight.clear();
+    } else if (
+      eventType === 'window:restored' ||
+      eventType === 'window:taskbar-restored' ||
+      eventType === 'window:opened'
+    ) {
       this.setPanelCollapsed(false);
     }
 
     const step = this.engine.getCurrentStep();
-    if (!step) return;
+    if (!step || !Array.isArray(step.expectedActions)) return;
 
-    // Step 2: Find the Button (identify mode)
-    if (step.id === 'step-2-find-button' && eventType === 'window:minimized') {
-      // In step 2, clicking Minimize identifies the button. Immediately restore window so it doesn't stay minimized.
-      this.windowManager.restore();
-      this.showFeedback('success', step.completionMessage);
-      this.engine.setStepCompleted(step.id, true);
-      return;
-    }
+    const expectedIndex = this.challengeSequence.length;
+    const expectedAction = step.expectedActions[expectedIndex];
 
-    // Step 4: Guided Practice - Minimize
-    if (step.id === 'step-4-guided-minimize' && eventType === 'window:minimized') {
-      // The Minimize button just vanished behind the minimized window -
-      // remove its highlight so no stray ring is left where it used to be.
-      this.highlight.clear();
-      this.showFeedback('success', step.completionMessage);
-      this.engine.setStepCompleted(step.id, true);
-      return;
-    }
+    if (action !== expectedAction) return;
 
-    // Step 5: Guided Practice - Bring It Back
-    if (step.id === 'step-5-guided-restore' && eventType === 'window:taskbar-restored') {
-      this.showFeedback('success', step.completionMessage);
-      this.engine.setStepCompleted(step.id, true);
-      return;
-    }
+    this.challengeSequence.push(action);
 
-    // Step 6: Independent Challenge (Minimize then Restore sequence)
-    if (step.id === 'step-6-independent-challenge') {
-      if (eventType === 'window:minimized' && this.challengeSequence.length === 0) {
-        this.challengeSequence.push('minimized');
-        this.showFeedback('success', 'Great! Now click the Chrome taskbar button to bring it back.');
-      } else if (eventType === 'window:taskbar-restored' && this.challengeSequence.includes('minimized')) {
-        this.challengeSequence.push('restored');
-        this.showFeedback('success', step.completionMessage);
-        this.engine.setStepCompleted(step.id, true);
+    const sequenceComplete =
+      this.challengeSequence.length === step.expectedActions.length;
+
+    if (!sequenceComplete) {
+      const message =
+        step.intermediateMessages?.[this.challengeSequence.length - 1];
+
+      if (message) {
+        this.showFeedback('success', message);
       }
+
+      return;
     }
+
+    this.showFeedback('success', step.completionMessage);
+    this.engine.setStepCompleted(step.id, true);
+    this.renderModeBar();
   }
 
   /**
@@ -571,7 +571,11 @@ export class StudentLesson {
     const step = this.engine.getCurrentStep();
     if (!step) return;
 
-    if (step.id === 'step-2-find-button' && control === 'btn-minimize' && allowed) {
+    if (
+      step.identifyControl &&
+      control === step.identifyControl &&
+      allowed
+    ) {
       e.preventDefault();
       this.highlight.clear();
       this.showFeedback('success', step.completionMessage);
@@ -581,7 +585,10 @@ export class StudentLesson {
     }
 
     if (!allowed && step.allowStudentInteraction !== false) {
-      this.showFeedback('try-again', 'That button does something different. Try again!');
+      this.showFeedback(
+        'try-again',
+        'That button does something different. Try again!'
+      );
     }
   }
 }

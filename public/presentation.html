@@ -22,7 +22,17 @@
         <span class="presentation-badge" title="This tab only follows a Teacher Control tab open in the same browser">
           Local Presentation Mode
         </span>
-        <span id="presentation-step-indicator" class="presentation-step-indicator">Step 1 of 1</span>
+        <div class="presentation-header-actions">
+          <span id="presentation-step-indicator" class="presentation-step-indicator">Step 1 of 1</span>
+          <nav class="presentation-step-nav" aria-label="Presentation lesson navigation">
+            <button type="button" id="presentation-prev-btn" class="presentation-step-nav-btn">
+              &larr; Previous
+            </button>
+            <button type="button" id="presentation-next-btn" class="presentation-step-nav-btn">
+              Next &rarr;
+            </button>
+          </nav>
+        </div>
       </div>
       <h1 id="presentation-lesson-title" class="presentation-lesson-title">Loading Lesson&hellip;</h1>
       <p id="presentation-explanation" class="presentation-explanation"></p>

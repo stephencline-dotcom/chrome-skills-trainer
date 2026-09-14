@@ -206,3 +206,39 @@ html, body {
     -webkit-line-clamp: 2;
   }
 }
+
+
+/* Compact teacher navigation available on the local presentation screen. */
+.presentation-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.presentation-step-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.presentation-step-nav-btn {
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.presentation-step-nav-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.presentation-step-nav-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}

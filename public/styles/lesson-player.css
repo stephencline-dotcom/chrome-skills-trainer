@@ -514,6 +514,14 @@
 }
 
 /* Teacher Slide Footer Nav */
+
+.toolbar-mode-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+  white-space: nowrap;
+}
 .slide-footer-nav {
   position: fixed;
   left: 24px;
