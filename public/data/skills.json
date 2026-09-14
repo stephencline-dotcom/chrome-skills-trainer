@@ -410,38 +410,203 @@
     },
     {
       "id": "close",
-      "name": "Close",
+      "name": "Close & Reopen",
       "category": "Window Controls",
       "iconType": "symbol",
       "iconText": "❌",
-      "shortExplanation": "Close the window when you are completely finished with your work.",
+      "shortExplanation": "Close the Chrome window, then open a fresh window from the taskbar.",
       "simulatorControl": "Top right window red/hover button (X) or taskbar button to re-open.",
       "lessonSections": [
         {
-          "id": "meet-the-button",
-          "title": "Meet the Button",
-          "type": "presentation",
-          "placeholderDescription": "Locate the red X button in the very top right corner."
+          "id": "step-1-meet-close",
+          "title": "Meet Close",
+          "section": "Meet the Button",
+          "type": "introduction",
+          "teacherTitle": "Meet the Close Button",
+          "teacherText": "The Close button is the X in the top-right corner. It shuts the window instead of merely hiding it.",
+          "teacherPrompt": "Ask: “Which symbol usually means stop, remove, or close?”",
+          "studentTitle": "Meet the Close Button",
+          "studentInstruction": "Look for the X button in the top-right corner of Chrome.",
+          "studentMode": "observe",
+          "targetControl": null,
+          "completionMessage": "Ready to find Close!",
+          "allowStudentInteraction": false,
+          "presentationView": "symbol",
+          "startState": "restored",
+          "allowedControls": []
         },
         {
-          "id": "watch-it-work",
+          "id": "step-2-find-close",
+          "title": "Find the Button",
+          "section": "Meet the Button",
+          "type": "identify",
+          "teacherTitle": "Locate the Close Button",
+          "teacherText": "Help students locate the X at the far-right side of the window controls.",
+          "teacherPrompt": "Ask: “Can you find the highlighted X?”",
+          "studentTitle": "Find the Close Button",
+          "studentInstruction": "Click the highlighted X button.",
+          "studentMode": "identify",
+          "targetControl": "btn-close",
+          "completionMessage": "Great job! You found the Close button!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "highlightControl": "btn-close",
+          "allowedControls": [
+            "btn-close"
+          ],
+          "identifyControl": "btn-close"
+        },
+        {
+          "id": "step-3-watch-close",
           "title": "Watch It Work",
+          "section": "Watch It Work",
           "type": "demonstration",
-          "placeholderDescription": "Observe how closing turns the taskbar icon inactive."
+          "teacherTitle": "Watch Chrome Close and Reopen",
+          "teacherText": "Close removes the window from the desktop. Clicking Chrome on the taskbar opens a fresh window.",
+          "teacherPrompt": "Remind students that Close is different from Minimize and may end unfinished work on some pages.",
+          "studentTitle": "Watch Chrome Close and Reopen",
+          "studentInstruction": "Watch the X close Chrome, then watch the taskbar open a fresh window.",
+          "studentMode": "observe",
+          "targetControl": null,
+          "completionMessage": "Now you are ready to try it!",
+          "allowStudentInteraction": false,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [],
+          "demonstration": "close-reopen-cycle"
         },
         {
-          "id": "guided-practice",
-          "title": "Guided Practice",
-          "type": "practice",
-          "placeholderDescription": "Close the window, then click the taskbar button to open a fresh window."
+          "id": "step-4-guided-close",
+          "title": "Guided Practice — Close",
+          "section": "Guided Practice",
+          "type": "guided-practice",
+          "teacherTitle": "Practice: Close Chrome",
+          "teacherText": "Students click the X to close their simulated Chrome window.",
+          "teacherPrompt": "Say: “Click the X in the top-right corner.”",
+          "studentTitle": "Close the Window",
+          "studentInstruction": "Click the X to close Chrome.",
+          "studentMode": "interact",
+          "targetControl": "btn-close",
+          "completionMessage": "You closed the Chrome window!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "highlightControl": "btn-close",
+          "allowedControls": [
+            "btn-close"
+          ],
+          "expectedActions": [
+            "close"
+          ]
         },
         {
-          "id": "student-challenge",
-          "title": "Student Challenge",
-          "type": "challenge",
-          "placeholderDescription": "Practice closing and re-opening a fresh Chrome window."
+          "id": "step-5-guided-reopen",
+          "title": "Guided Practice — Reopen",
+          "section": "Guided Practice",
+          "type": "guided-practice",
+          "teacherTitle": "Practice: Reopen Chrome",
+          "teacherText": "Students click Chrome on the taskbar to open a fresh window.",
+          "teacherPrompt": "Say: “Find Chrome on the taskbar and click it.”",
+          "studentTitle": "Open Chrome Again",
+          "studentInstruction": "Click Chrome on the taskbar to open a fresh window.",
+          "studentMode": "interact",
+          "targetControl": "taskbar-chrome-btn",
+          "completionMessage": "Nice work! You opened a fresh Chrome window!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "closed",
+          "highlightControl": "taskbar-chrome-btn",
+          "allowedControls": [
+            "taskbar-chrome-btn"
+          ],
+          "expectedActions": [
+            "open"
+          ]
+        },
+        {
+          "id": "step-6-close-challenge",
+          "title": "Independent Challenge",
+          "section": "Student Challenge",
+          "type": "independent-challenge",
+          "teacherTitle": "Student Challenge: Close and Reopen",
+          "teacherText": "Students close Chrome and reopen it without highlights.",
+          "teacherPrompt": "Say: “Close Chrome completely, then open a fresh Chrome window.”",
+          "studentTitle": "Close & Reopen Challenge",
+          "studentInstruction": "Close Chrome, then open it again from the taskbar.",
+          "studentMode": "interact",
+          "targetControl": "sequence",
+          "completionMessage": "Outstanding! You closed and reopened Chrome!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [
+            "btn-close",
+            "taskbar-chrome-btn"
+          ],
+          "expectedActions": [
+            "close",
+            "open"
+          ],
+          "intermediateMessages": [
+            "Chrome is closed. Now click it on the taskbar to open it again."
+          ]
+        },
+        {
+          "id": "step-7-close-concept-check",
+          "title": "Close or Minimize?",
+          "section": "Student Challenge",
+          "type": "summary",
+          "teacherTitle": "Concept Check: Close vs Minimize",
+          "teacherText": "Review that Close shuts the window while Minimize keeps it open in the taskbar.",
+          "teacherPrompt": "Ask: “Which button shuts the window instead of hiding it?”",
+          "studentTitle": "Close or Minimize?",
+          "studentInstruction": "Which button shuts the Chrome window?",
+          "studentMode": "quiz",
+          "targetControl": "quiz-close",
+          "completionMessage": "Correct! Close shuts the window.",
+          "allowStudentInteraction": true,
+          "presentationView": "quiz",
+          "startState": "restored",
+          "allowedControls": [],
+          "quiz": {
+            "choices": [
+              {
+                "id": "close",
+                "label": "Close",
+                "icon": "❌",
+                "correct": true
+              },
+              {
+                "id": "minimize",
+                "label": "Minimize",
+                "icon": "➖",
+                "correct": false,
+                "feedback": "Minimize hides the window but keeps it open. Try Close!"
+              }
+            ]
+          }
+        },
+        {
+          "id": "step-8-close-complete",
+          "title": "Lesson Complete",
+          "section": "Student Challenge",
+          "type": "summary",
+          "teacherTitle": "Close Skill Mastered!",
+          "teacherText": "Celebrate success and reinforce the difference between Close and Minimize.",
+          "teacherPrompt": "Congratulate students on learning to close and reopen Chrome.",
+          "studentTitle": "Lesson Complete!",
+          "studentInstruction": "Close shuts a window. Chrome can be opened again from the taskbar.",
+          "studentMode": "summary",
+          "targetControl": null,
+          "completionMessage": "Lesson Complete! You mastered Close and Reopen!",
+          "allowStudentInteraction": false,
+          "presentationView": "completion",
+          "startState": "restored",
+          "allowedControls": []
         }
-      ]
+      ],
+      "hasCompleteLesson": true
     },
     {
       "id": "back",

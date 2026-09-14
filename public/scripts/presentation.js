@@ -20,6 +20,7 @@ import { SimulatorHighlight } from './simulator-highlight.js';
 import { targetControlToControlKey, getSimulatorControlElement, getControlLabel } from './simulator-controls.js';
 import { MinimizeDemonstration } from './minimize-demonstration.js';
 import { MaximizeDemonstration } from './maximize-demonstration.js';
+import { CloseDemonstration } from './close-demonstration.js';
 
 class PresentationController {
   constructor() {
@@ -80,7 +81,20 @@ class PresentationController {
     this.windowManager.defaultHeight = 440;
     this.windowManager.init();
 
+    this.windowEl.addEventListener('window:control-attempt', (event) => {
+      if (
+        this.currentStep?.identifyControl &&
+        event.detail?.control === this.currentStep.identifyControl
+      ) {
+        event.preventDefault();
+      }
+    });
+
     this.windowEl.addEventListener('window:minimized', () => {
+      this.highlight.clear();
+    });
+
+    this.windowEl.addEventListener('window:closed', () => {
       this.highlight.clear();
     });
 
@@ -96,13 +110,16 @@ class PresentationController {
     const demonstrationType = this.skill.lessonSections.find(
       (step) => step.demonstration
     )?.demonstration;
-    const DemonstrationClass = demonstrationType === 'maximize-cycle'
-      ? MaximizeDemonstration
-      : MinimizeDemonstration;
+    const DemonstrationClass = {
+      'minimize-cycle': MinimizeDemonstration,
+      'maximize-cycle': MaximizeDemonstration,
+      'close-reopen-cycle': CloseDemonstration
+    }[demonstrationType] || MinimizeDemonstration;
 
     this.demo = new DemonstrationClass({
       windowEl: this.windowEl,
       minimizeBtnEl: getSimulatorControlElement('minimize'),
+      closeBtnEl: getSimulatorControlElement('close'),
       maximizeBtnEl: getSimulatorControlElement('maximize'),
       taskbarBtnEl: getSimulatorControlElement('chrome-taskbar'),
       cursorLayer: document.body,
@@ -280,7 +297,7 @@ class PresentationController {
       this.applyControlHighlight(step.highlightControl);
     }
 
-    if (step.demonstration === 'minimize-cycle' || step.demonstration === 'maximize-cycle') {
+    if (step.demonstration && this.demo) {
       this.demo.play();
     }
 

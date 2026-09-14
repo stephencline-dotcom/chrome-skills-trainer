@@ -13,6 +13,7 @@ import { targetControlToControlKey, getSimulatorControlElement, getControlLabel 
 import { LocalLessonChannel, LOCAL_LESSON_COMMANDS, DELIVERY_MODES } from './local-lesson-channel.js';
 import { MinimizeDemonstration } from './minimize-demonstration.js';
 import { MaximizeDemonstration } from './maximize-demonstration.js';
+import { CloseDemonstration } from './close-demonstration.js';
 
 export class StudentLesson {
   /**
@@ -105,13 +106,16 @@ export class StudentLesson {
     const demonstrationType = this.skill.lessonSections.find(
       (step) => step.demonstration
     )?.demonstration;
-    const DemonstrationClass = demonstrationType === 'maximize-cycle'
-      ? MaximizeDemonstration
-      : MinimizeDemonstration;
+    const DemonstrationClass = {
+      'minimize-cycle': MinimizeDemonstration,
+      'maximize-cycle': MaximizeDemonstration,
+      'close-reopen-cycle': CloseDemonstration
+    }[demonstrationType] || MinimizeDemonstration;
 
     this.demo = new DemonstrationClass({
       windowEl: this.windowManager.windowEl,
       minimizeBtnEl: this.windowManager.btnMinimize,
+      closeBtnEl: this.windowManager.btnClose,
       maximizeBtnEl: this.windowManager.btnMaximize,
       taskbarBtnEl: this.windowManager.taskbarBtn,
       cursorLayer: document.body,
@@ -400,7 +404,7 @@ export class StudentLesson {
 
     // 5. Step 3: play the same reusable cursor demonstration used by
     // Classroom Presentation and Teacher Lesson Control.
-    if (step.demonstration === 'minimize-cycle' || step.demonstration === 'maximize-cycle') {
+    if (step.demonstration && this.demo) {
       this.demo.play();
     }
 
@@ -564,7 +568,10 @@ export class StudentLesson {
     const action = e.detail?.action;
 
     // Keep the compact instruction panel visible while Chrome is minimized.
-    if (eventType === 'window:minimized') {
+    if (
+      eventType === 'window:minimized' ||
+      eventType === 'window:closed'
+    ) {
       this.setPanelCollapsed(true);
       this.highlight.clear();
     } else if (

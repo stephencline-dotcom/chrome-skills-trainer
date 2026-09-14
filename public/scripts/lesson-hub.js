@@ -10,6 +10,7 @@ import { LessonEngine } from './lesson-engine.js';
 import { LocalLessonChannel, LOCAL_LESSON_COMMANDS, DELIVERY_MODES } from './local-lesson-channel.js';
 import { MinimizeDemonstration } from './minimize-demonstration.js';
 import { MaximizeDemonstration } from './maximize-demonstration.js';
+import { CloseDemonstration } from './close-demonstration.js';
 
 class LessonHub {
   constructor() {
@@ -420,7 +421,7 @@ class LessonHub {
                 <div class="demo-mini-controls">
                   <button type="button" id="demo-mini-btn-minimize" class="demo-mini-btn demo-mini-btn-min" tabindex="-1" aria-hidden="true"></button>
                   <button type="button" id="demo-mini-btn-maximize" class="demo-mini-btn demo-mini-btn-max" tabindex="-1" aria-hidden="true">□</button>
-                  <span class="demo-mini-btn"></span>
+                  <button type="button" id="demo-mini-btn-close" class="demo-mini-btn demo-mini-btn-close" tabindex="-1" aria-hidden="true">×</button>
                 </div>
               </div>
               <div style="flex: 1; padding: 12px; font-size: 0.75rem; color: #475569; text-align: center; display: flex; align-items: center; justify-content: center;">
@@ -507,6 +508,7 @@ class LessonHub {
       const miniWindow = document.getElementById('demo-mini-window');
       const miniMinimizeBtn = document.getElementById('demo-mini-btn-minimize');
       const miniMaximizeBtn = document.getElementById('demo-mini-btn-maximize');
+      const miniCloseBtn = document.getElementById('demo-mini-btn-close');
       const miniTaskbarBtn = document.getElementById('demo-mini-taskbar-btn');
       const miniCaptionEl = document.getElementById('demo-caption-mini');
       const replayBtn = document.getElementById('replay-demo-btn');
@@ -515,17 +517,20 @@ class LessonHub {
         miniWindow &&
         miniMinimizeBtn &&
         miniMaximizeBtn &&
+        miniCloseBtn &&
         miniTaskbarBtn
       ) {
-        const DemonstrationClass =
-          step.demonstration === 'maximize-cycle'
-            ? MaximizeDemonstration
-            : MinimizeDemonstration;
+        const DemonstrationClass = {
+          'minimize-cycle': MinimizeDemonstration,
+          'maximize-cycle': MaximizeDemonstration,
+          'close-reopen-cycle': CloseDemonstration
+        }[step.demonstration] || MinimizeDemonstration;
 
         this.teacherDemo = new DemonstrationClass({
           windowEl: miniWindow,
           minimizeBtnEl: miniMinimizeBtn,
           maximizeBtnEl: miniMaximizeBtn,
+          closeBtnEl: miniCloseBtn,
           taskbarBtnEl: miniTaskbarBtn,
           cursorLayer: document.body,
           maximizeBottomInset: 28,

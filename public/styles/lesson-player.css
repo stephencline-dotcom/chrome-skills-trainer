@@ -793,3 +793,19 @@
   line-height: 1;
   cursor: default;
 }
+
+
+.demo-mini-btn-close {
+  border-radius: 3px;
+  background-color: #ef4444;
+  color: #ffffff;
+  font-size: 12px;
+  line-height: 1;
+  cursor: default;
+}
+
+.demo-mini-window.is-closed {
+  transform: translateY(18px) scale(0.86);
+  opacity: 0;
+  pointer-events: none;
+}

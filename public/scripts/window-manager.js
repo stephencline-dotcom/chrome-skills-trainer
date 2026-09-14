@@ -329,8 +329,12 @@ export class WindowManager {
    * interaction permissions).
    */
   handleClose() {
-    this.dispatchEvent('window:control-attempt', { control: 'btn-close', action: 'close', allowed: this.canInteract('btn-close') });
-    if (!this.canInteract('btn-close')) return;
+    const attemptEvent = this.dispatchEvent('window:control-attempt', {
+      control: 'btn-close',
+      action: 'close',
+      allowed: this.canInteract('btn-close')
+    });
+    if (attemptEvent.defaultPrevented || !this.canInteract('btn-close')) return;
     this.performClose();
   }
 
