@@ -50,6 +50,12 @@ export class StudentLesson {
     this.teacherStepIndex = this.engine.getCurrentStepIndex();
     this.teacherStepId = this.engine.getCurrentStep()?.id || null;
 
+    this.useSharedClassroom = !this.isPreview;
+    this.sharedClassroomTimer = null;
+    this.sharedBootId = null;
+    this.lastReplayVersion = null;
+    this.lastResetVersion = null;
+
     // Challenge state tracking
     this.challengeSequence = [];
 
@@ -160,17 +166,202 @@ export class StudentLesson {
       onCaption: (text) => this.setDemoCaption(text)
     });
 
-    // Join the local (same-browser only) Teacher Control sync channel
     if (this.modeBarEl) {
       this.modeBarEl.style.display = 'flex';
     }
-    if (this.channel.isAvailable()) {
+
+    if (this.useSharedClassroom) {
+      void this.refreshSharedClassroomState();
+
+      this.sharedClassroomTimer = window.setInterval(
+        () => {
+          void this.refreshSharedClassroomState();
+        },
+        500
+      );
+    } else if (this.channel.isAvailable()) {
       this.channel.subscribe(this.handleChannelMessage);
-      this.channel.publish({ command: LOCAL_LESSON_COMMANDS.FOLLOWER_READY, skillId: this.skill.id });
+      this.channel.publish({
+        command: LOCAL_LESSON_COMMANDS.FOLLOWER_READY,
+        skillId: this.skill.id
+      });
     }
 
     // Apply initial step (teacher-led by default; nav hidden until independent)
     this.setupStep(this.engine.getCurrentStep());
+    this.renderModeBar();
+  }
+
+  async refreshSharedClassroomState() {
+    try {
+      const response = await fetch(
+        '/api/classroom-state',
+        {
+          cache: 'no-store'
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Classroom state request failed: ${response.status}`
+        );
+      }
+
+      const state = await response.json();
+
+      this.applySharedClassroomState(state);
+    } catch (error) {
+      this.connectedToTeacher = false;
+      this.renderModeBar();
+
+      console.warn(
+        'Student Lesson: unable to refresh shared classroom state.',
+        error
+      );
+    }
+  }
+
+  applySharedClassroomState(state) {
+    if (!state || typeof state !== 'object') {
+      return;
+    }
+
+    const bootChanged =
+      this.sharedBootId !== null &&
+      state.bootId &&
+      state.bootId !== this.sharedBootId;
+
+    if (state.bootId) {
+      this.sharedBootId = state.bootId;
+    }
+
+    if (
+      this.lastReplayVersion === null ||
+      bootChanged
+    ) {
+      this.lastReplayVersion =
+        Number(state.replayVersion) || 0;
+    }
+
+    if (
+      this.lastResetVersion === null ||
+      bootChanged
+    ) {
+      this.lastResetVersion =
+        Number(state.resetVersion) || 0;
+    }
+
+    if (!state.teacherPresent) {
+      this.connectedToTeacher = false;
+      this.renderModeBar();
+      return;
+    }
+
+    if (
+      state.skillId &&
+      state.skillId !== this.skill.id
+    ) {
+      const nextUrl =
+        new URL(window.location.href);
+
+      nextUrl.searchParams.set(
+        'skill',
+        state.skillId
+      );
+      nextUrl.searchParams.set(
+        'lesson',
+        'active'
+      );
+      nextUrl.searchParams.delete(
+        'preview'
+      );
+
+      window.location.replace(
+        nextUrl.toString()
+      );
+      return;
+    }
+
+    this.connectedToTeacher = true;
+
+    let resolvedIndex = null;
+
+    if (state.stepId) {
+      const index =
+        this.skill.lessonSections.findIndex(
+          (step) => step.id === state.stepId
+        );
+
+      if (index !== -1) {
+        resolvedIndex = index;
+      }
+    }
+
+    if (
+      resolvedIndex === null &&
+      Number.isInteger(state.stepIndex) &&
+      this.skill.lessonSections[state.stepIndex]
+    ) {
+      resolvedIndex = state.stepIndex;
+    }
+
+    if (resolvedIndex !== null) {
+      this.teacherStepIndex = resolvedIndex;
+      this.teacherStepId =
+        this.skill.lessonSections[resolvedIndex].id;
+    }
+
+    if (
+      state.deliveryMode === DELIVERY_MODES.TEACHER_LED ||
+      state.deliveryMode === DELIVERY_MODES.INDEPENDENT
+    ) {
+      this.applyDeliveryMode(
+        state.deliveryMode,
+        { silent: true }
+      );
+    }
+
+    if (
+      this.deliveryMode === DELIVERY_MODES.TEACHER_LED &&
+      resolvedIndex !== null &&
+      this.engine.getCurrentStepIndex() !== resolvedIndex
+    ) {
+      this.engine.goToStep(resolvedIndex);
+    }
+
+    const resetVersion =
+      Number(state.resetVersion) || 0;
+
+    if (resetVersion > this.lastResetVersion) {
+      this.lastResetVersion = resetVersion;
+      this.deliveryMode = DELIVERY_MODES.TEACHER_LED;
+      this.engine.resetLesson();
+
+      if (
+        resolvedIndex !== null &&
+        this.engine.getCurrentStepIndex() !== resolvedIndex
+      ) {
+        this.engine.goToStep(resolvedIndex);
+      }
+    }
+
+    const replayVersion =
+      Number(state.replayVersion) || 0;
+
+    if (replayVersion > this.lastReplayVersion) {
+      this.lastReplayVersion = replayVersion;
+
+      const step = this.engine.getCurrentStep();
+
+      if (
+        this.deliveryMode === DELIVERY_MODES.TEACHER_LED &&
+        step?.demonstration &&
+        this.demo
+      ) {
+        this.demo.play();
+      }
+    }
+
     this.renderModeBar();
   }
 
@@ -281,12 +472,23 @@ export class StudentLesson {
     const modeBadgeClass = isIndependent ? 'student-mode-badge is-independent' : 'student-mode-badge';
 
     let syncStatus;
-    if (!this.channel.isAvailable()) {
-      syncStatus = 'Local sync unavailable in this browser.';
+
+    if (this.useSharedClassroom) {
+      if (!this.connectedToTeacher) {
+        syncStatus = 'Waiting for Teacher Control…';
+      } else {
+        syncStatus = isIndependent
+          ? 'Practicing independently.'
+          : 'Following Teacher Control.';
+      }
+    } else if (!this.channel.isAvailable()) {
+      syncStatus = 'Local preview sync unavailable in this browser.';
     } else if (!this.connectedToTeacher) {
-      syncStatus = 'Waiting for Teacher Control to open\u2026';
+      syncStatus = 'Waiting for Teacher Control to open…';
     } else {
-      syncStatus = isIndependent ? 'Practicing independently.' : 'Following Teacher Control.';
+      syncStatus = isIndependent
+        ? 'Practicing independently.'
+        : 'Following Teacher Control.';
     }
 
     // Teacher-led: Previous/Next are completely absent (not just hidden),
@@ -765,8 +967,7 @@ export class StudentLesson {
 
     if (
       step.identifyControl &&
-      control === step.identifyControl &&
-      allowed
+      control === step.identifyControl
     ) {
       e.preventDefault();
       this.highlight.clear();
