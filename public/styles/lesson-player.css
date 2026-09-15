@@ -923,3 +923,69 @@ button[data-demo-available="false"]:disabled {
 .tab-demo-mini-window .sim-page-icon {
   display: none;
 }
+
+
+/* =========================================================
+   Classroom Freeze Screen
+   ========================================================= */
+
+.eyes-up-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  background:
+    radial-gradient(
+      circle at 50% 35%,
+      #1e3a5f 0%,
+      #10233f 45%,
+      #071426 100%
+    );
+  text-align: center;
+  cursor: default;
+}
+
+.eyes-up-overlay[hidden] {
+  display: none;
+}
+
+.eyes-up-card {
+  width: min(620px, 92vw);
+  padding: 48px 42px;
+  border: 3px solid rgba(255, 255, 255, 0.28);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow:
+    0 28px 70px rgba(0, 0, 0, 0.38);
+}
+
+.eyes-up-icon {
+  margin-bottom: 12px;
+  font-size: clamp(4rem, 9vw, 6.5rem);
+  line-height: 1;
+}
+
+.eyes-up-card h1 {
+  margin: 0 0 16px;
+  color: #17365d;
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.eyes-up-card p {
+  margin: 0;
+  color: #475569;
+  font-size: clamp(1.1rem, 2.5vw, 1.45rem);
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+body.is-classroom-frozen {
+  overflow: hidden;
+}
+

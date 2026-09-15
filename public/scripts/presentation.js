@@ -28,6 +28,66 @@ import { ReloadDemonstration } from './reload-demonstration.js';
 import { TabDemonstration } from './tab-demonstration.js';
 import { AddressBarDemonstration } from './address-bar-demonstration.js';
 
+
+const TEACHER_TOKEN_KEY =
+  'chromeSkillsTeacherToken';
+
+function getPresentationTeacherToken() {
+  return localStorage.getItem(
+    TEACHER_TOKEN_KEY
+  );
+}
+
+async function fetchPresentationClassroomState() {
+  const response = await fetch(
+    '/api/classroom-state',
+    {
+      cache: 'no-store'
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `Classroom state request failed: ${response.status}`
+    );
+  }
+
+  return response.json();
+}
+
+async function updatePresentationClassroomState(patch) {
+  const token =
+    getPresentationTeacherToken();
+
+  if (!token) {
+    throw new Error(
+      'Teacher sign-in is required.'
+    );
+  }
+
+  const response = await fetch(
+    '/api/classroom-state',
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type':
+          'application/json',
+        Authorization:
+          `Bearer ${token}`
+      },
+      body: JSON.stringify(patch)
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `Classroom update failed: ${response.status}`
+    );
+  }
+
+  return response.json();
+}
+
 class PresentationController {
   constructor() {
     this.workspaceEl = document.getElementById('presentation-workspace');
@@ -51,6 +111,24 @@ class PresentationController {
     this.prevButtonEl = document.getElementById('presentation-prev-btn');
     this.nextButtonEl = document.getElementById('presentation-next-btn');
 
+    this.freezeButtonEl =
+      document.getElementById(
+        'presentation-freeze-screen'
+      );
+
+    this.releaseButtonEl =
+      document.getElementById(
+        'presentation-release-unlocked'
+      );
+
+    this.unlockButtonEl =
+      document.getElementById(
+        'presentation-unlock-all'
+      );
+
+    this.freezeControlsBusy = false;
+    this.freezeStateTimer = null;
+
     this.handleResize = this.handleResize.bind(this);
     this.handleChannelMessage = this.handleChannelMessage.bind(this);
   }
@@ -59,6 +137,7 @@ class PresentationController {
     const params = new URLSearchParams(window.location.search);
     const skillId = params.get('skill');
 
+    await this.attachClassroomFreezeControls();
 
     try {
       await lessonCatalog.loadCatalog();
@@ -283,6 +362,211 @@ class PresentationController {
   handleResize() {
     if (!this.windowEl.classList.contains('is-minimized')) {
     }
+  }
+
+  renderFreezeControls(state) {
+    if (
+      !this.freezeButtonEl ||
+      !this.releaseButtonEl ||
+      !this.unlockButtonEl
+    ) {
+      return;
+    }
+
+    const armed =
+      Boolean(
+        state?.freezeScreenArmed
+      );
+
+    this.freezeButtonEl.classList.toggle(
+      'is-armed',
+      armed
+    );
+
+    this.freezeButtonEl.setAttribute(
+      'aria-pressed',
+      armed ? 'true' : 'false'
+    );
+
+    this.freezeButtonEl.textContent =
+      armed
+        ? 'Freeze Armed'
+        : 'Freeze Screen';
+
+    if (!this.freezeControlsBusy) {
+      this.freezeButtonEl.disabled =
+        armed;
+
+      this.releaseButtonEl.disabled =
+        !armed;
+
+      this.unlockButtonEl.disabled =
+        false;
+    }
+  }
+
+  setFreezeControlsBusy(busy) {
+    this.freezeControlsBusy = busy;
+
+    if (!busy) return;
+
+    if (this.freezeButtonEl) {
+      this.freezeButtonEl.disabled = true;
+    }
+
+    if (this.releaseButtonEl) {
+      this.releaseButtonEl.disabled = true;
+    }
+
+    if (this.unlockButtonEl) {
+      this.unlockButtonEl.disabled = true;
+    }
+  }
+
+  async refreshFreezeControls() {
+    try {
+      const state =
+        await fetchPresentationClassroomState();
+
+      this.renderFreezeControls(
+        state
+      );
+    } catch (error) {
+      console.warn(
+        'Classroom Presentation: unable to refresh freeze controls.',
+        error
+      );
+    }
+  }
+
+  async attachClassroomFreezeControls() {
+    if (
+      !this.freezeButtonEl ||
+      !this.releaseButtonEl ||
+      !this.unlockButtonEl
+    ) {
+      return;
+    }
+
+    const token =
+      getPresentationTeacherToken();
+
+    if (!token) {
+      this.freezeButtonEl.disabled = true;
+      this.releaseButtonEl.disabled = true;
+      this.unlockButtonEl.disabled = true;
+
+      this.freezeButtonEl.title =
+        'Open Classroom Presentation from a signed-in Teacher Control tab.';
+
+      return;
+    }
+
+    this.freezeButtonEl.addEventListener(
+      'click',
+      async () => {
+        if (this.freezeControlsBusy) {
+          return;
+        }
+
+        this.setFreezeControlsBusy(true);
+
+        try {
+          const state =
+            await updatePresentationClassroomState({
+              freezeScreenArmed: true
+            });
+
+          this.setFreezeControlsBusy(false);
+          this.renderFreezeControls(
+            state
+          );
+        } catch (error) {
+          this.setFreezeControlsBusy(false);
+
+          console.error(
+            'Unable to arm Freeze Screen:',
+            error
+          );
+
+          await this.refreshFreezeControls();
+        }
+      }
+    );
+
+    this.releaseButtonEl.addEventListener(
+      'click',
+      async () => {
+        if (this.freezeControlsBusy) {
+          return;
+        }
+
+        this.setFreezeControlsBusy(true);
+
+        try {
+          const state =
+            await updatePresentationClassroomState({
+              freezeScreenArmed: false
+            });
+
+          this.setFreezeControlsBusy(false);
+          this.renderFreezeControls(
+            state
+          );
+        } catch (error) {
+          this.setFreezeControlsBusy(false);
+
+          console.error(
+            'Unable to release unlocked students:',
+            error
+          );
+
+          await this.refreshFreezeControls();
+        }
+      }
+    );
+
+    this.unlockButtonEl.addEventListener(
+      'click',
+      async () => {
+        if (this.freezeControlsBusy) {
+          return;
+        }
+
+        this.setFreezeControlsBusy(true);
+
+        try {
+          const state =
+            await updatePresentationClassroomState({
+              unlockAllFrozenStudents: true
+            });
+
+          this.setFreezeControlsBusy(false);
+          this.renderFreezeControls(
+            state
+          );
+        } catch (error) {
+          this.setFreezeControlsBusy(false);
+
+          console.error(
+            'Unable to unlock all students:',
+            error
+          );
+
+          await this.refreshFreezeControls();
+        }
+      }
+    );
+
+    await this.refreshFreezeControls();
+
+    this.freezeStateTimer =
+      window.setInterval(
+        () => {
+          void this.refreshFreezeControls();
+        },
+        1000
+      );
   }
 
   /** Resets all step-specific visual state before applying the new step. */

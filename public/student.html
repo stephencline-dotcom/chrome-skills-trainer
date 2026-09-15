@@ -235,5 +235,30 @@
 
   <!-- Application Logic -->
   <script type="module" src="scripts/app.js"></script>
+
+  <!-- Classroom Freeze Screen overlay.
+       Hidden until this student interacts while Freeze Screen is armed. -->
+  <div
+    id="eyes-up-overlay"
+    class="eyes-up-overlay"
+    role="alertdialog"
+    aria-modal="true"
+    aria-labelledby="eyes-up-title"
+    aria-describedby="eyes-up-message"
+    hidden
+  >
+    <div class="eyes-up-card">
+      <div class="eyes-up-icon" aria-hidden="true">👀</div>
+
+      <h1 id="eyes-up-title">
+        Eyes Up Front
+      </h1>
+
+      <p id="eyes-up-message">
+        Please look at your teacher and wait for directions.
+      </p>
+    </div>
+  </div>
+
 </body>
 </html>

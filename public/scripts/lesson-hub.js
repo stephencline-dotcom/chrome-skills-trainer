@@ -82,6 +82,274 @@ function attachTeacherSignOut() {
   );
 }
 
+function getTeacherToken() {
+  return localStorage.getItem(
+    TEACHER_TOKEN_KEY
+  );
+}
+
+async function fetchClassroomState() {
+  const response = await fetch(
+    '/api/classroom-state',
+    {
+      cache: 'no-store'
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      'Unable to read classroom state.'
+    );
+  }
+
+  return response.json();
+}
+
+async function updateClassroomState(patch) {
+  const token = getTeacherToken();
+
+  if (!token) {
+    redirectToTeacherLogin();
+    throw new Error(
+      'Teacher sign-in required.'
+    );
+  }
+
+  const response = await fetch(
+    '/api/classroom-state',
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(patch)
+    }
+  );
+
+  if (response.status === 401) {
+    localStorage.removeItem(
+      TEACHER_TOKEN_KEY
+    );
+
+    redirectToTeacherLogin();
+
+    throw new Error(
+      'Teacher session expired.'
+    );
+  }
+
+  if (!response.ok) {
+    const result = await response
+      .json()
+      .catch(() => ({}));
+
+    throw new Error(
+      result.error ||
+      'Unable to update classroom state.'
+    );
+  }
+
+  return response.json();
+}
+
+function renderFreezeControls(state) {
+  const freezeButton =
+    document.getElementById(
+      'teacher-freeze-screen'
+    );
+
+  const releaseButton =
+    document.getElementById(
+      'teacher-release-unlocked'
+    );
+
+  const unlockButton =
+    document.getElementById(
+      'teacher-unlock-all'
+    );
+
+  if (!freezeButton) return;
+
+  const armed =
+    Boolean(state?.freezeScreenArmed);
+
+  freezeButton.classList.toggle(
+    'is-armed',
+    armed
+  );
+
+  freezeButton.setAttribute(
+    'aria-pressed',
+    String(armed)
+  );
+
+  freezeButton.textContent =
+    armed
+      ? 'Freeze Armed'
+      : 'Freeze Screen';
+
+  freezeButton.disabled = armed;
+
+  if (releaseButton) {
+    releaseButton.disabled = !armed;
+  }
+
+  if (unlockButton) {
+    unlockButton.disabled = false;
+  }
+}
+
+async function attachClassroomFreezeControls() {
+  const freezeButton =
+    document.getElementById(
+      'teacher-freeze-screen'
+    );
+
+  const releaseButton =
+    document.getElementById(
+      'teacher-release-unlocked'
+    );
+
+  const unlockButton =
+    document.getElementById(
+      'teacher-unlock-all'
+    );
+
+  if (
+    !freezeButton ||
+    !releaseButton ||
+    !unlockButton
+  ) {
+    return;
+  }
+
+  let latestState = null;
+  let busy = false;
+
+  const refresh = async () => {
+    try {
+      latestState =
+        await fetchClassroomState();
+
+      renderFreezeControls(
+        latestState
+      );
+    } catch (error) {
+      console.error(
+        'Unable to refresh classroom freeze state:',
+        error
+      );
+    }
+  };
+
+  freezeButton.addEventListener(
+    'click',
+    async () => {
+      if (busy) return;
+
+      busy = true;
+      freezeButton.disabled = true;
+      releaseButton.disabled = true;
+      unlockButton.disabled = true;
+
+      try {
+        latestState =
+          await updateClassroomState({
+            freezeScreenArmed: true
+          });
+
+        renderFreezeControls(
+          latestState
+        );
+      } catch (error) {
+        console.error(
+          'Unable to change Freeze Screen:',
+          error
+        );
+      } finally {
+        busy = false;
+        renderFreezeControls(
+          latestState
+        );
+      }
+    }
+  );
+
+  releaseButton.addEventListener(
+    'click',
+    async () => {
+      if (busy) return;
+
+      busy = true;
+      freezeButton.disabled = true;
+      releaseButton.disabled = true;
+      unlockButton.disabled = true;
+
+      try {
+        latestState =
+          await updateClassroomState({
+            freezeScreenArmed: false
+          });
+
+        renderFreezeControls(
+          latestState
+        );
+      } catch (error) {
+        console.error(
+          'Unable to release unlocked students:',
+          error
+        );
+      } finally {
+        busy = false;
+        renderFreezeControls(
+          latestState
+        );
+      }
+    }
+  );
+
+  unlockButton.addEventListener(
+    'click',
+    async () => {
+      if (busy) return;
+
+      busy = true;
+      freezeButton.disabled = true;
+      releaseButton.disabled = true;
+      unlockButton.disabled = true;
+
+      try {
+        latestState =
+          await updateClassroomState({
+            unlockAllFrozenStudents: true
+          });
+
+        renderFreezeControls(
+          latestState
+        );
+      } catch (error) {
+        console.error(
+          'Unable to unlock frozen students:',
+          error
+        );
+      } finally {
+        busy = false;
+        renderFreezeControls(
+          latestState
+        );
+      }
+    }
+  );
+
+  await refresh();
+
+  window.setInterval(
+    refresh,
+    1500
+  );
+}
+
 async function requireTeacherSession() {
   const token = localStorage.getItem(
     TEACHER_TOKEN_KEY
@@ -433,6 +701,17 @@ class LessonHub {
           stepIndex: this.engine.getCurrentStepIndex(),
           deliveryMode: this.deliveryMode
         });
+
+        void updateClassroomState({
+          skillId: this.selectedSkill.id,
+          stepIndex: this.engine.getCurrentStepIndex(),
+          deliveryMode: this.deliveryMode
+        }).catch((error) => {
+          console.error(
+            'Unable to publish classroom delivery mode:',
+            error
+          );
+        });
       };
     }
     this.updateModeToggleUi();
@@ -498,6 +777,17 @@ class LessonHub {
       stepId: step.id,
       stepIndex: this.engine.getCurrentStepIndex(),
       deliveryMode: this.deliveryMode
+    });
+
+    void updateClassroomState({
+      skillId: this.selectedSkill.id,
+      stepIndex: this.engine.getCurrentStepIndex(),
+      deliveryMode: this.deliveryMode
+    }).catch((error) => {
+      console.error(
+        'Unable to publish shared classroom state:',
+        error
+      );
     });
 
     const statusEl = document.getElementById('teacher-sync-status');
@@ -600,8 +890,8 @@ class LessonHub {
             📺 Open Classroom Presentation
           </a>
 
-          <a href="student.html?skill=${encodeURIComponent(this.selectedSkill.id)}&lesson=active&preview=teacher" target="_blank" class="slide-nav-btn primary" title="Open student simulator preview in a new tab">
-            🚀 Open Student Practice Preview
+          <a href="student.html?skill=${encodeURIComponent(this.selectedSkill.id)}&lesson=active" target="_blank" class="slide-nav-btn primary" title="Open the live student classroom view in a new tab">
+            🚀 Open Student Classroom
           </a>
         </div>
 
@@ -753,6 +1043,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!authenticated) return;
 
   attachTeacherSignOut();
+  await attachClassroomFreezeControls();
 
   const hub = new LessonHub();
   hub.init();

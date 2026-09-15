@@ -23,6 +23,37 @@
           Local Presentation Mode
         </span>
         <div class="presentation-header-actions">
+          <div
+            class="presentation-freeze-controls"
+            aria-label="Student screen controls"
+          >
+            <button
+              type="button"
+              id="presentation-freeze-screen"
+              class="presentation-freeze-btn"
+              aria-pressed="false"
+            >
+              Freeze Screen
+            </button>
+
+            <button
+              type="button"
+              id="presentation-release-unlocked"
+              class="presentation-release-btn"
+              disabled
+            >
+              Release Unlocked
+            </button>
+
+            <button
+              type="button"
+              id="presentation-unlock-all"
+              class="presentation-unlock-btn"
+            >
+              Unlock All
+            </button>
+          </div>
+
           <span id="presentation-step-indicator" class="presentation-step-indicator">Step 1 of 1</span>
           <nav class="presentation-step-nav" aria-label="Presentation lesson navigation">
             <button type="button" id="presentation-prev-btn" class="presentation-step-nav-btn">

@@ -242,3 +242,78 @@ html, body {
   opacity: 0.4;
   cursor: default;
 }
+
+
+/* =========================================================
+   Classroom Freeze Controls
+   ========================================================= */
+
+.presentation-freeze-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.presentation-freeze-btn,
+.presentation-release-btn,
+.presentation-unlock-btn {
+  min-height: 36px;
+  padding: 7px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.presentation-freeze-btn {
+  color: #b91c1c;
+  border-color: #fecaca;
+  background: #fff7f7;
+}
+
+.presentation-freeze-btn.is-armed {
+  color: #ffffff;
+  border-color: #b91c1c;
+  background: #dc2626;
+}
+
+.presentation-release-btn {
+  color: #1d4ed8;
+  border-color: #93c5fd;
+  background: #eff6ff;
+}
+
+.presentation-unlock-btn {
+  color: #166534;
+  border-color: #86efac;
+  background: #f0fdf4;
+}
+
+.presentation-freeze-btn:hover:not(:disabled),
+.presentation-release-btn:hover:not(:disabled),
+.presentation-unlock-btn:hover:not(:disabled) {
+  filter: brightness(0.97);
+}
+
+.presentation-freeze-btn:disabled,
+.presentation-release-btn:disabled,
+.presentation-unlock-btn:disabled {
+  opacity: 0.48;
+  cursor: default;
+}
+
+@media (max-width: 1100px) {
+  .presentation-header-actions {
+    flex-wrap: wrap;
+  }
+
+  .presentation-freeze-controls {
+    order: 2;
+    width: 100%;
+  }
+}
+

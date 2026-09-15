@@ -11,7 +11,216 @@ import { StudentLesson } from './student-lesson.js';
 import { BrowserNavigator } from './browser-navigator.js';
 import { BrowserTabs } from './browser-tabs.js';
 
+class ClassroomFreezeController {
+  constructor() {
+    this.overlay =
+      document.getElementById(
+        'eyes-up-overlay'
+      );
+
+    this.freezeArmed = false;
+    this.studentFrozen = false;
+    this.lastUnlockVersion = null;
+    this.pollTimer = null;
+
+    this.handleInteraction =
+      this.handleInteraction.bind(this);
+
+  }
+
+  async init() {
+    if (!this.overlay) return;
+
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+    // Teacher practice previews should never get trapped
+    // by live classroom Freeze Screen controls.
+    if (params.get('preview') === 'teacher') {
+      return;
+    }
+
+    this.attachInteractionGuards();
+
+    await this.refreshState();
+
+    this.pollTimer = window.setInterval(
+      () => {
+        this.refreshState();
+      },
+      500
+    );
+  }
+
+  attachInteractionGuards() {
+    const capture = true;
+
+    [
+      'pointerdown',
+      'mousedown',
+      'click',
+      'dblclick',
+      'contextmenu',
+      'keydown',
+      'touchstart'
+    ].forEach((eventName) => {
+      document.addEventListener(
+        eventName,
+        this.handleInteraction,
+        capture
+      );
+    });
+
+    document.addEventListener(
+      'pointermove',
+      this.handleInteraction,
+      capture
+    );
+
+    document.addEventListener(
+      'mousemove',
+      this.handleInteraction,
+      capture
+    );
+
+    document.addEventListener(
+      'wheel',
+      this.handleInteraction,
+      {
+        capture: true,
+        passive: false
+      }
+    );
+
+    document.addEventListener(
+      'touchmove',
+      this.handleInteraction,
+      {
+        capture: true,
+        passive: false
+      }
+    );
+  }
+
+  stopEvent(event) {
+    if (event.cancelable) {
+      event.preventDefault();
+    }
+
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+  }
+
+  handleInteraction(event) {
+    // Once this student has triggered Eyes Up Front,
+    // Release Unlocked must NOT free them. Only a new
+    // freezeUnlockVersion from Unlock All / logout does.
+    if (this.studentFrozen) {
+      this.stopEvent(event);
+      return;
+    }
+
+    if (!this.freezeArmed) {
+      return;
+    }
+
+    // Freeze takes priority over every lesson interaction.
+    this.stopEvent(event);
+    this.freezeStudent();
+  }
+
+  freezeStudent() {
+    if (this.studentFrozen) return;
+
+    this.studentFrozen = true;
+
+    document.body.classList.add(
+      'is-classroom-frozen'
+    );
+
+    this.overlay.hidden = false;
+
+    const title =
+      document.getElementById(
+        'eyes-up-title'
+      );
+
+    if (title) {
+      title.focus?.();
+    }
+  }
+
+  unlockStudent() {
+    this.studentFrozen = false;
+
+    document.body.classList.remove(
+      'is-classroom-frozen'
+    );
+
+    if (this.overlay) {
+      this.overlay.hidden = true;
+    }
+  }
+
+  applyState(state) {
+    if (!state) return;
+
+    const unlockVersion =
+      Number(
+        state.freezeUnlockVersion || 0
+      );
+
+    if (this.lastUnlockVersion === null) {
+      this.lastUnlockVersion =
+        unlockVersion;
+    } else if (
+      unlockVersion >
+      this.lastUnlockVersion
+    ) {
+      this.lastUnlockVersion =
+        unlockVersion;
+
+      this.unlockStudent();
+    }
+
+    this.freezeArmed =
+      Boolean(
+        state.freezeScreenArmed
+      );
+  }
+
+  async refreshState() {
+    try {
+      const response = await fetch(
+        '/api/classroom-state',
+        {
+          cache: 'no-store'
+        }
+      );
+
+      if (!response.ok) {
+        return;
+      }
+
+      const state =
+        await response.json();
+
+      this.applyState(state);
+    } catch (error) {
+      // Keep the last known classroom state during a
+      // temporary network interruption.
+    }
+  }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
+  const classroomFreezeController =
+    new ClassroomFreezeController();
+
+  await classroomFreezeController.init();
+
   // Retrieve DOM element references
   const desktopWorkspace = document.getElementById('desktop-workspace');
   const windowEl = document.getElementById('chrome-window');
