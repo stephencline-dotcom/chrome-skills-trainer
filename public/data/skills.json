@@ -1096,30 +1096,235 @@
       "simulatorControl": "House icon on the navigation bar.",
       "lessonSections": [
         {
-          "id": "meet-the-button",
-          "title": "Meet the Button",
-          "type": "presentation",
-          "placeholderDescription": "Find the house-shaped Home button."
+          "id": "step-1-meet-home",
+          "title": "Meet the Home Button",
+          "section": "Meet the Home Button",
+          "type": "introduction",
+          "teacherTitle": "Meet the Home Button",
+          "teacherText": "The Home button looks like a little house. It takes you straight back to your starting page.",
+          "teacherPrompt": "Point to the house and explain that Home takes us back to our starting page.",
+          "studentTitle": "Meet the Home Button",
+          "studentInstruction": "The Home button looks like a little house. It takes you back to your starting page.",
+          "studentMode": "observe",
+          "targetControl": null,
+          "completionMessage": "Ready to find the Home button!",
+          "allowStudentInteraction": false,
+          "presentationView": "symbol",
+          "startState": "restored",
+          "allowedControls": [],
+          "browserHistory": [
+            "home",
+            "reading"
+          ],
+          "browserHistoryIndex": 1
         },
         {
-          "id": "watch-it-work",
+          "id": "step-2-find-home",
+          "title": "Find the Home Button",
+          "section": "Meet the Home Button",
+          "type": "identify",
+          "teacherTitle": "Find the Home Button",
+          "teacherText": "Home is the little house button near Reload and the Address Bar.",
+          "teacherPrompt": "Ask: “Which button looks like a little house?”",
+          "studentTitle": "Find the Home Button",
+          "studentInstruction": "Click the highlighted Home button.",
+          "studentMode": "identify",
+          "targetControl": "btn-home",
+          "completionMessage": "Great job! You found the Home button!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "highlightControl": "btn-home",
+          "highlightLabel": "Home",
+          "allowedControls": [
+            "btn-home"
+          ],
+          "identifyControl": "btn-home",
+          "browserHistory": [
+            "home",
+            "reading"
+          ],
+          "browserHistoryIndex": 1
+        },
+        {
+          "id": "step-3-watch-home",
           "title": "Watch It Work",
+          "section": "Watch It Work",
           "type": "demonstration",
-          "placeholderDescription": "Observe how Home jumps straight to your starting page."
+          "teacherTitle": "Watch the Home Button",
+          "teacherText": "Watch Home take the browser straight from Reading Corner back to Student Learning Home.",
+          "teacherPrompt": "Say: “Home takes us straight back to our starting page.”",
+          "studentTitle": "Watch the Home Button",
+          "studentInstruction": "Watch the cursor click the Home button and return to Student Learning Home.",
+          "studentMode": "observe",
+          "targetControl": null,
+          "completionMessage": "Now you are ready to try the Home button!",
+          "allowStudentInteraction": false,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [],
+          "demonstration": "home-cycle",
+          "browserHistory": [
+            "home",
+            "reading"
+          ],
+          "browserHistoryIndex": 1
         },
         {
-          "id": "guided-practice",
-          "title": "Guided Practice",
-          "type": "practice",
-          "placeholderDescription": "Click the Home button to jump back to the main portal."
+          "id": "step-4-try-home",
+          "title": "Try the Home Button",
+          "section": "Guided Practice",
+          "type": "guided-practice",
+          "teacherTitle": "Practice Using Home",
+          "teacherText": "Students are on Reading Corner and use Home to return directly to Student Learning Home.",
+          "teacherPrompt": "Say: “Click the little house to go back to your starting page.”",
+          "studentTitle": "Go Home",
+          "studentInstruction": "You are on Reading Corner. Click the Home button to return to Student Learning Home.",
+          "studentMode": "interact",
+          "targetControl": "btn-home",
+          "completionMessage": "Great job! Home took you back to your starting page!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "highlightControl": "btn-home",
+          "highlightLabel": "Home",
+          "allowedControls": [
+            "btn-home"
+          ],
+          "expectedActions": [
+            "home"
+          ],
+          "browserHistory": [
+            "home",
+            "reading"
+          ],
+          "browserHistoryIndex": 1
         },
         {
-          "id": "student-challenge",
-          "title": "Student Challenge",
-          "type": "challenge",
-          "placeholderDescription": "Navigate away and use Home to quickly return."
+          "id": "step-5-home-no-hint",
+          "title": "Go Home Without a Hint",
+          "section": "Guided Practice",
+          "type": "guided-practice",
+          "teacherTitle": "Find Home on Your Own",
+          "teacherText": "Students are on Today’s Story and return to Student Learning Home without the Home button being highlighted.",
+          "teacherPrompt": "Say: “Find the Home button on your own and return to your starting page.”",
+          "studentTitle": "Find Home on Your Own",
+          "studentInstruction": "You are on Today’s Story. Find the Home button and return to Student Learning Home.",
+          "studentMode": "interact",
+          "targetControl": "btn-home",
+          "completionMessage": "Excellent! You remembered where the Home button is!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [
+            "btn-home"
+          ],
+          "expectedActions": [
+            "home"
+          ],
+          "browserHistory": [
+            "home",
+            "reading",
+            "story"
+          ],
+          "browserHistoryIndex": 2
+        },
+        {
+          "id": "step-6-home-or-back",
+          "title": "Home or Back?",
+          "section": "Check Your Understanding",
+          "type": "quiz",
+          "teacherTitle": "Home or Back?",
+          "teacherText": "Home goes straight to the starting page. Back returns to the page visited just before.",
+          "teacherPrompt": "Ask: “If you want to go straight to your starting page, which button should you choose?”",
+          "studentTitle": "Home or Back?",
+          "studentInstruction": "You are several pages away. Which button takes you straight to your starting page?",
+          "studentMode": "quiz",
+          "targetControl": null,
+          "completionMessage": "Correct! Home takes you straight to your starting page!",
+          "allowStudentInteraction": true,
+          "presentationView": "quiz",
+          "startState": "restored",
+          "allowedControls": [],
+          "quiz": {
+            "choices": [
+              {
+                "id": "home",
+                "label": "Home",
+                "icon": "🏠",
+                "correct": true
+              },
+              {
+                "id": "back",
+                "label": "Back",
+                "icon": "←",
+                "correct": false,
+                "feedback": "Back goes to the page you visited just before. Choose Home to go straight to your starting page."
+              }
+            ]
+          },
+          "browserHistory": [
+            "home",
+            "reading",
+            "story"
+          ],
+          "browserHistoryIndex": 2
+        },
+        {
+          "id": "step-7-home-challenge",
+          "title": "Home Button Challenge",
+          "section": "Student Challenge",
+          "type": "independent-challenge",
+          "teacherTitle": "Home Button Challenge",
+          "teacherText": "Students return directly to Student Learning Home without a highlight or hint.",
+          "teacherPrompt": "Say: “Get back to your starting page in one click.”",
+          "studentTitle": "Home Button Challenge",
+          "studentInstruction": "Get back to Student Learning Home in one click.",
+          "studentMode": "interact",
+          "targetControl": null,
+          "completionMessage": "Outstanding! You used Home to return in one click!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [
+            "btn-home"
+          ],
+          "expectedActions": [
+            "home"
+          ],
+          "browserHistory": [
+            "home",
+            "reading",
+            "story"
+          ],
+          "browserHistoryIndex": 2
+        },
+        {
+          "id": "step-8-home-complete",
+          "title": "Home Button Complete",
+          "section": "Lesson Complete",
+          "type": "summary",
+          "teacherTitle": "Home Button Mastered!",
+          "teacherText": "Review that Home returns directly to the starting page, while Back returns to the page visited just before.",
+          "teacherPrompt": "Ask: “What does the little house button do?”",
+          "studentTitle": "Home Button Complete!",
+          "studentInstruction": "The Home button takes you straight back to your starting page.",
+          "studentMode": "summary",
+          "targetControl": null,
+          "completionMessage": "Lesson Complete! You mastered the Home button!",
+          "allowStudentInteraction": false,
+          "presentationView": "completion",
+          "startState": "restored",
+          "allowedControls": [],
+          "browserHistory": [
+            "home"
+          ],
+          "browserHistoryIndex": 0
         }
-      ]
+      ],
+      "description": "Use the Home button to return directly to your starting page.",
+      "shortDescription": "Return directly to your starting page.",
+      "hasCompleteLesson": true
     },
     {
       "id": "address-bar",

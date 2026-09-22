@@ -25,6 +25,7 @@ import { MaximizeDemonstration } from './maximize-demonstration.js';
 import { CloseDemonstration } from './close-demonstration.js';
 import { BackForwardDemonstration } from './back-forward-demonstration.js';
 import { ReloadDemonstration } from './reload-demonstration.js';
+import { HomeDemonstration } from './home-demonstration.js';
 import { TabDemonstration } from './tab-demonstration.js';
 import { AddressBarDemonstration } from './address-bar-demonstration.js';
 
@@ -170,6 +171,7 @@ class PresentationController {
       backButton: document.getElementById('btn-back'),
       forwardButton: document.getElementById('btn-forward'),
       reloadButton: document.getElementById('btn-reload'),
+      homeButton: document.getElementById('btn-home'),
       addressElement: document.getElementById('browser-address'),
       contentElement: document.getElementById('browser-content')
     });
@@ -228,6 +230,7 @@ class PresentationController {
       'switch-tab-cycle': TabDemonstration,
       'close-tab-cycle': TabDemonstration,
       'reload-cycle': ReloadDemonstration,
+      'home-cycle': HomeDemonstration,
       'back-forward-cycle': BackForwardDemonstration,
       'address-bar-cycle': AddressBarDemonstration
     }[demonstrationType] || MinimizeDemonstration;
@@ -243,6 +246,7 @@ class PresentationController {
       forwardBtnEl: getSimulatorControlElement('forward'),
       browserNavigator: this.browserNavigator,
       reloadBtnEl: this.browserNavigator?.reloadButton,
+      homeBtnEl: this.browserNavigator?.homeButton,
       addressBarEl: getSimulatorControlElement(
         'address-bar'
       ),

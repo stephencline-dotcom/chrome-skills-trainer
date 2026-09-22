@@ -13,6 +13,7 @@ import { MaximizeDemonstration } from './maximize-demonstration.js';
 import { CloseDemonstration } from './close-demonstration.js';
 import { BackForwardDemonstration } from './back-forward-demonstration.js';
 import { ReloadDemonstration } from './reload-demonstration.js';
+import { HomeDemonstration } from './home-demonstration.js';
 import { TabDemonstration } from './tab-demonstration.js';
 
 const TEACHER_TOKEN_KEY = 'chromeSkillsTeacherToken';
@@ -827,6 +828,7 @@ class LessonHub {
                 <button type="button" id="demo-mini-btn-back" class="demo-mini-nav-btn" tabindex="-1" aria-hidden="true">←</button>
                 <button type="button" id="demo-mini-btn-forward" class="demo-mini-nav-btn" tabindex="-1" aria-hidden="true">→</button>
                 <button type="button" id="demo-mini-btn-reload" class="demo-mini-nav-btn" tabindex="-1" aria-hidden="true">↻</button>
+                <button type="button" id="demo-mini-btn-home" class="demo-mini-nav-btn" tabindex="-1" aria-hidden="true">🏠</button>
                 <span class="demo-mini-address">chrome-skills-trainer.local</span>
               </div>
               <div id="demo-mini-page-label" class="demo-mini-page-label">
@@ -917,6 +919,7 @@ class LessonHub {
       const miniTaskbarBtn = document.getElementById('demo-mini-taskbar-btn');
       const miniBackBtn = document.getElementById('demo-mini-btn-back');
       const miniForwardBtn = document.getElementById('demo-mini-btn-forward');
+      const miniHomeBtn = document.getElementById('demo-mini-btn-home');
       const miniPageLabel = document.getElementById('demo-mini-page-label');
       const miniCaptionEl = document.getElementById('demo-caption-mini');
       const replayBtn = document.getElementById('replay-demo-btn');
@@ -936,6 +939,7 @@ class LessonHub {
       'switch-tab-cycle': TabDemonstration,
       'close-tab-cycle': TabDemonstration,
       'reload-cycle': ReloadDemonstration,
+      'home-cycle': HomeDemonstration,
       'back-forward-cycle': BackForwardDemonstration
         }[step.demonstration] || MinimizeDemonstration;
 
@@ -949,6 +953,7 @@ class LessonHub {
           backBtnEl: miniBackBtn,
           forwardBtnEl: miniForwardBtn,
           reloadBtnEl: document.getElementById('demo-mini-btn-reload'),
+          homeBtnEl: miniHomeBtn,
           pageLabelEl: miniPageLabel,
           cursorLayer: document.body,
           maximizeBottomInset: 28,
@@ -972,6 +977,18 @@ class LessonHub {
               deliveryMode: this.deliveryMode
             });
           }
+
+          void updateClassroomState({
+            skillId: this.selectedSkill.id,
+            stepIndex: idx,
+            deliveryMode: this.deliveryMode,
+            replayDemonstration: true
+          }).catch((error) => {
+            console.error(
+              'Unable to replay demonstration on student screens:',
+              error
+            );
+          });
         };
       }
     }

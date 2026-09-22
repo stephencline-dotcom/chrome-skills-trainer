@@ -16,6 +16,7 @@ import { MaximizeDemonstration } from './maximize-demonstration.js';
 import { CloseDemonstration } from './close-demonstration.js';
 import { BackForwardDemonstration } from './back-forward-demonstration.js';
 import { ReloadDemonstration } from './reload-demonstration.js';
+import { HomeDemonstration } from './home-demonstration.js';
 import { TabDemonstration } from './tab-demonstration.js';
 import { AddressBarDemonstration } from './address-bar-demonstration.js';
 
@@ -142,6 +143,7 @@ export class StudentLesson {
       'switch-tab-cycle': TabDemonstration,
       'close-tab-cycle': TabDemonstration,
       'reload-cycle': ReloadDemonstration,
+      'home-cycle': HomeDemonstration,
       'back-forward-cycle': BackForwardDemonstration,
       'address-bar-cycle': AddressBarDemonstration
     }[demonstrationType] || MinimizeDemonstration;
@@ -157,6 +159,7 @@ export class StudentLesson {
       forwardBtnEl: this.browserNavigator?.forwardButton,
       browserNavigator: this.browserNavigator,
       reloadBtnEl: this.browserNavigator?.reloadButton,
+      homeBtnEl: this.browserNavigator?.homeButton,
       addressBarEl: getSimulatorControlElement(
         'address-bar'
       ),

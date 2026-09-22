@@ -7,12 +7,14 @@ export class BrowserNavigator {
     backButton,
     forwardButton,
     reloadButton,
+    homeButton,
     addressElement,
     contentElement
   }) {
     this.backButton = backButton;
     this.forwardButton = forwardButton;
     this.reloadButton = reloadButton;
+    this.homeButton = homeButton;
     this.addressElement = addressElement;
     this.contentElement = contentElement;
 
@@ -26,6 +28,7 @@ export class BrowserNavigator {
     this.handleBack = this.handleBack.bind(this);
     this.handleForward = this.handleForward.bind(this);
     this.handleReload = this.handleReload.bind(this);
+    this.handleHome = this.handleHome.bind(this);
     this.handleAddressFocus = this.handleAddressFocus.bind(this);
     this.handleAddressClick = this.handleAddressClick.bind(this);
     this.handleAddressKeyDown = this.handleAddressKeyDown.bind(this);
@@ -36,6 +39,7 @@ export class BrowserNavigator {
     this.backButton?.addEventListener('click', this.handleBack);
     this.forwardButton?.addEventListener('click', this.handleForward);
     this.reloadButton?.addEventListener('click', this.handleReload);
+    this.homeButton?.addEventListener('click', this.handleHome);
     this.addressElement?.addEventListener(
       'focus',
       this.handleAddressFocus
@@ -130,6 +134,32 @@ export class BrowserNavigator {
     });
   }
 
+  handleHome() {
+    const allowed = this.canUse('btn-home');
+
+    const attempt = this.dispatch('browser:control-attempt', {
+      control: 'btn-home',
+      action: 'home',
+      allowed
+    });
+
+    if (!allowed || attempt.defaultPrevented) return;
+
+    this.history = this.history.slice(0, this.historyIndex + 1);
+
+    if (this.currentPageId !== 'home') {
+      this.history.push('home');
+      this.historyIndex = this.history.length - 1;
+    }
+
+    this.render();
+
+    this.dispatch('browser:navigated', {
+      control: 'btn-home',
+      action: 'home',
+      pageId: 'home'
+    });
+  }
   handleReload() {
     const allowed = this.canUse('btn-reload');
 
@@ -365,6 +395,14 @@ export class BrowserNavigator {
       );
     }
 
+    if (this.homeButton) {
+      const interactionBlocked = !this.canUse('btn-home');
+      this.homeButton.disabled = interactionBlocked;
+      this.homeButton.classList.toggle(
+        'control-disabled',
+        interactionBlocked
+      );
+    }
     if (this.addressElement && 'readOnly' in this.addressElement) {
       const interactionBlocked =
         !this.canUse('btn-address-bar');
