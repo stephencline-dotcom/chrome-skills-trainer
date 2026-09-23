@@ -2332,30 +2332,232 @@
       "simulatorControl": "Star icon on the right side of the address bar.",
       "lessonSections": [
         {
-          "id": "meet-the-button",
-          "title": "Meet the Button",
-          "type": "presentation",
-          "placeholderDescription": "Find the star icon inside the address bar."
+          "id": "step-1-meet-bookmark",
+          "title": "Meet the Bookmark Star",
+          "section": "Meet the Bookmark Star",
+          "type": "introduction",
+          "teacherTitle": "Meet the Bookmark Star",
+          "teacherText": "A bookmark saves a webpage so you can find it again later. Chrome uses the star at the right side of the Address Bar.",
+          "teacherPrompt": "Point to the star and say: “The star helps us save a page we want to find again.”",
+          "studentTitle": "Meet the Bookmark Star",
+          "studentInstruction": "The star lets you save a webpage so you can find it again later.",
+          "studentMode": "observe",
+          "targetControl": null,
+          "completionMessage": "Ready to find the Bookmark star!",
+          "allowStudentInteraction": false,
+          "presentationView": "symbol",
+          "startState": "restored",
+          "allowedControls": [],
+          "browserHistory": [
+            "home",
+            "reading"
+          ],
+          "browserHistoryIndex": 1
         },
         {
-          "id": "watch-it-work",
+          "id": "step-2-find-bookmark",
+          "title": "Find the Bookmark Star",
+          "section": "Meet the Bookmark Star",
+          "type": "identify",
+          "teacherTitle": "Find the Bookmark Star",
+          "teacherText": "The Bookmark star is at the right side of the Address Bar.",
+          "teacherPrompt": "Ask: “Which star would you click to save this page?”",
+          "studentTitle": "Find the Bookmark Star",
+          "studentInstruction": "Click the highlighted Bookmark star.",
+          "studentMode": "identify",
+          "targetControl": "btn-bookmark",
+          "completionMessage": "Great job! You found the Bookmark star!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "highlightControl": "btn-bookmark",
+          "highlightLabel": "Bookmark",
+          "allowedControls": [
+            "btn-bookmark"
+          ],
+          "identifyControl": "btn-bookmark",
+          "browserHistory": [
+            "home",
+            "reading"
+          ],
+          "browserHistoryIndex": 1
+        },
+        {
+          "id": "step-3-watch-bookmark",
           "title": "Watch It Work",
+          "section": "Watch It Work",
           "type": "demonstration",
-          "placeholderDescription": "Learn how bookmarking adds websites to your favorites list."
+          "teacherTitle": "Watch a Page Get Bookmarked",
+          "teacherText": "Watch the star turn blue and the Bookmark added box appear. The saved page also appears on the Bookmarks Bar.",
+          "teacherPrompt": "Say: “Click the star to save the page. The blue star tells us the page is bookmarked.”",
+          "studentTitle": "Watch a Page Get Bookmarked",
+          "studentInstruction": "Watch the cursor click the star and save Reading Corner.",
+          "studentMode": "observe",
+          "targetControl": null,
+          "completionMessage": "Now you are ready to bookmark a page!",
+          "allowStudentInteraction": false,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [],
+          "demonstration": "bookmark-save",
+          "browserHistory": [
+            "home",
+            "reading"
+          ],
+          "browserHistoryIndex": 1
         },
         {
-          "id": "guided-practice",
-          "title": "Guided Practice",
-          "type": "practice",
-          "placeholderDescription": "Click the star icon to save the current page."
+          "id": "step-4-try-bookmark",
+          "title": "Bookmark This Page",
+          "section": "Guided Practice",
+          "type": "guided-practice",
+          "teacherTitle": "Practice Bookmarking",
+          "teacherText": "Students bookmark Reading Corner by clicking the star on the right side of the Address Bar.",
+          "teacherPrompt": "Say: “Click the star to save Reading Corner.”",
+          "studentTitle": "Save Reading Corner",
+          "studentInstruction": "Click the Bookmark star to save Reading Corner.",
+          "studentMode": "interact",
+          "targetControl": "btn-bookmark",
+          "completionMessage": "Great job! Reading Corner is bookmarked!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "highlightControl": "btn-bookmark",
+          "highlightLabel": "Bookmark",
+          "allowedControls": [
+            "btn-bookmark"
+          ],
+          "expectedActions": [
+            "bookmark"
+          ],
+          "browserHistory": [
+            "home",
+            "reading"
+          ],
+          "browserHistoryIndex": 1
         },
         {
-          "id": "student-challenge",
-          "title": "Student Challenge",
-          "type": "challenge",
-          "placeholderDescription": "Bookmark your favorite classroom subject page."
+          "id": "step-5-bookmark-no-hint",
+          "title": "Bookmark Without a Hint",
+          "section": "Guided Practice",
+          "type": "guided-practice",
+          "teacherTitle": "Find the Star on Your Own",
+          "teacherText": "Students bookmark Science Lab without the Bookmark star being highlighted.",
+          "teacherPrompt": "Say: “Save Science Lab so you can find it again later.”",
+          "studentTitle": "Save Science Lab",
+          "studentInstruction": "Bookmark Science Lab without a hint.",
+          "studentMode": "interact",
+          "targetControl": "btn-bookmark",
+          "completionMessage": "Excellent! You remembered how to bookmark a page!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [
+            "btn-bookmark"
+          ],
+          "expectedActions": [
+            "bookmark"
+          ],
+          "browserHistory": [
+            "home",
+            "science"
+          ],
+          "browserHistoryIndex": 1
+        },
+        {
+          "id": "step-6-what-is-bookmark",
+          "title": "What Does a Bookmark Do?",
+          "section": "Check Your Understanding",
+          "type": "quiz",
+          "teacherTitle": "What Does a Bookmark Do?",
+          "teacherText": "A bookmark saves a webpage so it is easy to find and open again later.",
+          "teacherPrompt": "Ask: “Why would we bookmark a webpage?”",
+          "studentTitle": "What Does a Bookmark Do?",
+          "studentInstruction": "What happens when you bookmark a webpage?",
+          "studentMode": "quiz",
+          "targetControl": null,
+          "completionMessage": "Correct! A bookmark saves a page so you can find it again!",
+          "allowStudentInteraction": true,
+          "presentationView": "quiz",
+          "startState": "restored",
+          "allowedControls": [],
+          "quiz": {
+            "choices": [
+              {
+                "id": "save",
+                "label": "Save the page so I can find it again",
+                "icon": "⭐",
+                "correct": true
+              },
+              {
+                "id": "reload",
+                "label": "Reload the page",
+                "icon": "↻",
+                "correct": false,
+                "feedback": "Reload refreshes the current page. A bookmark saves the page so you can find it again later."
+              }
+            ]
+          },
+          "browserHistory": [
+            "home",
+            "science"
+          ],
+          "browserHistoryIndex": 1
+        },
+        {
+          "id": "step-7-bookmark-challenge",
+          "title": "Bookmark Challenge",
+          "section": "Student Challenge",
+          "type": "independent-challenge",
+          "teacherTitle": "Bookmark Challenge",
+          "teacherText": "Students independently bookmark Art Studio without a highlight or hint.",
+          "teacherPrompt": "Say: “Save Art Studio so you can quickly find it again later.”",
+          "studentTitle": "Bookmark Challenge",
+          "studentInstruction": "Save Art Studio as a bookmark.",
+          "studentMode": "interact",
+          "targetControl": null,
+          "completionMessage": "Outstanding! You bookmarked Art Studio on your own!",
+          "allowStudentInteraction": true,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": [
+            "btn-bookmark"
+          ],
+          "expectedActions": [
+            "bookmark"
+          ],
+          "browserHistory": [
+            "home",
+            "art"
+          ],
+          "browserHistoryIndex": 1
+        },
+        {
+          "id": "step-8-bookmark-complete",
+          "title": "Bookmark This Page Complete",
+          "section": "Lesson Complete",
+          "type": "summary",
+          "teacherTitle": "Bookmarking Mastered!",
+          "teacherText": "Review that the star saves the current webpage, a blue star means the page is bookmarked, and saved bookmarks can appear on the Bookmarks Bar.",
+          "teacherPrompt": "Ask: “What does the star in the Address Bar help us do?”",
+          "studentTitle": "Bookmark This Page Complete!",
+          "studentInstruction": "Click the star to save a webpage so you can easily find it again later.",
+          "studentMode": "summary",
+          "targetControl": null,
+          "completionMessage": "Lesson Complete! You mastered bookmarking a webpage!",
+          "allowStudentInteraction": false,
+          "presentationView": "completion",
+          "startState": "restored",
+          "allowedControls": [],
+          "browserHistory": [
+            "home"
+          ],
+          "browserHistoryIndex": 0
         }
-      ]
+      ],
+      "description": "Use the Bookmark star to save a webpage so it is easy to find again later.",
+      "shortDescription": "Save a webpage to find again later.",
+      "hasCompleteLesson": true
     },
     {
       "id": "bookmarks-bar",

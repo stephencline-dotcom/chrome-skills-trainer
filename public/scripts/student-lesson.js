@@ -17,6 +17,7 @@ import { CloseDemonstration } from './close-demonstration.js';
 import { BackForwardDemonstration } from './back-forward-demonstration.js';
 import { ReloadDemonstration } from './reload-demonstration.js';
 import { HomeDemonstration } from './home-demonstration.js';
+import { BookmarkDemonstration } from './bookmark-demonstration.js';
 import { TabDemonstration } from './tab-demonstration.js';
 import { AddressBarDemonstration } from './address-bar-demonstration.js';
 
@@ -125,6 +126,7 @@ export class StudentLesson {
     document.addEventListener('browser:tab-opened', this.handleWindowEvent);
     document.addEventListener('browser:tab-switched', this.handleWindowEvent);
     document.addEventListener('browser:tab-closed', this.handleWindowEvent);
+    document.addEventListener('browser:bookmarked', this.handleWindowEvent);
     document.addEventListener('browser:control-attempt', this.handleControlAttempt);
 
     // Listen to LessonEngine events
@@ -144,6 +146,7 @@ export class StudentLesson {
       'close-tab-cycle': TabDemonstration,
       'reload-cycle': ReloadDemonstration,
       'home-cycle': HomeDemonstration,
+      'bookmark-save': BookmarkDemonstration,
       'back-forward-cycle': BackForwardDemonstration,
       'address-bar-cycle': AddressBarDemonstration
     }[demonstrationType] || MinimizeDemonstration;
@@ -160,6 +163,7 @@ export class StudentLesson {
       browserNavigator: this.browserNavigator,
       reloadBtnEl: this.browserNavigator?.reloadButton,
       homeBtnEl: this.browserNavigator?.homeButton,
+      bookmarkBtnEl: this.browserNavigator?.bookmarkButton,
       addressBarEl: getSimulatorControlElement(
         'address-bar'
       ),

@@ -14,6 +14,7 @@ import { CloseDemonstration } from './close-demonstration.js';
 import { BackForwardDemonstration } from './back-forward-demonstration.js';
 import { ReloadDemonstration } from './reload-demonstration.js';
 import { HomeDemonstration } from './home-demonstration.js';
+import { BookmarkDemonstration } from './bookmark-demonstration.js';
 import { TabDemonstration } from './tab-demonstration.js';
 
 const TEACHER_TOKEN_KEY = 'chromeSkillsTeacherToken';
@@ -830,7 +831,9 @@ class LessonHub {
                 <button type="button" id="demo-mini-btn-reload" class="demo-mini-nav-btn" tabindex="-1" aria-hidden="true">↻</button>
                 <button type="button" id="demo-mini-btn-home" class="demo-mini-nav-btn" tabindex="-1" aria-hidden="true">🏠</button>
                 <span class="demo-mini-address">chrome-skills-trainer.local</span>
+                <button type="button" id="demo-mini-btn-bookmark" class="demo-mini-nav-btn" tabindex="-1" aria-hidden="true">☆</button>
               </div>
+              <div id="demo-mini-bookmarks-bar" class="demo-mini-bookmarks-bar"></div>
               <div id="demo-mini-page-label" class="demo-mini-page-label">
                 Simulated Web Content
               </div>
@@ -920,6 +923,8 @@ class LessonHub {
       const miniBackBtn = document.getElementById('demo-mini-btn-back');
       const miniForwardBtn = document.getElementById('demo-mini-btn-forward');
       const miniHomeBtn = document.getElementById('demo-mini-btn-home');
+      const miniBookmarkBtn = document.getElementById('demo-mini-btn-bookmark');
+      const miniBookmarksBar = document.getElementById('demo-mini-bookmarks-bar');
       const miniPageLabel = document.getElementById('demo-mini-page-label');
       const miniCaptionEl = document.getElementById('demo-caption-mini');
       const replayBtn = document.getElementById('replay-demo-btn');
@@ -940,9 +945,86 @@ class LessonHub {
       'close-tab-cycle': TabDemonstration,
       'reload-cycle': ReloadDemonstration,
       'home-cycle': HomeDemonstration,
+      'bookmark-save': BookmarkDemonstration,
       'back-forward-cycle': BackForwardDemonstration
         }[step.demonstration] || MinimizeDemonstration;
 
+        const miniBookmarkNavigator = {
+          bookmarkedPages: new Set(),
+
+          reset: () => {
+            if (miniPageLabel) {
+              miniPageLabel.textContent = 'Reading Corner';
+            }
+
+            if (miniBookmarkBtn) {
+              miniBookmarkBtn.textContent = '☆';
+              miniBookmarkBtn.classList.remove('is-bookmarked');
+            }
+
+            if (miniBookmarksBar) {
+              miniBookmarksBar.innerHTML = '';
+            }
+
+            miniWindow
+              ?.querySelector('.demo-mini-bookmark-popup')
+              ?.remove();
+          },
+
+          updateButtons: () => {
+            const bookmarked =
+              miniBookmarkNavigator.bookmarkedPages.has('reading');
+
+            if (miniBookmarkBtn) {
+              miniBookmarkBtn.textContent = bookmarked ? '★' : '☆';
+              miniBookmarkBtn.classList.toggle(
+                'is-bookmarked',
+                bookmarked
+              );
+            }
+          },
+
+          renderBookmarksBar: () => {
+            if (!miniBookmarksBar) return;
+
+            miniBookmarksBar.innerHTML =
+              miniBookmarkNavigator.bookmarkedPages.has('reading')
+                ? '<span class="demo-mini-bookmark-item">Reading Corner</span>'
+                : '';
+          },
+
+          hideBookmarkPopup: () => {
+            miniWindow
+              ?.querySelector('.demo-mini-bookmark-popup')
+              ?.remove();
+          },
+
+          showBookmarkSavedPopup: () => {
+            miniWindow
+              ?.querySelector('.demo-mini-bookmark-popup')
+              ?.remove();
+
+            const popup = document.createElement('div');
+            popup.className = 'demo-mini-bookmark-popup';
+            popup.innerHTML = `
+              <span>Bookmark added</span>
+              <button
+                type="button"
+                class="bookmark-saved-done demo-mini-bookmark-done"
+              >
+                Done
+              </button>
+            `;
+
+            popup
+              .querySelector('.demo-mini-bookmark-done')
+              ?.addEventListener('click', () => {
+                popup.remove();
+              });
+
+            miniWindow.appendChild(popup);
+          }
+        };
         this.teacherDemo = new DemonstrationClass({
           demonstrationType: step.demonstration,
           windowEl: miniWindow,
@@ -954,6 +1036,8 @@ class LessonHub {
           forwardBtnEl: miniForwardBtn,
           reloadBtnEl: document.getElementById('demo-mini-btn-reload'),
           homeBtnEl: miniHomeBtn,
+          bookmarkBtnEl: miniBookmarkBtn,
+          browserNavigator: miniBookmarkNavigator,
           pageLabelEl: miniPageLabel,
           cursorLayer: document.body,
           maximizeBottomInset: 28,

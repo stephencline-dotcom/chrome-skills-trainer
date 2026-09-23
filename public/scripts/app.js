@@ -254,6 +254,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     forwardButton: document.getElementById('btn-forward'),
     reloadButton: document.getElementById('btn-reload'),
     homeButton: document.getElementById('btn-home'),
+    bookmarkButton: document.getElementById('btn-bookmark'),
     addressElement: document.getElementById('browser-address'),
     contentElement: document.getElementById('browser-content')
   });

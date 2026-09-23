@@ -26,6 +26,7 @@ import { CloseDemonstration } from './close-demonstration.js';
 import { BackForwardDemonstration } from './back-forward-demonstration.js';
 import { ReloadDemonstration } from './reload-demonstration.js';
 import { HomeDemonstration } from './home-demonstration.js';
+import { BookmarkDemonstration } from './bookmark-demonstration.js';
 import { TabDemonstration } from './tab-demonstration.js';
 import { AddressBarDemonstration } from './address-bar-demonstration.js';
 
@@ -172,6 +173,7 @@ class PresentationController {
       forwardButton: document.getElementById('btn-forward'),
       reloadButton: document.getElementById('btn-reload'),
       homeButton: document.getElementById('btn-home'),
+      bookmarkButton: document.getElementById('btn-bookmark'),
       addressElement: document.getElementById('browser-address'),
       contentElement: document.getElementById('browser-content')
     });
@@ -231,6 +233,7 @@ class PresentationController {
       'close-tab-cycle': TabDemonstration,
       'reload-cycle': ReloadDemonstration,
       'home-cycle': HomeDemonstration,
+      'bookmark-save': BookmarkDemonstration,
       'back-forward-cycle': BackForwardDemonstration,
       'address-bar-cycle': AddressBarDemonstration
     }[demonstrationType] || MinimizeDemonstration;
@@ -247,6 +250,7 @@ class PresentationController {
       browserNavigator: this.browserNavigator,
       reloadBtnEl: this.browserNavigator?.reloadButton,
       homeBtnEl: this.browserNavigator?.homeButton,
+      bookmarkBtnEl: this.browserNavigator?.bookmarkButton,
       addressBarEl: getSimulatorControlElement(
         'address-bar'
       ),
@@ -435,14 +439,67 @@ class PresentationController {
       this.renderFreezeControls(
         state
       );
+
+      const sameLesson =
+        this.skill &&
+        state?.skillId === this.skill.id;
+
+      if (
+        state?.teacherPresent === true &&
+        sameLesson
+      ) {
+        this.connectedToTeacher = true;
+
+        if (this.syncStatusEl) {
+          this.syncStatusEl.textContent =
+            'Connected — following Teacher Control automatically.';
+        }
+
+        let resolvedIndex = null;
+
+        if (state.stepId) {
+          const foundIndex =
+            this.skill.lessonSections.findIndex(
+              (step) => step.id === state.stepId
+            );
+
+          if (foundIndex !== -1) {
+            resolvedIndex = foundIndex;
+          }
+        }
+
+        if (
+          resolvedIndex === null &&
+          Number.isInteger(state.stepIndex) &&
+          this.skill.lessonSections[state.stepIndex]
+        ) {
+          resolvedIndex = state.stepIndex;
+        }
+
+        if (
+          resolvedIndex !== null &&
+          resolvedIndex !== this.currentStepIndex
+        ) {
+          this.renderStep(
+            this.skill.lessonSections[resolvedIndex],
+            resolvedIndex
+          );
+        }
+      } else if (state?.teacherPresent !== true) {
+        this.connectedToTeacher = false;
+
+        if (this.syncStatusEl) {
+          this.syncStatusEl.textContent =
+            'Waiting for Teacher Control…';
+        }
+      }
     } catch (error) {
       console.warn(
-        'Classroom Presentation: unable to refresh freeze controls.',
+        'Classroom Presentation: unable to refresh classroom state.',
         error
       );
     }
   }
-
   async attachClassroomFreezeControls() {
     if (
       !this.freezeButtonEl ||

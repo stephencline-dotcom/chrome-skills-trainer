@@ -8,6 +8,7 @@ export class BrowserNavigator {
     forwardButton,
     reloadButton,
     homeButton,
+    bookmarkButton,
     addressElement,
     contentElement
   }) {
@@ -15,11 +16,14 @@ export class BrowserNavigator {
     this.forwardButton = forwardButton;
     this.reloadButton = reloadButton;
     this.homeButton = homeButton;
+    this.bookmarkButton = bookmarkButton;
     this.addressElement = addressElement;
     this.contentElement = contentElement;
 
     this.reloadCount = 0;
     this.searchQuery = '';
+    this.bookmarkedPages = new Set();
+    this.bookmarkPopupEl = null;
     this.history = ['home'];
     this.historyIndex = 0;
     this.interactionEnabled = true;
@@ -29,6 +33,7 @@ export class BrowserNavigator {
     this.handleForward = this.handleForward.bind(this);
     this.handleReload = this.handleReload.bind(this);
     this.handleHome = this.handleHome.bind(this);
+    this.handleBookmark = this.handleBookmark.bind(this);
     this.handleAddressFocus = this.handleAddressFocus.bind(this);
     this.handleAddressClick = this.handleAddressClick.bind(this);
     this.handleAddressKeyDown = this.handleAddressKeyDown.bind(this);
@@ -40,6 +45,7 @@ export class BrowserNavigator {
     this.forwardButton?.addEventListener('click', this.handleForward);
     this.reloadButton?.addEventListener('click', this.handleReload);
     this.homeButton?.addEventListener('click', this.handleHome);
+    this.bookmarkButton?.addEventListener('click', this.handleBookmark);
     this.addressElement?.addEventListener(
       'focus',
       this.handleAddressFocus
@@ -158,6 +164,195 @@ export class BrowserNavigator {
       control: 'btn-home',
       action: 'home',
       pageId: 'home'
+    });
+  }
+  handleBookmark() {
+    const allowed = this.canUse('btn-bookmark');
+
+    const attempt = this.dispatch('browser:control-attempt', {
+      control: 'btn-bookmark',
+      action: 'bookmark',
+      allowed
+    });
+
+    if (!allowed || attempt.defaultPrevented) return;
+
+    this.bookmarkedPages.add(this.currentPageId);
+    this.updateButtons();
+    this.renderBookmarksBar();
+    this.showBookmarkSavedPopup();
+
+    this.dispatch('browser:bookmarked', {
+      control: 'btn-bookmark',
+      action: 'bookmark',
+      pageId: this.currentPageId
+    });
+  }
+
+  hideBookmarkPopup() {
+    if (!this.bookmarkPopupEl) return;
+
+    this.bookmarkPopupEl.remove();
+    this.bookmarkPopupEl = null;
+  }
+
+  getBookmarkPageName() {
+    const names = {
+      home: 'Student Learning Home',
+      reading: 'Reading Corner',
+      story: 'Story Time',
+      science: 'Science Lab',
+      space: 'Space Explorer',
+      art: 'Art Studio',
+      noticeboard: 'Class Noticeboard',
+      nasa: 'NASA',
+      search: 'Google Search'
+    };
+
+    return names[this.currentPageId] ||
+      this.currentPageId
+        .replace(/-/g, ' ')
+        .replace(/\b\w/g, (letter) => letter.toUpperCase());
+  }
+
+  showBookmarkSavedPopup() {
+    this.hideBookmarkPopup();
+
+    if (!this.bookmarkButton) return;
+
+    const popup = document.createElement('div');
+    popup.className = 'bookmark-saved-popover';
+    popup.setAttribute('role', 'dialog');
+    popup.setAttribute('aria-label', 'Bookmark added');
+
+    popup.innerHTML = `
+      <button
+        type="button"
+        class="bookmark-popup-close"
+        aria-label="Close"
+        title="Close"
+      >×</button>
+
+      <h2 class="bookmark-popup-title">Bookmark added</h2>
+
+      <div class="bookmark-popup-row">
+        <label for="bookmark-name-input">Name</label>
+        <input
+          id="bookmark-name-input"
+          class="bookmark-name-input"
+          type="text"
+          value="${this.escapeHtml(this.getBookmarkPageName())}"
+        >
+      </div>
+
+      <div class="bookmark-popup-row">
+        <label for="bookmark-folder-select">Folder</label>
+        <select
+          id="bookmark-folder-select"
+          class="bookmark-folder-select"
+        >
+          <option selected>Bookmarks bar</option>
+          <option>Other bookmarks</option>
+        </select>
+      </div>
+
+      <div class="bookmark-popup-actions">
+        <button type="button" class="bookmark-saved-done">
+          Done
+        </button>
+
+        <button type="button" class="bookmark-remove-btn">
+          Remove
+        </button>
+      </div>
+    `;
+
+    document.body.appendChild(popup);
+    this.bookmarkPopupEl = popup;
+
+    const buttonRect = this.bookmarkButton.getBoundingClientRect();
+    const popupRect = popup.getBoundingClientRect();
+
+    popup.style.left = `${Math.max(
+      12,
+      Math.min(
+        window.innerWidth - popupRect.width - 12,
+        buttonRect.right - popupRect.width + 12
+      )
+    )}px`;
+
+    const preferredTop = buttonRect.bottom + 8;
+    const highestSafeTop = Math.max(
+      12,
+      window.innerHeight - popupRect.height - 12
+    );
+
+    popup.style.top = `${Math.min(preferredTop, highestSafeTop)}px`;
+
+    popup
+      .querySelector('.bookmark-popup-close')
+      ?.addEventListener('click', () => this.hideBookmarkPopup());
+
+    popup
+      .querySelector('.bookmark-saved-done')
+      ?.addEventListener('click', () => this.hideBookmarkPopup());
+
+    popup
+      .querySelector('.bookmark-remove-btn')
+      ?.addEventListener('click', () => {
+        this.bookmarkedPages.delete(this.currentPageId);
+        this.updateButtons();
+        this.renderBookmarksBar();
+        this.hideBookmarkPopup();
+      });
+  }
+
+  renderBookmarksBar() {
+    const bar = document.getElementById('bookmarks-bar');
+    if (!bar) return;
+
+    const names = {
+      home: 'Student Learning Home',
+      reading: 'Reading Corner',
+      story: 'Story Time',
+      science: 'Science Lab',
+      space: 'Space Explorer',
+      art: 'Art Studio',
+      noticeboard: 'Class Noticeboard',
+      nasa: 'NASA',
+      search: 'Google Search'
+    };
+
+    bar.innerHTML = '';
+
+    this.bookmarkedPages.forEach((pageId) => {
+      const bookmark = document.createElement('button');
+      bookmark.type = 'button';
+      bookmark.className = 'chrome-bookmark-item';
+      bookmark.dataset.pageId = pageId;
+      bookmark.textContent = names[pageId] || pageId;
+
+      bookmark.addEventListener('click', () => {
+        const allowed = this.canUse('bookmarks-bar');
+
+        const attempt = this.dispatch('browser:control-attempt', {
+          control: 'bookmarks-bar',
+          action: 'open-bookmark',
+          allowed
+        });
+
+        if (!allowed || attempt.defaultPrevented) return;
+
+        this.navigate(pageId);
+
+        this.dispatch('browser:bookmark-opened', {
+          control: 'bookmarks-bar',
+          action: 'open-bookmark',
+          pageId
+        });
+      });
+
+      bar.appendChild(bookmark);
     });
   }
   handleReload() {
@@ -402,6 +597,29 @@ export class BrowserNavigator {
         'control-disabled',
         interactionBlocked
       );
+    }
+    if (this.bookmarkButton) {
+      const interactionBlocked = !this.canUse('btn-bookmark');
+
+      this.bookmarkButton.disabled = interactionBlocked;
+      this.bookmarkButton.classList.toggle(
+        'control-disabled',
+        interactionBlocked
+      );
+      this.bookmarkButton.classList.toggle(
+        'is-bookmarked',
+        this.bookmarkedPages.has(this.currentPageId)
+      );
+      this.bookmarkButton.setAttribute(
+        'aria-label',
+        this.bookmarkedPages.has(this.currentPageId)
+          ? 'Page bookmarked'
+          : 'Bookmark this page'
+      );
+      this.bookmarkButton.title =
+        this.bookmarkedPages.has(this.currentPageId)
+          ? 'Page bookmarked'
+          : 'Bookmark this page';
     }
     if (this.addressElement && 'readOnly' in this.addressElement) {
       const interactionBlocked =
