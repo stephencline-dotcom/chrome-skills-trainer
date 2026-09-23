@@ -15,6 +15,7 @@ import { BackForwardDemonstration } from './back-forward-demonstration.js';
 import { ReloadDemonstration } from './reload-demonstration.js';
 import { HomeDemonstration } from './home-demonstration.js';
 import { BookmarkDemonstration } from './bookmark-demonstration.js';
+import { BookmarksBarDemonstration } from './bookmarks-bar-demonstration.js';
 import { TabDemonstration } from './tab-demonstration.js';
 
 const TEACHER_TOKEN_KEY = 'chromeSkillsTeacherToken';
@@ -946,20 +947,40 @@ class LessonHub {
       'reload-cycle': ReloadDemonstration,
       'home-cycle': HomeDemonstration,
       'bookmark-save': BookmarkDemonstration,
+      'bookmarks-bar-open': BookmarksBarDemonstration,
       'back-forward-cycle': BackForwardDemonstration
         }[step.demonstration] || MinimizeDemonstration;
 
         const miniBookmarkNavigator = {
           bookmarkedPages: new Set(),
 
-          reset: () => {
+          reset: (history = ['home'], historyIndex = 0) => {
+            const pageNames = {
+              home: 'Student Learning Home',
+              reading: 'Reading Corner',
+              science: 'Science Lab',
+              art: 'Art Studio'
+            };
+
+            const pageId =
+              history[historyIndex] || 'home';
+
             if (miniPageLabel) {
-              miniPageLabel.textContent = 'Reading Corner';
+              miniPageLabel.textContent =
+                pageNames[pageId] || pageId;
             }
 
             if (miniBookmarkBtn) {
-              miniBookmarkBtn.textContent = '☆';
-              miniBookmarkBtn.classList.remove('is-bookmarked');
+              const bookmarked =
+                miniBookmarkNavigator.bookmarkedPages.has(pageId);
+
+              miniBookmarkBtn.textContent =
+                bookmarked ? '★' : '☆';
+
+              miniBookmarkBtn.classList.toggle(
+                'is-bookmarked',
+                bookmarked
+              );
             }
 
             if (miniBookmarksBar) {
@@ -987,10 +1008,38 @@ class LessonHub {
           renderBookmarksBar: () => {
             if (!miniBookmarksBar) return;
 
-            miniBookmarksBar.innerHTML =
-              miniBookmarkNavigator.bookmarkedPages.has('reading')
-                ? '<span class="demo-mini-bookmark-item">Reading Corner</span>'
-                : '';
+            const pageNames = {
+              reading: 'Reading Corner',
+              science: 'Science Lab',
+              art: 'Art Studio'
+            };
+
+            miniBookmarksBar.innerHTML = '';
+
+            miniBookmarkNavigator.bookmarkedPages.forEach(
+              (pageId) => {
+                const bookmark =
+                  document.createElement('button');
+
+                bookmark.type = 'button';
+                bookmark.className =
+                  'chrome-bookmark-item demo-mini-bookmark-item';
+
+                bookmark.dataset.pageId = pageId;
+                bookmark.textContent =
+                  pageNames[pageId] || pageId;
+
+                bookmark.tabIndex = -1;
+                bookmark.setAttribute(
+                  'aria-hidden',
+                  'true'
+                );
+
+                miniBookmarksBar.appendChild(
+                  bookmark
+                );
+              }
+            );
           },
 
           hideBookmarkPopup: () => {
@@ -1037,6 +1086,7 @@ class LessonHub {
           reloadBtnEl: document.getElementById('demo-mini-btn-reload'),
           homeBtnEl: miniHomeBtn,
           bookmarkBtnEl: miniBookmarkBtn,
+          bookmarksBarEl: miniBookmarksBar,
           browserNavigator: miniBookmarkNavigator,
           pageLabelEl: miniPageLabel,
           cursorLayer: document.body,

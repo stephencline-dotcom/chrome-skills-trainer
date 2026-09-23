@@ -27,6 +27,7 @@ import { BackForwardDemonstration } from './back-forward-demonstration.js';
 import { ReloadDemonstration } from './reload-demonstration.js';
 import { HomeDemonstration } from './home-demonstration.js';
 import { BookmarkDemonstration } from './bookmark-demonstration.js';
+import { BookmarksBarDemonstration } from './bookmarks-bar-demonstration.js';
 import { TabDemonstration } from './tab-demonstration.js';
 import { AddressBarDemonstration } from './address-bar-demonstration.js';
 
@@ -234,6 +235,7 @@ class PresentationController {
       'reload-cycle': ReloadDemonstration,
       'home-cycle': HomeDemonstration,
       'bookmark-save': BookmarkDemonstration,
+      'bookmarks-bar-open': BookmarksBarDemonstration,
       'back-forward-cycle': BackForwardDemonstration,
       'address-bar-cycle': AddressBarDemonstration
     }[demonstrationType] || MinimizeDemonstration;
@@ -251,6 +253,7 @@ class PresentationController {
       reloadBtnEl: this.browserNavigator?.reloadButton,
       homeBtnEl: this.browserNavigator?.homeButton,
       bookmarkBtnEl: this.browserNavigator?.bookmarkButton,
+      bookmarksBarEl: getSimulatorControlElement('bookmarks-bar'),
       addressBarEl: getSimulatorControlElement(
         'address-bar'
       ),
@@ -670,7 +673,19 @@ class PresentationController {
           ? step.browserHistoryIndex
           : 0
       );
-    }
+    
+      if (Array.isArray(step.browserBookmarks)) {
+        this.browserNavigator.bookmarkedPages.clear();
+
+        step.browserBookmarks.forEach((pageId) => {
+          this.browserNavigator.bookmarkedPages.add(pageId);
+        });
+
+        this.browserNavigator.updateButtons();
+        this.browserNavigator.renderBookmarksBar();
+        this.browserNavigator.hideBookmarkPopup?.();
+      }
+}
 
     if (step.tabs && this.browserNavigator?.tabs) {
       this.browserNavigator.tabs.resetTabs(step.tabs, step.activeTabIndex || 0);
