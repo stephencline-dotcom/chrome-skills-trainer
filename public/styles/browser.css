@@ -18,7 +18,7 @@
               height 0.22s ease,
               top 0.22s ease,
               left 0.22s ease;
-  transform-origin: bottom center;
+  transform-origin: center center;
 }
 
 /* Disable transitions while user is dragging for zero-latency movement */
@@ -31,20 +31,38 @@
   cursor: grabbing !important;
 }
 
-/* Minimized Window State */
+/* Minimized Window State - same shelf animation as Close */
 #chrome-window.is-minimized {
-  transform: translateY(80px) scale(0.85);
+  transform:
+    translate(
+      var(--shelf-shift-x, 0px),
+      var(--shelf-shift-y, 80px)
+    )
+    scale(var(--shelf-scale, 0.06));
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
+  transition:
+    transform 0.34s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.26s ease,
+    visibility 0s linear 0.34s;
 }
 
-/* Closed Window State */
+/* Closed Window State - shrink into Chrome shelf icon */
 #chrome-window.is-closed {
-  transform: scale(0.92);
+  transform:
+    translate(
+      var(--shelf-shift-x, 0px),
+      var(--shelf-shift-y, 80px)
+    )
+    scale(var(--shelf-scale, 0.06));
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
+  transition:
+    transform 0.34s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.26s ease,
+    visibility 0s linear 0.34s;
 }
 
 /* Maximized Window State */
@@ -761,4 +779,34 @@
 .chrome-bookmark-item-icon {
   flex-shrink: 0;
   font-size: 14px;
+}
+
+@keyframes chrome-minimize-into-shelf {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+    visibility: visible;
+  }
+
+  82% {
+    transform:
+      scale(0.58)
+      translate(
+        var(--shelf-near-x, 0px),
+        var(--shelf-near-y, 70px)
+      );
+    opacity: 1;
+    visibility: visible;
+  }
+
+  100% {
+    transform:
+      scale(var(--shelf-scale, 0.06))
+      translate(
+        var(--shelf-shift-x, 0px),
+        var(--shelf-shift-y, 80px)
+      );
+    opacity: 0;
+    visibility: hidden;
+  }
 }

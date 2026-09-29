@@ -288,3 +288,105 @@
   font-size: 0.78rem;
   padding: 0 8px;
 }
+
+/* Chromebook-style shared shelf */
+#taskbar {
+  background: rgba(238, 242, 247, 0.94);
+  border-top: 1px solid rgba(100, 116, 139, 0.22);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: #334155;
+  justify-content: center;
+  padding: 0;
+  box-shadow: 0 -2px 10px rgba(15, 23, 42, 0.08);
+}
+
+.taskbar-left {
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  position: relative;
+}
+
+.taskbar-start-btn,
+.taskbar-right,
+.taskbar-label {
+  display: none !important;
+}
+
+.taskbar-apps {
+  margin-left: 0;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.taskbar-app-btn {
+  width: 52px;
+  height: 46px;
+  padding: 0;
+  border-radius: 12px;
+  justify-content: center;
+  gap: 0;
+  background: transparent;
+  color: #334155;
+  transition:
+    background-color 160ms ease,
+    transform 160ms ease;
+}
+
+.taskbar-app-btn:hover {
+  background: rgba(148, 163, 184, 0.18);
+}
+
+.taskbar-app-btn:active {
+  transform: scale(0.94);
+}
+
+.taskbar-icon {
+  width: 34px;
+  height: 34px;
+}
+
+.taskbar-icon svg {
+  width: 34px;
+  height: 34px;
+  display: block;
+}
+
+/* Chromebook-style running-app indicator */
+.taskbar-app-btn::after {
+  left: 50%;
+  right: auto;
+  bottom: 2px;
+  width: 18px;
+  height: 3px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: transparent;
+}
+
+.taskbar-app-btn.is-active {
+  background: rgba(148, 163, 184, 0.13);
+}
+
+.taskbar-app-btn.is-active::after {
+  background: #2563eb;
+}
+
+.taskbar-app-btn.is-minimized {
+  background: transparent;
+}
+
+.taskbar-app-btn.is-minimized::after {
+  background: #94a3b8;
+}
+
+.taskbar-app-btn.is-closed {
+  background: transparent;
+}
+
+.taskbar-app-btn.is-closed::after {
+  background: transparent;
+}

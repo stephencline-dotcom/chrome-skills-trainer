@@ -275,11 +275,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   const instructionPanelEl = document.getElementById('instruction-panel');
   const handlePanelCollapseEvent = (e) => {
     if (!instructionPanelEl) return;
+
     if (e.type === 'window:minimized') {
       instructionPanelEl.classList.add('is-collapsed');
-    } else {
-      instructionPanelEl.classList.remove('is-collapsed');
+
+      // Keep the simulator geometry fixed while Chrome animates
+      // down into the shelf icon.
+      return;
     }
+
+    instructionPanelEl.classList.remove('is-collapsed');
     windowManager.handleResize();
   };
   document.addEventListener('window:minimized', handlePanelCollapseEvent);

@@ -204,6 +204,73 @@ export class WindowManager {
   }
 
   /**
+   * Calculate the Chrome shelf icon position so the window can
+   * shrink directly toward it.
+   */
+  updateShelfAnimationTarget() {
+    if (!this.windowEl || !this.taskbarBtn) return;
+
+    const windowRect =
+      this.windowEl.getBoundingClientRect();
+
+    const shelfRect =
+      this.taskbarBtn.getBoundingClientRect();
+
+    if (
+      !windowRect.width ||
+      !windowRect.height ||
+      !shelfRect.width ||
+      !shelfRect.height
+    ) {
+      return;
+    }
+
+    const windowCenterX =
+      windowRect.left + windowRect.width / 2;
+
+    const windowCenterY =
+      windowRect.top + windowRect.height / 2;
+
+    const shelfCenterX =
+      shelfRect.left + shelfRect.width / 2;
+
+    const shelfCenterY =
+      shelfRect.top + shelfRect.height / 2;
+
+
+    const shiftX =
+      shelfCenterX - windowCenterX;
+
+    const shiftY =
+      shelfCenterY - windowCenterY;
+
+    this.windowEl.style.setProperty(
+      '--shelf-shift-x',
+      `${shiftX}px`
+    );
+
+    this.windowEl.style.setProperty(
+      '--shelf-shift-y',
+      `${shiftY}px`
+    );
+
+    this.windowEl.style.setProperty(
+      '--shelf-near-x',
+      `${shiftX * 0.92}px`
+    );
+
+    this.windowEl.style.setProperty(
+      '--shelf-near-y',
+      `${shiftY * 0.92}px`
+    );
+
+    this.windowEl.style.setProperty(
+      '--shelf-scale',
+      '0.06'
+    );
+  }
+
+  /**
    * Core minimize state mutation with NO interaction gating. Used by
    * handleMinimize() (after its own gate check), by the taskbar's own
    * "minimize an open window" fallback, and by lesson code that needs to
@@ -216,6 +283,7 @@ export class WindowManager {
     if (this.isClosed) return;
 
     this.saveCurrentBounds();
+    this.updateShelfAnimationTarget();
     this.isMinimized = true;
 
     this.windowEl.classList.add('is-minimized');
@@ -227,7 +295,16 @@ export class WindowManager {
     this.taskbarBtn.setAttribute('aria-label', 'Chrome Skills Trainer (Minimized - Click to Restore)');
     this.taskbarBtn.setAttribute('title', 'Chrome Skills Trainer (Minimized)');
 
-    this.dispatchEvent('window:minimized', { control: 'btn-minimize', action: 'minimize' });
+    // Let the window finish traveling into the Chrome shelf icon
+    // before the lesson layout reacts to the minimized state.
+    window.setTimeout(() => {
+      if (this.isMinimized && !this.isClosed) {
+        this.dispatchEvent('window:minimized', {
+          control: 'btn-minimize',
+          action: 'minimize'
+        });
+      }
+    }, 360);
   }
 
 
@@ -343,6 +420,7 @@ export class WindowManager {
    */
   performClose() {
     this.saveCurrentBounds();
+    this.updateShelfAnimationTarget();
     this.isClosed = true;
 
     this.windowEl.classList.add('is-closed');
