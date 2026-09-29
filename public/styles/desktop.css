@@ -390,3 +390,111 @@
 .taskbar-app-btn.is-closed::after {
   background: transparent;
 }
+/* CHROMEBOOK SHELF APP ICONS */
+.taskbar-apps {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.taskbar-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shelf-chrome-logo {
+  width: 30px;
+  height: 30px;
+  display: block;
+}
+
+.shelf-decoration {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  pointer-events: none;
+}
+
+.shelf-fake-app {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-radius: 10px;
+  flex: 0 0 auto;
+}
+
+/* Files */
+.shelf-files-icon {
+  background: #f3f6fb;
+}
+
+.files-folder-body {
+  position: absolute;
+  width: 24px;
+  height: 16px;
+  top: 11px;
+  border-radius: 3px;
+  background: #4285f4;
+}
+
+.files-folder-tab {
+  position: absolute;
+  width: 11px;
+  height: 5px;
+  left: 6px;
+  top: 7px;
+  border-radius: 3px 3px 0 0;
+  background: #8ab4f8;
+}
+
+/* Play Store */
+.shelf-play-icon {
+  background: #ffffff;
+}
+
+.play-triangle {
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 18px solid #4285f4;
+  margin-left: 3px;
+  filter: drop-shadow(-4px 0 0 #34a853);
+}
+
+/* Classroom */
+.shelf-classroom-icon {
+  background: #34a853;
+}
+
+.classroom-board {
+  width: 24px;
+  height: 18px;
+  border-radius: 3px;
+  background: #ffffff;
+  position: relative;
+}
+
+.classroom-head {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #34a853;
+  top: 3px;
+  left: 9px;
+}
+
+.classroom-body {
+  position: absolute;
+  width: 12px;
+  height: 5px;
+  border-radius: 6px 6px 2px 2px;
+  background: #34a853;
+  left: 6px;
+  bottom: 3px;
+}

@@ -282,7 +282,9 @@ export class WindowManager {
   performMinimize() {
     if (this.isClosed) return;
 
-    this.saveCurrentBounds();
+    if (!this.isMaximized) {
+      this.saveCurrentBounds();
+    }
     this.updateShelfAnimationTarget();
     this.isMinimized = true;
 
@@ -338,7 +340,9 @@ export class WindowManager {
    * Expand window to full desktop area above taskbar
    */
   maximize() {
-    this.saveCurrentBounds();
+    if (!this.isMaximized) {
+      this.saveCurrentBounds();
+    }
     this.isMaximized = true;
 
     this.windowEl.classList.add('is-maximized');
@@ -419,7 +423,9 @@ export class WindowManager {
    * Core close state mutation with NO interaction gating (see performMinimize).
    */
   performClose() {
-    this.saveCurrentBounds();
+    if (!this.isMaximized) {
+      this.saveCurrentBounds();
+    }
     this.updateShelfAnimationTarget();
     this.isClosed = true;
 
@@ -513,13 +519,33 @@ export class WindowManager {
    * Start dragging the window by title bar (only allowed when restored)
    */
   startDrag(e) {
-    if (this.interactionEnabled === false) return;
-    // Prevent dragging if window is maximized or minimized or closed
-    if (this.isMaximized || this.isMinimized || this.isClosed) return;
+    if (this.isMinimized || this.isClosed) return;
 
-    // Prevent dragging when clicking control buttons or tab buttons
-    if (e.target.closest('button') || e.target.closest('.chrome-tab-close') || e.target.closest('.chrome-new-tab-btn')) {
-      return;
+    // Do not start dragging from buttons.
+    if (e.target.closest('button')) return;
+
+    e.preventDefault();
+
+    // If currently maximized, restore it before allowing it to move.
+    if (this.isMaximized) {
+      this.isMaximized = false;
+      this.windowEl.classList.remove('is-maximized');
+
+      const workspaceWidth = this.desktopWorkspace.clientWidth;
+      const restoredWidth = this.restoredBounds.width || this.defaultWidth;
+      const restoredHeight = this.restoredBounds.height || this.defaultHeight;
+
+      const pointerRatio = Math.max(
+        0,
+        Math.min(1, e.clientX / workspaceWidth)
+      );
+
+      const newLeft = e.clientX - (restoredWidth * pointerRatio);
+
+      this.windowEl.style.width = `${restoredWidth}px`;
+      this.windowEl.style.height = `${restoredHeight}px`;
+      this.windowEl.style.left = `${newLeft}px`;
+      this.windowEl.style.top = '0px';
     }
 
     this.isDragging = true;
@@ -530,17 +556,23 @@ export class WindowManager {
     this.windowStartX = this.windowEl.offsetLeft;
     this.windowStartY = this.windowEl.offsetTop;
 
-    // Capture pointer events on window
-    window.addEventListener('pointermove', this.onDrag);
-    window.addEventListener('pointerup', this.stopDrag);
-    window.addEventListener('pointercancel', this.stopDrag);
+    this.activePointerId = e.pointerId;
+
+    if (this.titlebarEl.setPointerCapture) {
+      try {
+        this.titlebarEl.setPointerCapture(e.pointerId);
+      } catch {}
+    }
+
+    this.titlebarEl.addEventListener('pointermove', this.onDrag);
+    this.titlebarEl.addEventListener('pointerup', this.stopDrag);
+    this.titlebarEl.addEventListener('pointercancel', this.stopDrag);
   }
 
-  /**
-   * Drag move handler - keeps window bounded within desktop workspace
-   */
   onDrag(e) {
     if (!this.isDragging) return;
+
+    e.preventDefault();
 
     const deltaX = e.clientX - this.dragStartX;
     const deltaY = e.clientY - this.dragStartY;
@@ -548,43 +580,56 @@ export class WindowManager {
     let newLeft = this.windowStartX + deltaX;
     let newTop = this.windowStartY + deltaY;
 
-    // Clamp window within visible desktop area
     const workspaceWidth = this.desktopWorkspace.clientWidth;
-    const workspaceHeight = this.desktopWorkspace.clientHeight;
     const windowWidth = this.windowEl.offsetWidth;
-    const windowHeight = this.windowEl.offsetHeight;
 
-    const maxLeft = workspaceWidth - windowWidth;
-    const maxTop = workspaceHeight - windowHeight;
+    // Let most of the window move off-screen, but always leave
+    // enough title bar available to pull it back.
+    const visibleGrabArea = 120;
 
-    newLeft = Math.max(0, Math.min(newLeft, maxLeft));
-    newTop = Math.max(0, Math.min(newTop, maxTop));
+    const minLeft = -(windowWidth - visibleGrabArea);
+    const maxLeft = workspaceWidth - visibleGrabArea;
+
+    newLeft = Math.max(minLeft, Math.min(newLeft, maxLeft));
+    newTop = Math.max(0, newTop);
 
     this.windowEl.style.left = `${newLeft}px`;
     this.windowEl.style.top = `${newTop}px`;
   }
 
-  /**
-   * Stop dragging window
-   */
-  stopDrag() {
+  stopDrag(e) {
     if (!this.isDragging) return;
 
     this.isDragging = false;
     this.windowEl.classList.remove('is-dragging');
 
-    this.saveCurrentBounds();
+    if (
+      e &&
+      this.titlebarEl.releasePointerCapture &&
+      this.titlebarEl.hasPointerCapture &&
+      this.titlebarEl.hasPointerCapture(e.pointerId)
+    ) {
+      try {
+        this.titlebarEl.releasePointerCapture(e.pointerId);
+      } catch {}
+    }
 
-    window.removeEventListener('pointermove', this.onDrag);
-    window.removeEventListener('pointerup', this.stopDrag);
-    window.removeEventListener('pointercancel', this.stopDrag);
+    this.titlebarEl.removeEventListener('pointermove', this.onDrag);
+    this.titlebarEl.removeEventListener('pointerup', this.stopDrag);
+    this.titlebarEl.removeEventListener('pointercancel', this.stopDrag);
+
+    this.activePointerId = null;
+
+    if (!this.isMaximized) {
+      this.saveCurrentBounds();
+    }
   }
 
   /**
    * Recalculate and clamp window bounds on browser resize
    */
   handleResize() {
-    if (this.isMaximized || this.isMinimized || this.isClosed) return;
+    if (this.isMinimized || this.isClosed) return;
 
     const workspaceWidth = this.desktopWorkspace.clientWidth;
     const workspaceHeight = this.desktopWorkspace.clientHeight;
@@ -602,7 +647,9 @@ export class WindowManager {
 
     this.windowEl.style.left = `${left}px`;
     this.windowEl.style.top = `${top}px`;
-    this.saveCurrentBounds();
+    if (!this.isMaximized) {
+      this.saveCurrentBounds();
+    }
   }
 
   // --- Safe Public API Methods for Lesson Activity Controller ---
@@ -647,3 +694,7 @@ export class WindowManager {
     this.updateTaskbarActiveState();
   }
 }
+
+
+
+

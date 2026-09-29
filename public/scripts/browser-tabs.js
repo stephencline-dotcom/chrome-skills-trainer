@@ -40,7 +40,6 @@ export class BrowserTabs {
     this.strip.setAttribute('aria-label', 'Browser tabs');
 
     // Tab clicks must not drag or maximize the containing window.
-    this.strip.addEventListener('pointerdown', event => event.stopPropagation());
     this.strip.addEventListener('dblclick', event => event.stopPropagation());
     this.strip.addEventListener('click', event => {
       const button = event.target.closest('button[data-tab-action]');
@@ -236,3 +235,4 @@ export class BrowserTabs {
     });
   }
 }
+
