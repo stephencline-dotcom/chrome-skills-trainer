@@ -266,6 +266,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
   browserTabs.init();
 
+  // Closing Chrome should start a fresh browser session next time it opens.
+  // Minimize does NOT reset anything.
+  windowEl.addEventListener('window:closed', () => {
+    browserNavigator.reset(['home'], 0);
+    browserTabs.resetTabs(['home'], 0);
+  });
+
   // Compact instruction panel: collapse to a single-line strip while Chrome
   // is minimized so the taskbar and its Chrome button stay visually
   // dominant, then restore once Chrome is visible again. Applies generally
@@ -379,3 +386,4 @@ function initClock() {
   updateTime();
   setInterval(updateTime, 1000);
 }
+
