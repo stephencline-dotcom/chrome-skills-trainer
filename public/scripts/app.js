@@ -8,6 +8,7 @@
 import { WindowManager } from './window-manager.js';
 import { lessonCatalog } from './lesson-catalog.js';
 import { StudentLesson } from './student-lesson.js';
+import { AssessmentController } from './assessment-controller.js';
 import { BrowserNavigator } from './browser-navigator.js';
 import { BrowserTabs } from './browser-tabs.js';
 
@@ -314,14 +315,26 @@ document.addEventListener('DOMContentLoaded', async () => {
       const skill = lessonCatalog.getSkillById(skillId);
 
       if (skill && lessonMode === 'active' && skill.hasCompleteLesson) {
-        // Initialize Student Lesson Engine Controller
-        const studentLesson = new StudentLesson({
-          skill,
-          windowManager,
-          browserNavigator,
-          isPreview: previewMode === 'teacher'
-        });
-        studentLesson.init();
+        if (skill.isAssessment) {
+          const assessment = new AssessmentController({
+            skill,
+            windowManager,
+            browserNavigator,
+            browserTabs
+          });
+
+          assessment.init();
+        } else {
+          // Normal classroom lessons keep their existing behavior.
+          const studentLesson = new StudentLesson({
+            skill,
+            windowManager,
+            browserNavigator,
+            isPreview: previewMode === 'teacher'
+          });
+
+          studentLesson.init();
+        }
       } else {
         // Default static instruction card for skill
         await updateInstructionCardForSkill(skill);

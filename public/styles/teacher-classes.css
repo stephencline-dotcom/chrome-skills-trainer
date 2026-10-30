@@ -1,0 +1,395 @@
+.classes-page {
+  width: min(1400px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 30px 0 50px;
+}
+
+.classes-page-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 18px;
+}
+
+.classes-page-heading h2 {
+  margin: 0 0 5px;
+  color: #1e293b;
+  font-size: 1.7rem;
+}
+
+.classes-page-heading p {
+  margin: 0;
+  color: #64748b;
+}
+
+.temporary-data-note {
+  margin-bottom: 22px;
+  padding: 12px 16px;
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  background: #fffbeb;
+  color: #854d0e;
+  font-size: 0.9rem;
+}
+
+.classes-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 350px) minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.classes-sidebar,
+.classes-detail {
+  display: grid;
+  gap: 18px;
+}
+
+.classes-card {
+  padding: 20px;
+  border: 1px solid #dbe3ee;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 5px 18px rgba(15, 23, 42, 0.06);
+}
+
+.classes-card h3 {
+  margin: 0 0 14px;
+  color: #1e293b;
+}
+
+.classes-card label {
+  display: block;
+  margin-bottom: 6px;
+  color: #475569;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.classes-card input,
+.classes-card textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #0f172a;
+  font: inherit;
+}
+
+.classes-card input {
+  min-height: 42px;
+  padding: 8px 11px;
+}
+
+.classes-card textarea {
+  padding: 12px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.class-create-row,
+.rename-row {
+  display: flex;
+  gap: 8px;
+}
+
+.class-create-row input,
+.rename-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.classes-primary-btn,
+.classes-secondary-btn {
+  min-height: 40px;
+  padding: 8px 14px;
+  border-radius: 9px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.classes-primary-btn {
+  border: 1px solid #2563eb;
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.classes-secondary-btn {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+}
+
+.classes-primary-btn:hover {
+  background: #1d4ed8;
+}
+
+.classes-secondary-btn:hover {
+  background: #f8fafc;
+}
+
+.class-list {
+  display: grid;
+  gap: 8px;
+}
+
+.class-list-button {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #dbe3ee;
+  border-radius: 10px;
+  background: #f8fafc;
+  text-align: left;
+  cursor: pointer;
+}
+
+.class-list-button:hover,
+.class-list-button.is-selected {
+  border-color: #60a5fa;
+  background: #eff6ff;
+}
+
+.class-list-name {
+  display: block;
+  color: #1e293b;
+  font-weight: 800;
+}
+
+.class-list-meta {
+  display: block;
+  margin-top: 3px;
+  color: #64748b;
+  font-size: 0.82rem;
+}
+
+.classes-empty {
+  margin: 0;
+  color: #94a3b8;
+}
+
+.classes-empty-state {
+  padding: 80px 30px;
+  border: 2px dashed #cbd5e1;
+  border-radius: 14px;
+  background: #f8fafc;
+  text-align: center;
+  color: #64748b;
+}
+
+.classes-empty-icon {
+  margin-bottom: 10px;
+  font-size: 2.8rem;
+}
+
+.classes-empty-state h3 {
+  margin: 0 0 6px;
+  color: #334155;
+}
+
+.class-heading-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px;
+  align-items: end;
+}
+
+.class-code-box {
+  min-width: 190px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  background: #eff6ff;
+  text-align: center;
+}
+
+.class-code-label {
+  display: block;
+  margin-bottom: 3px;
+  color: #475569;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+#class-code-value {
+  color: #1d4ed8;
+  font-size: 1.75rem;
+  letter-spacing: 0.14em;
+}
+
+.classes-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 14px;
+}
+
+.classes-section-heading h3 {
+  margin-bottom: 3px;
+}
+
+.classes-section-heading p {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.88rem;
+}
+
+.roster-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+#roster-count {
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.classes-message {
+  min-height: 1.1em;
+  margin: 10px 0 0;
+  color: #047857;
+  font-size: 0.87rem;
+}
+
+.classes-message.is-error {
+  color: #b91c1c;
+}
+
+.results-table-wrap {
+  overflow-x: auto;
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.results-table th,
+.results-table td {
+  padding: 11px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+}
+
+.results-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.results-table td {
+  color: #1e293b;
+}
+
+.result-score {
+  font-weight: 800;
+}
+
+.result-complete {
+  color: #047857;
+  font-weight: 700;
+}
+
+.result-pending {
+  color: #94a3b8;
+}
+
+.teacher-classes-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 7px 13px;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.teacher-classes-link:hover {
+  background: #dbeafe;
+}
+
+@media (max-width: 850px) {
+  .classes-layout,
+  .class-heading-card {
+    grid-template-columns: 1fr;
+  }
+
+  .classes-page-heading,
+  .classes-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media print {
+  .hub-header,
+  .classes-page-heading button,
+  .temporary-data-note,
+  .classes-sidebar,
+  .class-heading-card,
+  .results-card button {
+    display: none !important;
+  }
+
+  .classes-page {
+    width: 100%;
+    padding: 0;
+  }
+
+  .classes-layout {
+    display: block;
+  }
+
+  .classes-card {
+    border: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .results-table th,
+  .results-table td {
+    color: #000;
+  }
+}
+
+#roster-input {
+  min-height: 168px;
+  max-height: 384px;
+  overflow-y: hidden;
+}
+/* Classes page scrolling fix */
+
+html {
+  height: auto;
+  min-height: 100%;
+  overflow-y: auto;
+}
+
+body.teacher-body {
+  height: auto;
+  max-height: none;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.classes-page {
+  flex: none;
+  min-height: auto;
+  overflow: visible;
+}
+
+#class-detail-content {
+  padding-bottom: 40px;
+}

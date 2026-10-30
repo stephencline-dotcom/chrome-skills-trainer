@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chrome Skills Trainer - Classes & Results</title>
+
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/lesson-hub.css">
+  <link rel="stylesheet" href="styles/teacher-classes.css">
+</head>
+
+<body class="teacher-body">
+  <header class="hub-header">
+    <a href="teacher.html" class="hub-brand" title="Return to Teacher Hub">
+      <h1 class="hub-brand-title">
+        <span style="color:#4285f4;">C</span><span style="color:#ea4335;">h</span><span style="color:#fbbc05;">r</span><span style="color:#4285f4;">o</span><span style="color:#34a853;">m</span><span style="color:#ea4335;">e</span>
+        Skills Trainer
+      </h1>
+      <span class="hub-brand-subtitle">Classes & Results</span>
+    </a>
+
+    <div class="hub-header-actions">
+      <a href="teacher.html" class="teacher-classes-link">
+        ← Teacher Hub
+      </a>
+
+      <button
+        type="button"
+        id="teacher-sign-out"
+        class="teacher-sign-out-btn"
+      >
+        Sign Out
+      </button>
+    </div>
+  </header>
+
+  <main class="classes-page">
+    <section class="classes-page-heading">
+      <div>
+        <h2>Chrome Assessment Classes</h2>
+        <p>
+          Create a class, add your student roster, and collect the Quick Chrome Assessment scores.
+        </p>
+      </div>
+
+      <button type="button" id="refresh-results" class="classes-secondary-btn">
+        Refresh Results
+      </button>
+    </section>
+
+    <div class="temporary-data-note">
+      <strong>Temporary classroom data:</strong>
+      Classes and scores remain available while this server is running.
+      Print your results before restarting or redeploying the site.
+    </div>
+
+    <div class="classes-layout">
+      <section class="classes-sidebar">
+        <div class="classes-card">
+          <h3>Create Class</h3>
+
+          <label for="new-class-name">Class name</label>
+          <div class="class-create-row">
+            <input
+              type="text"
+              id="new-class-name"
+              maxlength="80"
+              placeholder="Example: Mrs. Cline - Grade 2"
+            >
+            <button type="button" id="create-class-btn" class="classes-primary-btn">
+              Create
+            </button>
+          </div>
+
+          <p id="class-create-message" class="classes-message" aria-live="polite"></p>
+        </div>
+
+        <div class="classes-card">
+          <h3>Your Classes</h3>
+          <div id="class-list" class="class-list">
+            <p class="classes-empty">No classes yet.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="class-detail" class="classes-detail is-empty">
+        <div id="class-empty-state" class="classes-empty-state">
+          <div class="classes-empty-icon">🏫</div>
+          <h3>Select a class</h3>
+          <p>Create or select a class to manage its roster and assessment results.</p>
+        </div>
+
+        <div id="class-detail-content" hidden>
+          <section class="classes-card class-heading-card">
+            <div>
+              <label for="class-name-input">Class name</label>
+              <div class="rename-row">
+                <input type="text" id="class-name-input" maxlength="80">
+                <button type="button" id="rename-class-btn" class="classes-secondary-btn">
+                  Rename Class
+                </button>
+              </div>
+            </div>
+
+            <div class="class-code-box">
+              <span class="class-code-label">Student Class Code</span>
+              <strong id="class-code-value">-----</strong>
+            </div>
+          </section>
+
+          <section class="classes-card results-card">
+            <div class="classes-section-heading">
+              <div>
+                <h3>Quick Chrome Assessment Results</h3>
+                <p>Scores update after students finish the assessment.</p>
+              </div>
+
+              <button type="button" id="print-results-btn" class="classes-secondary-btn">
+                🖨 Print Results
+              </button>
+            </div>
+
+            <div class="results-table-wrap">
+              <table class="results-table">
+                <thead>
+                  <tr>
+                    <th>Student</th>
+                    <th>Score</th>
+                    <th>Percent</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="results-body">
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+
+          <section class="classes-card">
+            <div class="classes-section-heading">
+              <div>
+                <h3>Student Roster</h3>
+                <p>Enter one student name on each line.</p>
+              </div>
+            </div>
+
+            <div class="roster-actions">
+              <button type="button" id="save-roster-btn" class="classes-primary-btn">
+                Save Roster
+              </button>
+
+              <span id="roster-count">0 students</span>
+            </div>
+
+            <textarea
+              id="roster-input"
+              rows="6"
+              placeholder="Ava Smith&#10;Liam Jones&#10;Mia Brown"
+            ></textarea>
+
+            <p id="roster-message" class="classes-message" aria-live="polite"></p>
+          </section>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script type="module" src="scripts/teacher-classes.js"></script>
+</body>
+</html>

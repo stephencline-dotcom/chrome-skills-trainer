@@ -2771,6 +2771,41 @@
       "hasCompleteLesson": true
     },
     {
+      "id": "quick-chrome-assessment",
+      "name": "Quick Chrome Assessment",
+      "category": "Assessment",
+      "iconType": "symbol",
+      "iconText": "🏁",
+      "shortExplanation": "A quick 10-question performance check covering Chrome skills learned so far.",
+      "simulatorControl": "Uses the full Chrome simulator.",
+      "isAssessment": true,
+      "assessmentId": "chrome-basics-1",
+      "assessmentQuestionCount": 10,
+      "lessonSections": [
+        {
+          "id": "assessment-ready",
+          "title": "Quick Chrome Assessment",
+          "section": "Assessment",
+          "type": "introduction",
+          "teacherTitle": "Quick Chrome Assessment",
+          "teacherText": "Students complete 10 Chrome skill tasks independently. Each task is worth one point. Their final score stays on their screen for the teacher to record.",
+          "teacherPrompt": "Send this assessment to the class when everyone is ready. Students will move through the questions on their own.",
+          "studentTitle": "Quick Chrome Assessment",
+          "studentInstruction": "Complete each Chrome task. You get one try for each question.",
+          "studentMode": "assessment",
+          "targetControl": null,
+          "completionMessage": "Assessment ready.",
+          "allowStudentInteraction": false,
+          "presentationView": "simulator",
+          "startState": "restored",
+          "allowedControls": []
+        }
+      ],
+      "description": "A ten-question performance assessment covering Minimize, Maximize, Close, navigation, tabs, the Address Bar, bookmarks, and the Bookmarks Bar.",
+      "shortDescription": "10-question Chrome skills assessment.",
+      "hasCompleteLesson": true
+    },
+    {
       "id": "three-dot-menu",
       "name": "Three-Dot Menu",
       "category": "Chrome Menu",

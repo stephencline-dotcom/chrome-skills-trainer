@@ -551,3 +551,22 @@
   background-color: #1d4ed8;
   transform: translateY(-1px);
 }
+
+/* Teacher Classes & Results shortcut */
+.teacher-classes-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 7px 13px;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.teacher-classes-link:hover {
+  background: #dbeafe;
+}
