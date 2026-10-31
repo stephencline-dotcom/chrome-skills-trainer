@@ -81,6 +81,226 @@ module.exports = function registerClassroom(app, express) {
         }))
     };
   }
+  const assessmentDataPath =
+    process.env.ASSESSMENT_DATA_PATH ||
+    path.join(
+      __dirname,
+      '../.data/assessment-data.json'
+    );
+
+  function saveAssessmentData() {
+    const data = {
+      version: 1,
+      nextAssessmentClassId,
+      nextAssessmentStudentId,
+      classes: [...assessmentClasses.values()]
+        .map(item => ({
+          id: item.id,
+          name: item.name,
+          code: item.code,
+          students: [...item.students.values()]
+            .map(student => ({
+              id: student.id,
+              name: student.name,
+              nameKey: student.nameKey,
+              score: student.score,
+              completedAt: student.completedAt,
+              displayOrder: student.displayOrder
+            }))
+        }))
+    };
+
+    try {
+      fs.mkdirSync(
+        path.dirname(assessmentDataPath),
+        {
+          recursive: true
+        }
+      );
+
+      fs.writeFileSync(
+        assessmentDataPath,
+        JSON.stringify(data, null, 2),
+        'utf8'
+      );
+    } catch (error) {
+      console.error(
+        'Chrome Skills Trainer: Unable to save assessment data.',
+        error
+      );
+    }
+  }
+
+  function loadAssessmentData() {
+    if (
+      !fs.existsSync(
+        assessmentDataPath
+      )
+    ) {
+      return;
+    }
+
+    try {
+      const raw = JSON.parse(
+        fs.readFileSync(
+          assessmentDataPath,
+          'utf8'
+        )
+      );
+
+      if (!Array.isArray(raw?.classes)) {
+        throw new Error(
+          'Saved assessment data has an invalid format.'
+        );
+      }
+
+      assessmentClasses.clear();
+
+      let highestClassId = 0;
+      let highestStudentId = 0;
+
+      for (const rawClass of raw.classes) {
+        const classId =
+          Number(rawClass?.id);
+
+        const className =
+          cleanDisplayName(
+            rawClass?.name
+          );
+
+        const classCode =
+          String(
+            rawClass?.code || ''
+          )
+            .trim()
+            .toUpperCase();
+
+        if (
+          !Number.isInteger(classId) ||
+          classId <= 0 ||
+          !className ||
+          !classCode
+        ) {
+          continue;
+        }
+
+        const students =
+          new Map();
+
+        const rawStudents =
+          Array.isArray(
+            rawClass.students
+          )
+            ? rawClass.students
+            : [];
+
+        rawStudents.forEach(
+          (rawStudent, index) => {
+            const studentId =
+              Number(rawStudent?.id);
+
+            const studentName =
+              cleanDisplayName(
+                rawStudent?.name
+              );
+
+            const nameKey =
+              normalizeStudentName(
+                studentName
+              );
+
+            if (
+              !Number.isInteger(studentId) ||
+              studentId <= 0 ||
+              !studentName ||
+              !nameKey
+            ) {
+              return;
+            }
+
+            const rawScore =
+              rawStudent?.score;
+
+            const score =
+              Number.isInteger(rawScore) &&
+              rawScore >= 0 &&
+              rawScore <= 10
+                ? rawScore
+                : null;
+
+            students.set(
+              studentId,
+              {
+                id: studentId,
+                name: studentName,
+                nameKey,
+                score,
+                completedAt:
+                  typeof rawStudent?.completedAt === 'string'
+                    ? rawStudent.completedAt
+                    : null,
+                displayOrder:
+                  Number.isInteger(
+                    rawStudent?.displayOrder
+                  )
+                    ? rawStudent.displayOrder
+                    : index
+              }
+            );
+
+            highestStudentId =
+              Math.max(
+                highestStudentId,
+                studentId
+              );
+          }
+        );
+
+        assessmentClasses.set(
+          classId,
+          {
+            id: classId,
+            name: className,
+            code: classCode,
+            students
+          }
+        );
+
+        highestClassId =
+          Math.max(
+            highestClassId,
+            classId
+          );
+      }
+
+      nextAssessmentClassId =
+        Math.max(
+          Number(
+            raw.nextAssessmentClassId
+          ) || 1,
+          highestClassId + 1
+        );
+
+      nextAssessmentStudentId =
+        Math.max(
+          Number(
+            raw.nextAssessmentStudentId
+          ) || 1,
+          highestStudentId + 1
+        );
+
+      console.log(
+        `Chrome Skills Trainer: Loaded ${assessmentClasses.size} saved assessment class(es).`
+      );
+    } catch (error) {
+      console.error(
+        'Chrome Skills Trainer: Unable to load saved assessment data.',
+        error
+      );
+    }
+  }
+
+  loadAssessmentData();
   function changed() {
     state.revision += 1;
   }
@@ -326,6 +546,8 @@ module.exports = function registerClassroom(app, express) {
 
     assessmentClasses.set(item.id, item);
 
+    saveAssessmentData();
+
     res.status(201).json(
       serializeAssessmentClass(item)
     );
@@ -349,6 +571,8 @@ module.exports = function registerClassroom(app, express) {
     }
 
     item.name = name;
+
+    saveAssessmentData();
 
     res.json(
       serializeAssessmentClass(item)
@@ -378,6 +602,8 @@ module.exports = function registerClassroom(app, express) {
           assessmentStudentSessions.delete(token);
         }
       }
+
+      saveAssessmentData();
 
       res.json({
         success: true
@@ -448,6 +674,8 @@ module.exports = function registerClassroom(app, express) {
       student.name = name;
       student.nameKey = nameKey;
 
+      saveAssessmentData();
+
       for (
         const [token, session]
         of assessmentStudentSessions
@@ -491,6 +719,8 @@ module.exports = function registerClassroom(app, express) {
       }
 
       item.students.delete(studentId);
+
+      saveAssessmentData();
 
       for (
         const [token, session]
@@ -570,6 +800,8 @@ module.exports = function registerClassroom(app, express) {
       });
 
       item.students = nextStudents;
+
+      saveAssessmentData();
 
       // Roster edits invalidate old student join sessions for this class.
       for (const [token, session] of assessmentStudentSessions) {
@@ -655,6 +887,8 @@ module.exports = function registerClassroom(app, express) {
         student.id,
         student
       );
+
+      saveAssessmentData();
     }
 
     const token = crypto
@@ -727,6 +961,8 @@ module.exports = function registerClassroom(app, express) {
       student.score = score;
       student.completedAt =
         new Date().toISOString();
+
+      saveAssessmentData();
     }
 
     res.json({
