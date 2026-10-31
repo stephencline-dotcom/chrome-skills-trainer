@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
+const { Pool } = require('pg');
 
 module.exports = function registerClassroom(app, express) {
   const catalog = JSON.parse(fs.readFileSync(
@@ -88,31 +89,198 @@ module.exports = function registerClassroom(app, express) {
       '../.data/assessment-data.json'
     );
 
-  function saveAssessmentData() {
-    const data = {
+  const assessmentDatabaseUrl =
+    String(
+      process.env.DATABASE_URL || ''
+    ).trim();
+
+  const assessmentPool =
+    assessmentDatabaseUrl
+      ? new Pool({
+          connectionString:
+            assessmentDatabaseUrl,
+          max: 1,
+          connectionTimeoutMillis: 10000
+        })
+      : null;
+
+  function buildAssessmentData() {
+    return {
       version: 1,
       nextAssessmentClassId,
       nextAssessmentStudentId,
-      classes: [...assessmentClasses.values()]
-        .map(item => ({
-          id: item.id,
-          name: item.name,
-          code: item.code,
-          students: [...item.students.values()]
-            .map(student => ({
-              id: student.id,
-              name: student.name,
-              nameKey: student.nameKey,
-              score: student.score,
-              completedAt: student.completedAt,
-              displayOrder: student.displayOrder
-            }))
-        }))
+      classes:
+        [...assessmentClasses.values()]
+          .map(item => ({
+            id: item.id,
+            name: item.name,
+            code: item.code,
+            students:
+              [...item.students.values()]
+                .map(student => ({
+                  id: student.id,
+                  name: student.name,
+                  nameKey: student.nameKey,
+                  score: student.score,
+                  completedAt:
+                    student.completedAt,
+                  displayOrder:
+                    student.displayOrder
+                }))
+          }))
     };
+  }
 
+  function applyAssessmentData(raw) {
+    if (!Array.isArray(raw?.classes)) {
+      throw new Error(
+        'Saved assessment data has an invalid format.'
+      );
+    }
+
+    assessmentClasses.clear();
+
+    let highestClassId = 0;
+    let highestStudentId = 0;
+
+    for (const rawClass of raw.classes) {
+      const classId =
+        Number(rawClass?.id);
+
+      const className =
+        cleanDisplayName(
+          rawClass?.name
+        );
+
+      const classCode =
+        String(
+          rawClass?.code || ''
+        )
+          .trim()
+          .toUpperCase();
+
+      if (
+        !Number.isInteger(classId) ||
+        classId <= 0 ||
+        !className ||
+        !classCode
+      ) {
+        continue;
+      }
+
+      const students = new Map();
+
+      const rawStudents =
+        Array.isArray(
+          rawClass.students
+        )
+          ? rawClass.students
+          : [];
+
+      rawStudents.forEach(
+        (rawStudent, index) => {
+          const studentId =
+            Number(rawStudent?.id);
+
+          const studentName =
+            cleanDisplayName(
+              rawStudent?.name
+            );
+
+          const nameKey =
+            normalizeStudentName(
+              studentName
+            );
+
+          if (
+            !Number.isInteger(studentId) ||
+            studentId <= 0 ||
+            !studentName ||
+            !nameKey
+          ) {
+            return;
+          }
+
+          const rawScore =
+            rawStudent?.score;
+
+          const score =
+            Number.isInteger(rawScore) &&
+            rawScore >= 0 &&
+            rawScore <= 10
+              ? rawScore
+              : null;
+
+          students.set(
+            studentId,
+            {
+              id: studentId,
+              name: studentName,
+              nameKey,
+              score,
+              completedAt:
+                typeof rawStudent?.completedAt === 'string'
+                  ? rawStudent.completedAt
+                  : null,
+              displayOrder:
+                Number.isInteger(
+                  rawStudent?.displayOrder
+                )
+                  ? rawStudent.displayOrder
+                  : index
+            }
+          );
+
+          highestStudentId =
+            Math.max(
+              highestStudentId,
+              studentId
+            );
+        }
+      );
+
+      assessmentClasses.set(
+        classId,
+        {
+          id: classId,
+          name: className,
+          code: classCode,
+          students
+        }
+      );
+
+      highestClassId =
+        Math.max(
+          highestClassId,
+          classId
+        );
+    }
+
+    nextAssessmentClassId =
+      Math.max(
+        Number(
+          raw.nextAssessmentClassId
+        ) || 1,
+        highestClassId + 1
+      );
+
+    nextAssessmentStudentId =
+      Math.max(
+        Number(
+          raw.nextAssessmentStudentId
+        ) || 1,
+        highestStudentId + 1
+      );
+  }
+
+  function saveAssessmentDataToFile(
+    data
+  ) {
     try {
       fs.mkdirSync(
-        path.dirname(assessmentDataPath),
+        path.dirname(
+          assessmentDataPath
+        ),
         {
           recursive: true
         }
@@ -120,187 +288,170 @@ module.exports = function registerClassroom(app, express) {
 
       fs.writeFileSync(
         assessmentDataPath,
-        JSON.stringify(data, null, 2),
+        JSON.stringify(
+          data,
+          null,
+          2
+        ),
         'utf8'
       );
+
+      return true;
     } catch (error) {
       console.error(
-        'Chrome Skills Trainer: Unable to save assessment data.',
+        'Chrome Skills Trainer: Unable to save local assessment data.',
         error
       );
+
+      return false;
     }
   }
 
-  function loadAssessmentData() {
+  async function saveAssessmentData() {
+    const data =
+      buildAssessmentData();
+
+    if (!assessmentPool) {
+      return saveAssessmentDataToFile(
+        data
+      );
+    }
+
+    try {
+      await assessmentPool.query(
+        `
+          insert into chrome_assessment_data (
+            id,
+            data,
+            updated_at
+          )
+          values (
+            'main',
+            $1::jsonb,
+            now()
+          )
+          on conflict (id)
+          do update set
+            data = excluded.data,
+            updated_at = now()
+        `,
+        [
+          JSON.stringify(data)
+        ]
+      );
+
+      return true;
+    } catch (error) {
+      console.error(
+        'Chrome Skills Trainer: Unable to save assessment data to Neon.',
+        error
+      );
+
+      return false;
+    }
+  }
+
+  async function loadAssessmentData() {
+    if (assessmentPool) {
+      try {
+        await assessmentPool.query(`
+          create table if not exists chrome_assessment_data (
+            id text primary key,
+            data jsonb not null,
+            updated_at timestamptz not null default now()
+          )
+        `);
+
+        const result =
+          await assessmentPool.query(`
+            select data
+            from chrome_assessment_data
+            where id = 'main'
+            limit 1
+          `);
+
+        if (result.rows.length) {
+          applyAssessmentData(
+            result.rows[0].data
+          );
+        } else {
+          const saved =
+            await saveAssessmentData();
+
+          if (!saved) {
+            return false;
+          }
+        }
+
+        console.log(
+          `Chrome Skills Trainer: Loaded ${assessmentClasses.size} assessment class(es) from Neon.`
+        );
+
+        return true;
+      } catch (error) {
+        console.error(
+          'Chrome Skills Trainer: Unable to load assessment data from Neon.',
+          error
+        );
+
+        return false;
+      }
+    }
+
     if (
       !fs.existsSync(
         assessmentDataPath
       )
     ) {
-      return;
+      return true;
     }
 
     try {
-      const raw = JSON.parse(
-        fs.readFileSync(
-          assessmentDataPath,
-          'utf8'
-        )
-      );
-
-      if (!Array.isArray(raw?.classes)) {
-        throw new Error(
-          'Saved assessment data has an invalid format.'
-        );
-      }
-
-      assessmentClasses.clear();
-
-      let highestClassId = 0;
-      let highestStudentId = 0;
-
-      for (const rawClass of raw.classes) {
-        const classId =
-          Number(rawClass?.id);
-
-        const className =
-          cleanDisplayName(
-            rawClass?.name
-          );
-
-        const classCode =
-          String(
-            rawClass?.code || ''
+      const raw =
+        JSON.parse(
+          fs.readFileSync(
+            assessmentDataPath,
+            'utf8'
           )
-            .trim()
-            .toUpperCase();
-
-        if (
-          !Number.isInteger(classId) ||
-          classId <= 0 ||
-          !className ||
-          !classCode
-        ) {
-          continue;
-        }
-
-        const students =
-          new Map();
-
-        const rawStudents =
-          Array.isArray(
-            rawClass.students
-          )
-            ? rawClass.students
-            : [];
-
-        rawStudents.forEach(
-          (rawStudent, index) => {
-            const studentId =
-              Number(rawStudent?.id);
-
-            const studentName =
-              cleanDisplayName(
-                rawStudent?.name
-              );
-
-            const nameKey =
-              normalizeStudentName(
-                studentName
-              );
-
-            if (
-              !Number.isInteger(studentId) ||
-              studentId <= 0 ||
-              !studentName ||
-              !nameKey
-            ) {
-              return;
-            }
-
-            const rawScore =
-              rawStudent?.score;
-
-            const score =
-              Number.isInteger(rawScore) &&
-              rawScore >= 0 &&
-              rawScore <= 10
-                ? rawScore
-                : null;
-
-            students.set(
-              studentId,
-              {
-                id: studentId,
-                name: studentName,
-                nameKey,
-                score,
-                completedAt:
-                  typeof rawStudent?.completedAt === 'string'
-                    ? rawStudent.completedAt
-                    : null,
-                displayOrder:
-                  Number.isInteger(
-                    rawStudent?.displayOrder
-                  )
-                    ? rawStudent.displayOrder
-                    : index
-              }
-            );
-
-            highestStudentId =
-              Math.max(
-                highestStudentId,
-                studentId
-              );
-          }
         );
 
-        assessmentClasses.set(
-          classId,
-          {
-            id: classId,
-            name: className,
-            code: classCode,
-            students
-          }
-        );
-
-        highestClassId =
-          Math.max(
-            highestClassId,
-            classId
-          );
-      }
-
-      nextAssessmentClassId =
-        Math.max(
-          Number(
-            raw.nextAssessmentClassId
-          ) || 1,
-          highestClassId + 1
-        );
-
-      nextAssessmentStudentId =
-        Math.max(
-          Number(
-            raw.nextAssessmentStudentId
-          ) || 1,
-          highestStudentId + 1
-        );
+      applyAssessmentData(raw);
 
       console.log(
-        `Chrome Skills Trainer: Loaded ${assessmentClasses.size} saved assessment class(es).`
+        `Chrome Skills Trainer: Loaded ${assessmentClasses.size} saved assessment class(es) from local storage.`
       );
+
+      return true;
     } catch (error) {
       console.error(
-        'Chrome Skills Trainer: Unable to load saved assessment data.',
+        'Chrome Skills Trainer: Unable to load local assessment data.',
         error
       );
+
+      return false;
     }
   }
 
-  loadAssessmentData();
+  const assessmentStorageReady =
+    loadAssessmentData();
+
+  async function assessmentStorageReadyMiddleware(
+    req,
+    res,
+    next
+  ) {
+    const ready =
+      await assessmentStorageReady;
+
+    if (!ready) {
+      return res.status(503).json({
+        error:
+          'Assessment storage is temporarily unavailable. Please try again.'
+      });
+    }
+
+    next();
+  }
   function changed() {
     state.revision += 1;
   }
@@ -521,6 +672,14 @@ module.exports = function registerClassroom(app, express) {
   // Quick Chrome Assessment: simple class roster + one score
   // ------------------------------------------------------------
 
+  app.use(
+    [
+      '/api/assessment-classes',
+      '/api/assessment-join',
+      '/api/assessment-score'
+    ],
+    assessmentStorageReadyMiddleware
+  );
   app.get('/api/assessment-classes', teacherOnly, (req, res) => {
     res.json({
       classes: [...assessmentClasses.values()]
@@ -528,7 +687,7 @@ module.exports = function registerClassroom(app, express) {
     });
   });
 
-  app.post('/api/assessment-classes', teacherOnly, (req, res) => {
+  app.post('/api/assessment-classes', teacherOnly, async (req, res) => {
     const name = cleanDisplayName(req.body?.name);
 
     if (!name || name.length > 80) {
@@ -546,14 +705,23 @@ module.exports = function registerClassroom(app, express) {
 
     assessmentClasses.set(item.id, item);
 
-    saveAssessmentData();
+    if (!(await saveAssessmentData())) {
 
+      return res.status(503).json({
+
+        error:
+
+          'Assessment data could not be saved. Please try again.'
+
+      });
+
+    }
     res.status(201).json(
       serializeAssessmentClass(item)
     );
   });
 
-  app.put('/api/assessment-classes/:id', teacherOnly, (req, res) => {
+  app.put('/api/assessment-classes/:id', teacherOnly, async (req, res) => {
     const item = getAssessmentClass(req.params.id);
 
     if (!item) {
@@ -572,8 +740,17 @@ module.exports = function registerClassroom(app, express) {
 
     item.name = name;
 
-    saveAssessmentData();
+    if (!(await saveAssessmentData())) {
 
+      return res.status(503).json({
+
+        error:
+
+          'Assessment data could not be saved. Please try again.'
+
+      });
+
+    }
     res.json(
       serializeAssessmentClass(item)
     );
@@ -582,7 +759,7 @@ module.exports = function registerClassroom(app, express) {
   app.delete(
     '/api/assessment-classes/:id',
     teacherOnly,
-    (req, res) => {
+    async (req, res) => {
       const item =
         getAssessmentClass(req.params.id);
 
@@ -603,8 +780,17 @@ module.exports = function registerClassroom(app, express) {
         }
       }
 
-      saveAssessmentData();
+      if (!(await saveAssessmentData())) {
 
+        return res.status(503).json({
+
+          error:
+
+            'Assessment data could not be saved. Please try again.'
+
+        });
+
+      }
       res.json({
         success: true
       });
@@ -614,7 +800,7 @@ module.exports = function registerClassroom(app, express) {
   app.put(
     '/api/assessment-classes/:classId/students/:studentId',
     teacherOnly,
-    (req, res) => {
+    async (req, res) => {
       const item =
         getAssessmentClass(
           req.params.classId
@@ -674,8 +860,17 @@ module.exports = function registerClassroom(app, express) {
       student.name = name;
       student.nameKey = nameKey;
 
-      saveAssessmentData();
+      if (!(await saveAssessmentData())) {
 
+        return res.status(503).json({
+
+          error:
+
+            'Assessment data could not be saved. Please try again.'
+
+        });
+
+      }
       for (
         const [token, session]
         of assessmentStudentSessions
@@ -697,7 +892,7 @@ module.exports = function registerClassroom(app, express) {
   app.delete(
     '/api/assessment-classes/:classId/students/:studentId',
     teacherOnly,
-    (req, res) => {
+    async (req, res) => {
       const item =
         getAssessmentClass(
           req.params.classId
@@ -720,8 +915,17 @@ module.exports = function registerClassroom(app, express) {
 
       item.students.delete(studentId);
 
-      saveAssessmentData();
+      if (!(await saveAssessmentData())) {
 
+        return res.status(503).json({
+
+          error:
+
+            'Assessment data could not be saved. Please try again.'
+
+        });
+
+      }
       for (
         const [token, session]
         of assessmentStudentSessions
@@ -743,7 +947,7 @@ module.exports = function registerClassroom(app, express) {
   app.put(
     '/api/assessment-classes/:id/roster',
     teacherOnly,
-    (req, res) => {
+    async (req, res) => {
       const item = getAssessmentClass(req.params.id);
 
       if (!item) {
@@ -801,8 +1005,17 @@ module.exports = function registerClassroom(app, express) {
 
       item.students = nextStudents;
 
-      saveAssessmentData();
+      if (!(await saveAssessmentData())) {
 
+        return res.status(503).json({
+
+          error:
+
+            'Assessment data could not be saved. Please try again.'
+
+        });
+
+      }
       // Roster edits invalidate old student join sessions for this class.
       for (const [token, session] of assessmentStudentSessions) {
         if (session.classId === item.id) {
@@ -816,7 +1029,7 @@ module.exports = function registerClassroom(app, express) {
     }
   );
 
-  app.post('/api/assessment-join', (req, res) => {
+  app.post('/api/assessment-join', async (req, res) => {
     const classCode = String(
       req.body?.classCode || ''
     )
@@ -888,7 +1101,17 @@ module.exports = function registerClassroom(app, express) {
         student
       );
 
-      saveAssessmentData();
+      if (!(await saveAssessmentData())) {
+
+        return res.status(503).json({
+
+          error:
+
+            'Assessment data could not be saved. Please try again.'
+
+        });
+
+      }
     }
 
     const token = crypto
@@ -911,7 +1134,7 @@ module.exports = function registerClassroom(app, express) {
     });
   });
 
-  app.post('/api/assessment-score', (req, res) => {
+  app.post('/api/assessment-score', async (req, res) => {
     const token = String(
       req.body?.token || ''
     );
@@ -962,7 +1185,17 @@ module.exports = function registerClassroom(app, express) {
       student.completedAt =
         new Date().toISOString();
 
-      saveAssessmentData();
+      if (!(await saveAssessmentData())) {
+
+        return res.status(503).json({
+
+          error:
+
+            'Assessment data could not be saved. Please try again.'
+
+        });
+
+      }
     }
 
     res.json({
