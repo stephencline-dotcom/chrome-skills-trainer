@@ -131,35 +131,6 @@ function selectedClass() {
   ) || null;
 }
 
-function resizeRosterInput() {
-  const textarea =
-    document.getElementById('roster-input');
-
-  if (!textarea) return;
-
-  const lineHeight = 24;
-  const verticalPadding = 24;
-  const minLines = 6;
-  const maxLines = 15;
-
-  const lineCount = Math.max(
-    minLines,
-    textarea.value.split(/\r?\n/).length
-  );
-
-  const visibleLines = Math.min(
-    lineCount,
-    maxLines
-  );
-
-  textarea.style.height =
-    `${(visibleLines * lineHeight) + verticalPadding}px`;
-
-  textarea.style.overflowY =
-    lineCount > maxLines
-      ? 'auto'
-      : 'hidden';
-}
 function setMessage(element, text, isError = false) {
   if (!element) return;
 
@@ -179,6 +150,89 @@ function escapeHtml(value) {
     .replace(/'/g, '&#039;');
 }
 
+function buildClassLink(item) {
+  if (!item?.code) return '';
+
+  const url =
+    new URL(
+      '/student.html',
+      window.location.origin
+    );
+
+  url.searchParams.set(
+    'skill',
+    'quick-chrome-assessment'
+  );
+
+  url.searchParams.set(
+    'lesson',
+    'active'
+  );
+
+  url.searchParams.set(
+    'class',
+    item.code
+  );
+
+  return url.toString();
+}
+
+async function copySelectedClassLink() {
+  const item = selectedClass();
+
+  if (!item) return;
+
+  const link =
+    buildClassLink(item);
+
+  const message =
+    document.getElementById(
+      'class-link-message'
+    );
+
+  try {
+    await navigator.clipboard.writeText(
+      link
+    );
+
+    setMessage(
+      message,
+      'Class link copied!'
+    );
+  } catch {
+    const input =
+      document.getElementById(
+        'class-link-value'
+      );
+
+    input?.focus();
+    input?.select();
+
+    document.execCommand('copy');
+
+    setMessage(
+      message,
+      'Class link copied!'
+    );
+  }
+}
+async function activateAssessmentClass(classId) {
+  selectedClassId = Number(classId);
+
+  renderAll();
+
+  try {
+  } catch (error) {
+    console.error(
+      'Unable to select assessment class:',
+      error
+    );
+
+    window.alert(
+      'Could not select this class. Please try again.'
+    );
+  }
+}
 function renderClassList() {
   const list = document.getElementById('class-list');
   if (!list) return;
@@ -206,8 +260,7 @@ function renderClassList() {
             ${escapeHtml(item.name)}
           </span>
           <span class="class-list-meta">
-            Code ${escapeHtml(item.code)}
-            • ${item.students.length} students
+            ${item.students.length} students
             • ${completed} complete
           </span>
         </button>
@@ -221,59 +274,242 @@ function renderClassList() {
     button.addEventListener(
       'click',
       () => {
-        selectedClassId =
-          Number(button.dataset.classId);
-
-        renderAll();
+        activateAssessmentClass(
+          Number(button.dataset.classId)
+        );
       }
     );
   });
 }
 
+async function deleteSelectedClass() {
+  const item = selectedClass();
+
+  if (!item) return;
+
+  const confirmed =
+    window.confirm(
+      `Delete "${item.name}"? This will also remove its students and assessment results.`
+    );
+
+  if (!confirmed) return;
+
+  try {
+    await teacherFetch(
+      `/api/assessment-classes/${item.id}`,
+      {
+        method: 'DELETE'
+      }
+    );
+
+    selectedClassId = null;
+
+    await loadClasses();
+  } catch (error) {
+    window.alert(error.message);
+  }
+}
+
+async function editStudent(studentId) {
+  const item = selectedClass();
+
+  if (!item) return;
+
+  const student =
+    item.students.find(
+      entry =>
+        entry.id === Number(studentId)
+    );
+
+  if (!student) return;
+
+  const nextName =
+    window.prompt(
+      'Edit student name:',
+      student.name
+    );
+
+  if (nextName === null) return;
+
+  const name = nextName.trim();
+
+  if (!name) {
+    window.alert(
+      'Enter a student name.'
+    );
+    return;
+  }
+
+  try {
+    await teacherFetch(
+      `/api/assessment-classes/${item.id}/students/${student.id}`,
+      {
+        method: 'PUT',
+        body: JSON.stringify({
+          name
+        })
+      }
+    );
+
+    await loadClasses();
+  } catch (error) {
+    window.alert(error.message);
+  }
+}
+
+async function deleteStudent(studentId) {
+  const item = selectedClass();
+
+  if (!item) return;
+
+  const student =
+    item.students.find(
+      entry =>
+        entry.id === Number(studentId)
+    );
+
+  if (!student) return;
+
+  const confirmed =
+    window.confirm(
+      `Delete ${student.name} from this class?`
+    );
+
+  if (!confirmed) return;
+
+  try {
+    await teacherFetch(
+      `/api/assessment-classes/${item.id}/students/${student.id}`,
+      {
+        method: 'DELETE'
+      }
+    );
+
+    await loadClasses();
+  } catch (error) {
+    window.alert(error.message);
+  }
+}
 function renderResults(item) {
   const tbody =
-    document.getElementById('results-body');
+    document.getElementById(
+      'results-body'
+    );
 
   if (!tbody) return;
 
   if (!item.students.length) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="4" class="result-pending">
-          Add students to this class to begin.
+        <td
+          colspan="5"
+          class="result-pending"
+        >
+          No students have joined this class yet.
         </td>
       </tr>
     `;
+
     return;
   }
 
-  tbody.innerHTML = item.students
-    .map(student => {
-      const complete =
-        student.score !== null;
+  tbody.innerHTML =
+    item.students
+      .map(student => {
+        const complete =
+          student.score !== null;
 
-      const scoreText =
-        complete
-          ? `${student.score} / 10`
-          : '—';
+        const scoreText =
+          complete
+            ? `${student.score} / 10`
+            : '—';
 
-      const percentText =
-        complete
-          ? `${student.score * 10}%`
-          : '—';
+        const percentText =
+          complete
+            ? `${student.score * 10}%`
+            : '—';
 
-      return `
-        <tr>
-          <td>${escapeHtml(student.name)}</td>
-          <td class="result-score">${scoreText}</td>
-          <td>${percentText}</td>
-          <td class="${complete ? 'result-complete' : 'result-pending'}">
-            ${complete ? 'Complete' : 'Not completed'}
-          </td>
-        </tr>
-      `;
-    })
-    .join('');
+        return `
+          <tr>
+            <td>
+              ${escapeHtml(student.name)}
+            </td>
+
+            <td class="result-score">
+              ${scoreText}
+            </td>
+
+            <td>
+              ${percentText}
+            </td>
+
+            <td class="${
+              complete
+                ? 'result-complete'
+                : 'result-pending'
+            }">
+              ${
+                complete
+                  ? 'Complete'
+                  : 'Not completed'
+              }
+            </td>
+
+            <td class="student-actions">
+              <button
+                type="button"
+                class="student-edit-btn"
+                data-edit-student-id="${student.id}"
+              >
+                Edit
+              </button>
+
+              <button
+                type="button"
+                class="student-delete-btn"
+                data-delete-student-id="${student.id}"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        `;
+      })
+      .join('');
+
+  tbody
+    .querySelectorAll(
+      '[data-edit-student-id]'
+    )
+    .forEach(button => {
+      button.addEventListener(
+        'click',
+        () => {
+          editStudent(
+            Number(
+              button.dataset.editStudentId
+            )
+          );
+        }
+      );
+    });
+
+  tbody
+    .querySelectorAll(
+      '[data-delete-student-id]'
+    )
+    .forEach(button => {
+      button.addEventListener(
+        'click',
+        () => {
+          deleteStudent(
+            Number(
+              button.dataset.deleteStudentId
+            )
+          );
+        }
+      );
+    });
 }
 
 function renderDetail() {
@@ -303,21 +539,8 @@ function renderDetail() {
   ).value = item.name;
 
   document.getElementById(
-    'class-code-value'
-  ).textContent = item.code;
-
-  document.getElementById(
-    'roster-input'
-  ).value = item.students
-    .map(student => student.name)
-    .join('\n');
-
-  resizeRosterInput();
-
-  document.getElementById(
-    'roster-count'
-  ).textContent =
-    `${item.students.length} student${item.students.length === 1 ? '' : 's'}`;
+    'class-link-value'
+  ).value = buildClassLink(item);
 
   renderResults(item);
 }
@@ -382,6 +605,7 @@ async function createClass() {
     input.value = '';
     selectedClassId = item.id;
 
+
     setMessage(
       message,
       `Created ${item.name}.`
@@ -425,49 +649,6 @@ async function renameClass() {
   }
 }
 
-async function saveRoster() {
-  const item = selectedClass();
-  if (!item) return;
-
-  const rosterInput =
-    document.getElementById(
-      'roster-input'
-    );
-
-  const message =
-    document.getElementById(
-      'roster-message'
-    );
-
-  const names = rosterInput.value
-    .split(/\r?\n/)
-    .map(name => name.trim())
-    .filter(Boolean);
-
-  try {
-    const updated = await teacherFetch(
-      `/api/assessment-classes/${item.id}/roster`,
-      {
-        method: 'PUT',
-        body: JSON.stringify({ names })
-      }
-    );
-
-    setMessage(
-      message,
-      `Roster saved: ${updated.students.length} students.`
-    );
-
-    await loadClasses();
-  } catch (error) {
-    setMessage(
-      message,
-      error.message,
-      true
-    );
-  }
-}
-
 function attachEvents() {
   document.getElementById(
     'create-class-btn'
@@ -488,25 +669,25 @@ function attachEvents() {
   );
 
   document.getElementById(
+    'copy-class-link-btn'
+  )?.addEventListener(
+    'click',
+    copySelectedClassLink
+  );
+  document.getElementById(
+    'delete-class-btn'
+  )?.addEventListener(
+    'click',
+    deleteSelectedClass
+  );
+  document.getElementById(
     'rename-class-btn'
   )?.addEventListener(
     'click',
     renameClass
   );
 
-  document.getElementById(
-    'save-roster-btn'
-  )?.addEventListener(
-    'click',
-    saveRoster
-  );
 
-  document.getElementById(
-    'roster-input'
-  )?.addEventListener(
-    'input',
-    resizeRosterInput
-  );
 
   document.getElementById(
     'refresh-results'

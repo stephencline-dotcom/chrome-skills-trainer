@@ -355,6 +355,161 @@ module.exports = function registerClassroom(app, express) {
     );
   });
 
+  app.delete(
+    '/api/assessment-classes/:id',
+    teacherOnly,
+    (req, res) => {
+      const item =
+        getAssessmentClass(req.params.id);
+
+      if (!item) {
+        return res.status(404).json({
+          error: 'Class not found.'
+        });
+      }
+
+      assessmentClasses.delete(item.id);
+
+      for (
+        const [token, session]
+        of assessmentStudentSessions
+      ) {
+        if (session.classId === item.id) {
+          assessmentStudentSessions.delete(token);
+        }
+      }
+
+      res.json({
+        success: true
+      });
+    }
+  );
+
+  app.put(
+    '/api/assessment-classes/:classId/students/:studentId',
+    teacherOnly,
+    (req, res) => {
+      const item =
+        getAssessmentClass(
+          req.params.classId
+        );
+
+      if (!item) {
+        return res.status(404).json({
+          error: 'Class not found.'
+        });
+      }
+
+      const studentId =
+        Number(req.params.studentId);
+
+      const student =
+        item.students.get(studentId);
+
+      if (!student) {
+        return res.status(404).json({
+          error: 'Student not found.'
+        });
+      }
+
+      const name =
+        cleanDisplayName(
+          req.body?.name
+        );
+
+      const nameKey =
+        normalizeStudentName(name);
+
+      if (
+        !name ||
+        !nameKey ||
+        name.length > 80
+      ) {
+        return res.status(400).json({
+          error: 'Enter a student name.'
+        });
+      }
+
+      const duplicate =
+        [...item.students.values()]
+          .find(
+            entry =>
+              entry.id !== student.id &&
+              entry.nameKey === nameKey
+          );
+
+      if (duplicate) {
+        return res.status(400).json({
+          error:
+            'A student with that name is already in this class.'
+        });
+      }
+
+      student.name = name;
+      student.nameKey = nameKey;
+
+      for (
+        const [token, session]
+        of assessmentStudentSessions
+      ) {
+        if (
+          session.classId === item.id &&
+          session.studentId === student.id
+        ) {
+          assessmentStudentSessions.delete(token);
+        }
+      }
+
+      res.json(
+        serializeAssessmentClass(item)
+      );
+    }
+  );
+
+  app.delete(
+    '/api/assessment-classes/:classId/students/:studentId',
+    teacherOnly,
+    (req, res) => {
+      const item =
+        getAssessmentClass(
+          req.params.classId
+        );
+
+      if (!item) {
+        return res.status(404).json({
+          error: 'Class not found.'
+        });
+      }
+
+      const studentId =
+        Number(req.params.studentId);
+
+      if (!item.students.has(studentId)) {
+        return res.status(404).json({
+          error: 'Student not found.'
+        });
+      }
+
+      item.students.delete(studentId);
+
+      for (
+        const [token, session]
+        of assessmentStudentSessions
+      ) {
+        if (
+          session.classId === item.id &&
+          session.studentId === studentId
+        ) {
+          assessmentStudentSessions.delete(token);
+        }
+      }
+
+      res.json(
+        serializeAssessmentClass(item)
+      );
+    }
+  );
+
   app.put(
     '/api/assessment-classes/:id/roster',
     teacherOnly,
@@ -430,30 +585,76 @@ module.exports = function registerClassroom(app, express) {
   );
 
   app.post('/api/assessment-join', (req, res) => {
-    const code = String(req.body?.code || '')
+    const classCode = String(
+      req.body?.classCode || ''
+    )
       .trim()
       .toUpperCase();
 
-    const nameKey = normalizeStudentName(
+
+    const studentName = cleanDisplayName(
       req.body?.name
     );
 
-    const item = [...assessmentClasses.values()]
-      .find(classItem => classItem.code === code);
+    const nameKey = normalizeStudentName(
+      studentName
+    );
 
-    if (!item) {
-      return res.status(404).json({
-        error: 'Class code not found.'
+    if (
+      !studentName ||
+      !nameKey ||
+      studentName.length > 80
+    ) {
+      return res.status(400).json({
+        error: 'Enter your name.'
       });
     }
 
-    const student = [...item.students.values()]
+    const item =
+      [...assessmentClasses.values()]
+        .find(
+          classItem =>
+            classItem.code === classCode
+        );
+
+    if (!item) {
+      return res.status(404).json({
+        error:
+          'This class link is no longer valid. Ask your teacher for the class link.'
+      });
+    }
+
+    let student = [...item.students.values()]
       .find(entry => entry.nameKey === nameKey);
 
     if (!student) {
-      return res.status(404).json({
-        error: 'Name not found in this class.'
-      });
+      if (item.students.size >= 100) {
+        return res.status(400).json({
+          error: 'This class already has 100 students.'
+        });
+      }
+
+      const nextDisplayOrder =
+        item.students.size === 0
+          ? 0
+          : Math.max(
+              ...[...item.students.values()]
+                .map(entry => Number(entry.displayOrder) || 0)
+            ) + 1;
+
+      student = {
+        id: nextAssessmentStudentId++,
+        name: studentName,
+        nameKey,
+        score: null,
+        completedAt: null,
+        displayOrder: nextDisplayOrder
+      };
+
+      item.students.set(
+        student.id,
+        student
+      );
     }
 
     const token = crypto

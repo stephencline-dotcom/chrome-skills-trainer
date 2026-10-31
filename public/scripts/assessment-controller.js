@@ -110,6 +110,17 @@ export class AssessmentController {
         'student-mode-bar'
       );
 
+    this.classCode =
+      new URLSearchParams(
+        window.location.search
+      )
+        .get('class')
+        ?.trim()
+        .toUpperCase() || '';
+
+    this.attemptKey =
+      `${ATTEMPT_KEY}:${this.classCode || 'no-class'}`;
+
     this.attempt = null;
     this.settingUp = false;
     this.locked = false;
@@ -261,23 +272,10 @@ export class AssessmentController {
         <h1>Quick Chrome Assessment</h1>
 
         <p class="assessment-join-help">
-          Enter your class code and your name.
+          Type your name to join your class and begin.
         </p>
 
         <form id="assessment-join-form">
-          <label for="assessment-class-code">
-            Class Code
-          </label>
-
-          <input
-            id="assessment-class-code"
-            type="text"
-            maxlength="5"
-            autocomplete="off"
-            spellcheck="false"
-            placeholder="ABCDE"
-            required
-          >
 
           <label for="assessment-student-name">
             Your Name
@@ -310,24 +308,6 @@ export class AssessmentController {
 
     document.body.appendChild(overlay);
 
-    const codeInput =
-      overlay.querySelector(
-        '#assessment-class-code'
-      );
-
-    codeInput?.addEventListener(
-      'input',
-      () => {
-        codeInput.value =
-          codeInput.value
-            .toUpperCase()
-            .replace(
-              /[^A-Z0-9]/g,
-              ''
-            )
-            .slice(0, 5);
-      }
-    );
 
     overlay
       .querySelector(
@@ -341,18 +321,14 @@ export class AssessmentController {
         }
       );
 
-    codeInput?.focus();
+    overlay
+      .querySelector(
+        '#assessment-student-name'
+      )
+      ?.focus();
   }
 
   async joinAssessment(overlay) {
-    const code =
-      overlay
-        .querySelector(
-          '#assessment-class-code'
-        )
-        ?.value
-        .trim()
-        .toUpperCase() || '';
 
     const name =
       overlay
@@ -372,15 +348,21 @@ export class AssessmentController {
         '#assessment-join-message'
       );
 
-    if (!code || !name) {
+    if (!this.classCode) {
       message.textContent =
-        'Enter your class code and name.';
+        'This class link is missing. Ask your teacher for the class link.';
+      return;
+    }
+
+    if (!name) {
+      message.textContent =
+        'Enter your name.';
       return;
     }
 
     button.disabled = true;
     message.textContent =
-      'Checking your class...';
+      'Getting your assessment ready...';
 
     try {
       const response = await fetch(
@@ -392,7 +374,7 @@ export class AssessmentController {
               'application/json'
           },
           body: JSON.stringify({
-            code,
+            classCode: this.classCode,
             name
           })
         }

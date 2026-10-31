@@ -40,7 +40,7 @@
       <div>
         <h2>Chrome Assessment Classes</h2>
         <p>
-          Create a class, add your student roster, and collect the Quick Chrome Assessment scores.
+          Create a class, send students the class link, and collect Quick Chrome Assessment scores.
         </p>
       </div>
 
@@ -100,12 +100,44 @@
                 <button type="button" id="rename-class-btn" class="classes-secondary-btn">
                   Rename Class
                 </button>
+
+                <button type="button" id="delete-class-btn" class="classes-danger-btn">
+                  Delete Class
+                </button>
               </div>
             </div>
 
-            <div class="class-code-box">
-              <span class="class-code-label">Student Class Code</span>
-              <strong id="class-code-value">-----</strong>
+            <div class="class-code-box class-link-box">
+              <span class="class-code-label">
+                Student Class Link
+              </span>
+
+              <div class="class-link-row">
+                <input
+                  type="text"
+                  id="class-link-value"
+                  readonly
+                  aria-label="Student class link"
+                >
+
+                <button
+                  type="button"
+                  id="copy-class-link-btn"
+                  class="classes-primary-btn"
+                >
+                  Copy Class Link
+                </button>
+              </div>
+
+              <p class="class-link-help">
+                Send this link to your students.
+                They only need to type their name.
+              </p>
+              <p
+                id="class-link-message"
+                class="classes-message"
+                aria-live="polite"
+              ></p>
             </div>
           </section>
 
@@ -129,6 +161,7 @@
                     <th>Score</th>
                     <th>Percent</th>
                     <th>Status</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody id="results-body">
@@ -138,30 +171,7 @@
           </section>
 
 
-          <section class="classes-card">
-            <div class="classes-section-heading">
-              <div>
-                <h3>Student Roster</h3>
-                <p>Enter one student name on each line.</p>
-              </div>
-            </div>
-
-            <div class="roster-actions">
-              <button type="button" id="save-roster-btn" class="classes-primary-btn">
-                Save Roster
-              </button>
-
-              <span id="roster-count">0 students</span>
-            </div>
-
-            <textarea
-              id="roster-input"
-              rows="6"
-              placeholder="Ava Smith&#10;Liam Jones&#10;Mia Brown"
-            ></textarea>
-
-            <p id="roster-message" class="classes-message" aria-live="polite"></p>
-          </section>
+          
         </div>
       </section>
     </div>
